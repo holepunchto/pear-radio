@@ -1,0 +1,272 @@
+* {
+    font-family: 'Maven Pro', sans-serif;
+    color: #05070a;
+    z-index: 0;
+}
+
+#stream {
+    position: absolute;
+    width: 100%;
+    height: 90%;
+    top: 10%;
+    right: 0%;
+}
+
+#listen {
+    position: absolute;
+    width: 100%;
+    height: 90%;
+    top: 10%;
+    right: -100%;
+    background: white;
+}
+
+#menu-toggle {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    background: white;
+    border: 0px;
+    font-size: 150%;
+    margin-top: 1vh;
+}
+
+#thumbnail-image {
+    height: 150px;
+    width: 150px;
+    background-color: #bbb;
+    border-radius: 50%;
+    margin:auto;
+}
+
+#thumbnail {
+    margin-top: 5vh;
+    margin-left: 2vh;
+    margin-right: 2vh;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding: 1vh;
+    letter-spacing: 3px;
+}
+
+#thumbnail-track {
+    margin-bottom: 1vh;
+    font-weight: 900;
+    font-size: 225%;
+}
+
+#thumbnail-artist {
+    margin-top: 1vh;
+    font-size: 150%;
+}
+
+#controls {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+}
+
+.control {
+    margin-left: 4vh;
+    margin-right: 4vh;
+    cursor: pointer;
+}
+
+.control:hover{
+    color: #bbb;
+}
+
+#bar {
+    margin: auto;
+    height: 0.5vh;
+    width: 35vh;
+    background: #05070a;
+    margin-bottom: 5vh;
+    margin-top: 1vh;
+    border-radius: 5px;
+}
+
+#tracklist {
+    margin-top: 5vh;
+    margin-left: 1vh;
+    margin-right: 1vh;
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    height: 50vh;
+}
+
+.playing {
+    background: #e5ebf0;
+}
+
+.tracklist-track {
+    font-size: 125%;
+    padding-left: 4vh;
+    padding-right: 4vh;
+    padding-top: 2vh;
+    padding-bottom: 2vh;
+    border-bottom: 1px solid #e5ebf0;
+    cursor: pointer;
+}
+
+.tracklist-track:hover {
+    background: #e5ebf0;
+}
+
+.tracklist-trackname {
+    display: inline;
+    font-weight: 500;
+}
+
+.duration {
+    display: inline;
+    float: right;
+    margin-top: 0px;
+}
+
+.tracklist-artist {
+    margin-top: 1vh;
+    margin-bottom: 0vh;
+}
+
+#streaming-status {
+    display: none;
+    padding-right: 3vh;
+    font-weight: bold;
+    text-align: right;
+    margin-bottom: 3vh;
+}
+
+::-webkit-scrollbar {
+    width: 0px;
+}
+
+#search {
+    padding:2vh;
+}
+
+input[type=text] {
+  padding: 6px;
+  font-size: 150%;
+  border-radius: 5px;
+  border:none;
+}
+
+input:focus {
+outline: none ! important;
+}
+
+#streamers {
+    display: flex;
+    height: 75vh;
+    justify-content: flex-start;
+    flex-direction: column;
+    margin-top: 5vh;
+}
+
+.streamer {
+    width:100%;
+    border-bottom: 1px solid #e5ebf0;
+}
+
+.streamer-name{
+    color: #343434;
+    background-color: #ffffff;
+    padding:2vh;
+    padding-bottom: 0px;
+    font-weight: 900;
+    font-size:200%;
+    margin-top:1vh;
+    margin-bottom: 0vh;
+}
+
+.streamer-description{
+    font-size:125%;
+    padding-left:2vh;
+    font-weight: 600;
+    margin-top: 1vh;
+}
+
+.listen {
+    margin-left: 2vh;
+}
+
+.streamer-selected {
+    background: #343434;
+    color: #ffffff;
+    border: 0px;
+}
+
+header {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    margin-top: 4vh;
+    postition:absolute;
+    width:100%;
+    height:5vh;
+}
+
+.header-icon {
+    margin-left: 3vh;
+    margin-right: 3vh;
+    color: #bbb;
+    cursor: pointer;
+}
+
+.selected-header-icon {
+    color: #05070a;
+    border-bottom: 4px solid #05070a;
+}
+
+.fade-in {
+    right: 0% !important;
+    transition:right 0.5s ease-in-out;
+}
+
+.fade-out {
+    right: -100% !important;
+    transition:right 0.5s ease-in-out;
+}
+
+#tracklist-placeholder {
+    text-align: center;
+    padding: 5vh;
+    margin-top: 3vh;
+}
+
+.tracklist-placeholder-message {
+    color: #bbb;
+    font-size: 125%;
+    letter-spacing: 1px;
+}
+
+.disabled {
+    display: none;
+}
+
+.streamer-like {
+    margin-left: 5vw;
+    font-size: 24px;
+    float: right;
+    cursor: pointer;
+}
+
+.streamer-play {
+    font-size: 24px;
+    color: #05070a;
+    float: right;
+    cursor: pointer;
+}
+
+.streamer-pause {
+    font-size: 24px;
+    color: #ffffff;
+    float: right;
+    cursor: pointer;
+}

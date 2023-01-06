@@ -1,0 +1,34 @@
+{
+  "name": "pear-radio",
+  "main": "index.html",
+  "type": "module",
+  "scripts": {
+    "dev": "holepunch dev",
+    "test": "brittle test/*.test.js"
+  },
+  "holepunch": {
+    "gui": {
+      "backgroundColor": "#FFFFFF",
+      "height": 920,
+      "width": 400
+    }
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "brittle": "^3.0.0",
+    "joyrider": "^1.0.0"
+  },
+  "dependencies": {
+    "@dropb/ffprobe": "^2.0.1",
+    "@hyperswarm/dht": "^6.4.1",
+    "compact-encoding": "^2.11.0",
+    "compact-encoding-struct": "^1.3.0",
+    "corestore": "^6.4.0",
+    "hyperswarm": "^4.3.5",
+    "node-id3": "^0.2.5",
+    "random-access-memory": "^6.1.0",
+    "sodium-native": "^3.4.1",
+    "throttle": "^1.0.3"
+  }
+}
