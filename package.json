@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "holepunch dev",
+    "fix": "standard --fix",
     "test": "brittle test/*.test.js"
   },
   "holepunch": {
@@ -17,7 +18,8 @@
   "license": "MIT",
   "devDependencies": {
     "brittle": "^3.0.0",
-    "joyrider": "^1.0.0"
+    "joyrider": "^1.0.0",
+    "standard": "^17.0.0"
   },
   "dependencies": {
     "@dropb/ffprobe": "^2.0.1",

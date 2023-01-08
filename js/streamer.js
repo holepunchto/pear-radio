@@ -30,8 +30,8 @@ export class HttpAudioStreamer {
     })
   }
 
-  stream (readStream) {
-    if (this.streaming) this.streaming.destroy()
+  async stream (readStream) {
+    if (this.streaming) await this.streaming.destroy()
     this.streaming = readStream
     readStream.on('data', data => {
       this.listeners.forEach(l => l.write(data))
@@ -114,13 +114,11 @@ export class Streamer {
   async next (action) {
     if (this.streaming) this.streaming.destroy()
 
-    if(action === 1) {
+    if (action === 1) {
       this.index++
-    }
-    else if(action === -1) {
+    } else if (action === -1) {
       this.index--
-    }
-    else {
+    } else {
       this.index = this.playlist.indexOf(action)
     }
 
@@ -174,7 +172,7 @@ export class Listener {
   async listen () {
     await this.core.update()
     await this.metadata.update()
-    const stream = this.core.createReadStream({ live: true, start: 0 })
+    const stream = this.core.createReadStream({ live: true, start: this.core.length })
     const metadata = this.metadata.createReadStream({ live: true, start: this.metadata.length - 1 })
     return { stream, metadata }
   }
