@@ -196,7 +196,7 @@ outline: none ! important;
 }
 
 .streamer-selected {
-    background: #05070a;
+    background: #bbb;
     color: #ffffff;
     border: 0px;
 }
@@ -255,11 +255,12 @@ header {
     font-size: 24px;
     float: right;
     cursor: pointer;
+    color: #bbb;
 }
 
 .streamer-play {
     font-size: 24px;
-    color: #05070a;
+    color: #bbb;
     float: right;
     cursor: pointer;
 }

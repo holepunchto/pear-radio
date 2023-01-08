@@ -183,7 +183,7 @@ window.onload = async () => {
       name.innerHTML = info.name
       Array(fav, play, pause).forEach(e => name.append(e))
       description.innerHTML = info.description
-      listen.innerHTML = 'Listen to this stream'
+      listen.innerHTML = ''
       playing.innerHTML = 'Playing...'
 
       streamer.classList.add('streamer')
@@ -210,4 +210,9 @@ window.onload = async () => {
     document.body.appendChild(player)
     player.play()
   }
+
+  /*
+  addTrack(await Mp3ReadStream.readTrack('/home/rpaezbas/Desktop/music/dakim - youstandit-leftrecord/03 - hounds.mp3'))
+  streamer.addTrack('/home/rpaezbas/Desktop/music/dakim - youstandit-leftrecord/03 - hounds.mp3')
+ */
 }
