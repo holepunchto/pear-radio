@@ -10,8 +10,8 @@
   "holepunch": {
     "gui": {
       "backgroundColor": "#FFFFFF",
-      "height": 920,
-      "width": 400
+      "height": 960,
+      "width": 480
     }
   },
   "author": "",

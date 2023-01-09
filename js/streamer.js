@@ -1,5 +1,6 @@
 import NodeID3 from 'node-id3'
 import fs from 'fs'
+import { basename } from 'path'
 import ffprobe from '@dropb/ffprobe'
 import Hyperswarm from 'hyperswarm'
 import Corestore from 'corestore'
@@ -56,7 +57,8 @@ export class Mp3ReadStream {
     const tags = NodeID3.read(path)
     const duration = Math.floor((await ffprobe.ffprobe(path)).format.duration)
     const secondsToMinutes = (seconds) => Math.floor(seconds / 60) + ':' + (seconds % 60 >= 10 ? seconds % 60 : '0' + seconds % 60)
-    return { name: tags.title, artist: tags.artist, duration: secondsToMinutes(duration), seconds: duration, path }
+    const file = basename(path)
+    return { file, name: tags.title, artist: tags.artist, duration: secondsToMinutes(duration), seconds: duration, path }
   }
 }
 

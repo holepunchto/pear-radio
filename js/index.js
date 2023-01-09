@@ -13,7 +13,11 @@ window.onload = async () => {
   let currentTrackDuration = null
   let player = document.querySelector('#player')
 
+  let intervalIsFinished = null
+  let intervalIsBuffering = null
+
   await streamer.ready()
+
   await user.ready()
   user.info = { stream: streamer.core.key, metadata: streamer.metadata.key, name: 'Rafa', description: 'Stream description', tags: 'tag1 tag2' }
   console.log(user.server.publicKey.toString('hex')) // TODO render
@@ -113,9 +117,9 @@ window.onload = async () => {
     const duration = document.createElement('p')
 
     // TODO change default name
-    trackname.innerHTML = info.name ? info.name.length < 20 ? info.name : info.name.substr(0, 20) + '...' : 'Unknown name'
+    trackname.innerHTML = info.name ? (info.name.length < 20 ? info.name : info.name.substr(0, 20) + '...') : info.file
     duration.innerHTML = info.duration
-    artist.innerHTML = info.artist
+    artist.innerHTML = info.artist || 'Unknown artist'
 
     track.classList.add('tracklist-track')
     trackname.classList.add('tracklist-trackname')
@@ -131,7 +135,7 @@ window.onload = async () => {
       httpAudioStreamer.stream(stream)
       Array.from(document.querySelector('#tracklist').children).forEach(e => e.classList.remove('playing'))
       track.classList.add('playing')
-      play(info.seconds)
+      play(info)
     }
 
     document.querySelector('#tracklist').append(track)
@@ -204,33 +208,33 @@ window.onload = async () => {
     }
   }
 
-  trackIsFinished()
-
-  function play (duration) { // Remove previous buffered music
-    currentTrackDuration = duration
+  function play (info) { // Remove previous buffered music
+    currentTrackDuration = info.seconds
     player.remove()
     player = document.createElement('audio')
     player.src = 'http://localhost:' + httpAudioStreamer.port
     player.setAttribute('type', 'audio/mpeg')
     document.body.appendChild(player)
+    player.volume = 0.5 // TODO check with others
     player.play()
-    isBuffering()
+
+    if (!intervalIsBuffering) intervalIsBuffering = trackIsBuffering()
+    if (!intervalIsFinished) intervalIsFinished = trackIsFinished()
+
+    document.querySelector('#thumbnail-track').innerHTML = info.name || info.file
+    document.querySelector('#thumbnail-artist').innerHTML = info.artist || 'Unkown artist'
   }
 
-  function isBuffering () {
-    return new Promise((resolve, reject) => {
-      const interval = setInterval(() => {
-        try {
-          player.buffered.end(0)
-          // Done
-          clearInterval(interval)
-          resolve()
-        } catch (err) {
-          // Buffering...
-          console.log('buffering...')
-        }
-      }, 100)
-    })
+  function trackIsBuffering () {
+    return setInterval(() => {
+      try {
+        player.buffered.end(0)
+        // Done
+      } catch (err) {
+        // Buffering...
+        console.log('buffering...')
+      }
+    }, 100)
   }
 
   function trackIsFinished () {
@@ -238,9 +242,11 @@ window.onload = async () => {
       if (player && currentTrackDuration && !player.paused && player.currentTime + 2 >= currentTrackDuration) {
         player.currentTime = 0 // This must happen right after track is finished
         player.pause()
+
         const { stream, index, info } = await streamer.next(1)
         httpAudioStreamer.stream(stream)
-        play(info.seconds)
+        play(info)
+
         Array.from(document.querySelector('#tracklist').children).forEach(e => e.classList.remove('playing'))
         document.querySelector('#tracklist').children.item(index).classList.add('playing')
       }
