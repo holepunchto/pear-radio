@@ -19,8 +19,9 @@ window.onload = async () => {
   await streamer.ready()
 
   await user.ready()
-  user.info = { stream: streamer.core.key, metadata: streamer.metadata.key, name: 'Rafa', description: 'Stream description', tags: 'tag1 tag2' }
-  console.log(user.server.publicKey.toString('hex')) // TODO render
+  const pk = user.server.publicKey.toString('hex')
+  user.info = { stream: streamer.core.key, metadata: streamer.metadata.key, name: pk.substr(0, 6) + '...', description: '', tags: '' }
+  console.log(pk) // TODO render
 
   await httpAudioStreamer.ready()
   document.querySelector('#player').src = 'http://localhost:' + httpAudioStreamer.port
@@ -181,6 +182,7 @@ window.onload = async () => {
       const streamer = document.createElement('div')
       const name = document.createElement('p')
       const description = document.createElement('p')
+      const tags = document.createElement('p')
       const listen = document.createElement('p')
       const playing = document.createElement('p')
 
@@ -194,18 +196,21 @@ window.onload = async () => {
 
       name.innerHTML = info.name
       Array(fav, play, pause).forEach(e => name.append(e))
-      description.innerHTML = info.description
+      description.innerHTML = info.description.length > 0 ? info.description : 'No description provided.'
+      tags.innerHTML = info.tags && info.tags.length > 0 ? info.tags : 'No tags provided.'
       listen.innerHTML = ''
-      playing.innerHTML = 'Playing...'
+      playing.innerHTML = 'Connecting...'
 
       streamer.classList.add('streamer')
       name.classList.add('streamer-name')
       description.classList.add('streamer-description')
+      tags.classList.add('streamer-tags')
       listen.classList.add('listen')
       playing.classList.add('listen', 'disabled')
 
       streamer.append(name)
       streamer.append(description)
+      streamer.append(tags)
       streamer.append(listen)
       streamer.append(playing)
 

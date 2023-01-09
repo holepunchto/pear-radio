@@ -151,7 +151,7 @@ body {
 
 #search {
     padding: 2vh;
-    border: 1px solid #bbb;
+    border: 1px solid #e5ebf0;
     border-radius: 10px;
     margin-left: 4vw;
     margin-right: 4vw;
@@ -179,34 +179,42 @@ input:focus {
 .streamer {
     width:100%;
     border-bottom: 1px solid #e5ebf0;
+    background-color: white;
 }
 
-.streamer-name{
+.streamer-name {
     color: #343434;
-    background-color: #ffffff;
     padding:2vh;
     padding-bottom: 0px;
-    font-weight: 900;
+    font-weight: 600;
     font-size:200%;
     margin-top:1vh;
     margin-bottom: 0vh;
 }
 
-.streamer-description{
+.streamer-description {
     font-size:125%;
     padding-left:2vh;
-    font-weight: 600;
+    font-weight: 200;
+    margin-top: 2vh;
+}
+
+.streamer-tags {
+    font-size:125%;
+    padding-left:2vh;
+    font-weight: 200;
     margin-top: 1vh;
+    color: #bbb;
 }
 
 .listen {
+    margin-top: 3vh;
     margin-left: 2vh;
+    font-size: 125%;
 }
 
 .streamer-selected {
-    background: #bbb;
-    color: #ffffff;
-    border: 0px;
+    background-color: #e5ebf0;
 }
 
 header {
@@ -268,7 +276,7 @@ header {
 }
 
 .disabled {
-    display: none;
+    display: none !important;
 }
 
 .streamer-like {
@@ -276,19 +284,19 @@ header {
     font-size: 24px;
     float: right;
     cursor: pointer;
-    color: #bbb;
+    color: #343434;
 }
 
 .streamer-play {
     font-size: 24px;
-    color: #bbb;
+    color: #343434;
     float: right;
     cursor: pointer;
 }
 
 .streamer-pause {
     font-size: 24px;
-    color: #ffffff;
+    color: #343434;
     float: right;
     cursor: pointer;
 }
