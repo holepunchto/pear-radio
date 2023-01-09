@@ -37,6 +37,11 @@ export class HttpAudioStreamer {
       this.listeners.forEach(l => l.write(data))
     })
   }
+
+  async stop () {
+    if (this.streaming) await this.streaming.destroy()
+    this.streaming = null
+  }
 }
 
 export class Mp3ReadStream {
@@ -50,8 +55,8 @@ export class Mp3ReadStream {
   static async readTrack (path) {
     const tags = NodeID3.read(path)
     const duration = Math.floor((await ffprobe.ffprobe(path)).format.duration)
-    const secondsToMinutes = (seconds) => Math.floor(seconds / 60) + ':' + seconds % 60
-    return { name: tags.title, artist: tags.artist, duration: secondsToMinutes(duration), path }
+    const secondsToMinutes = (seconds) => Math.floor(seconds / 60) + ':' + (seconds % 60 >= 10 ? seconds % 60 : '0' + seconds % 60)
+    return { name: tags.title, artist: tags.artist, duration: secondsToMinutes(duration), seconds: duration, path }
   }
 }
 
@@ -131,7 +136,7 @@ export class Streamer {
       this.core.append(data)
     })
     this.streaming = stream
-    return { track, stream, index: this.index }
+    return { track, stream, index: this.index, info: trackInfo }
   }
 
   addTrack (track) {

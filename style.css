@@ -4,6 +4,10 @@
     z-index: 0;
 }
 
+body {
+    background: white;
+}
+
 #stream {
     position: absolute;
     width: 100%;
@@ -151,7 +155,7 @@
 
 input[type=text] {
   padding: 6px;
-  font-size: 150%;
+  font-size: 125%;
   border-radius: 5px;
   border:none;
 }
