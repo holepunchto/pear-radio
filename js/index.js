@@ -165,7 +165,7 @@ window.onload = async () => {
       const { stream, metadata } = await listener.listen()
       metadata.on('data', (data) => { result.playing.innerHTML = `Playing: ${data.artist || 'Unknown artist'} - ${data.name || 'Unknown track'}` })
       await httpAudioStreamer.stream(stream)
-      play()
+      playStream()
     }
 
     result.pause.onclick = async () => {
@@ -226,7 +226,7 @@ window.onload = async () => {
     player.src = 'http://localhost:' + httpAudioStreamer.port
     player.setAttribute('type', 'audio/mpeg')
     document.body.appendChild(player)
-    player.volume = 0.5 // TODO check with others
+    player.volume = 0 // TODO check with others
     player.play()
 
     if (!intervalIsBuffering) intervalIsBuffering = trackIsBuffering()
@@ -234,6 +234,19 @@ window.onload = async () => {
 
     document.querySelector('#thumbnail-track').innerHTML = info.name || info.file
     document.querySelector('#thumbnail-artist').innerHTML = info.artist || 'Unkown artist'
+  }
+
+  function playStream () {
+    if (!intervalIsBuffering) intervalIsBuffering = trackIsBuffering()
+    intervalIsFinished = null // only for local
+
+    player.remove()
+    player = document.createElement('audio')
+    player.src = 'http://localhost:' + httpAudioStreamer.port
+    player.setAttribute('type', 'audio/mpeg')
+    document.body.appendChild(player)
+    player.volume = 0.5 // TODO check with others
+    player.play()
   }
 
   function trackIsBuffering () {

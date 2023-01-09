@@ -48,7 +48,7 @@ export class HttpAudioStreamer {
 export class Mp3ReadStream {
   static async stream (track) {
     const bitRate = (await ffprobe.ffprobe(track)).format.bit_rate
-    const throttle = new Throttle(bitRate / 4)
+    const throttle = new Throttle(bitRate / 8)
     const readStream = fs.createReadStream(track)
     return readStream.pipe(throttle)
   }

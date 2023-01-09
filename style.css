@@ -197,6 +197,7 @@ input:focus {
     padding-left:2vh;
     font-weight: 200;
     margin-top: 2vh;
+    color: #bbb;
 }
 
 .streamer-tags {
@@ -211,6 +212,7 @@ input:focus {
     margin-top: 3vh;
     margin-left: 2vh;
     font-size: 125%;
+    width: 80vw;
 }
 
 .streamer-selected {
