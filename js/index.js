@@ -74,17 +74,23 @@ window.onload = async () => {
   }
 
   document.querySelector('#forward-controls').onclick = async () => {
-    const { index } = await streamer.next(1)
-    document.querySelector('#tracklist').children.item(index).classList.add('playing')
+    const { stream, index, info } = await streamer.next(1)
+    httpAudioStreamer.stream(stream)
+
     Array.from(document.querySelector('#tracklist').children).forEach(e => e.classList.remove('playing'))
-    play()
+    document.querySelector('#tracklist').children.item(index).classList.add('playing')
+
+    play(info)
   }
 
   document.querySelector('#backward-controls').onclick = async () => {
-    const { index } = await streamer.next(-1)
-    document.querySelector('#tracklist').children.item(index).classList.add('playing')
+    const { stream, index, info } = await streamer.next(-1)
+    httpAudioStreamer.stream(stream)
+
     Array.from(document.querySelector('#tracklist').children).forEach(e => e.classList.remove('playing'))
-    play()
+    document.querySelector('#tracklist').children.item(index).classList.add('playing')
+
+    play(info)
   }
 
   document.querySelector('#pause-controls').onclick = async () => {

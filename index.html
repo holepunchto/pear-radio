@@ -6,11 +6,11 @@
     <link href="https://fonts.googleapis.com/css?family=Maven+Pro:400,500,600,700,800,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./assets/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="style.css">
-    <title>Peer Radio</title>
+    <title>Pear Radio</title>
   </head>
   <body>
     <header>
-      <i id="stream-icon" class="fas fa-broadcast-tower header-icon" style='font-size:28px'></i>
+      <i id="stream-icon" class="fas fa-gear header-icon" style='font-size:28px'></i>
       <i id="tracklist-icon" class="fas fa-music header-icon selected-header-icon" style='font-size:28px'></i>
       <i id="search-icon" class="fas fa-search header-icon" style='font-size:28px'></i>
       <i id="favourites-icon" class="far fa-heart header-icon" style='font-size:28px'></i>
@@ -28,7 +28,7 @@
       <div id="controls">
         <i class="fas fa-fast-backward control" id="backward-controls" style='font-size:22px'></i>
         <i class="fas fa-play control"  id="play-controls" style='font-size:22px'></i>
-        <i class="fas fa-stop control disabled"  id="pause-controls" style='font-size:22px'></i>
+        <i class="fas fa-pause control disabled"  id="pause-controls" style='font-size:22px'></i>
         <i class="fas fa-fast-forward control" id="forward-controls" style='font-size:22px'></i>
       </div>
       <div id="tracklist">
@@ -40,6 +40,10 @@
     </div>
     <div id="listen">
       <div id="streamers">
+        <div id="streamers-placeholder">
+          <i class="fas fa-broadcast-tower streamers-placeholder-message" style='font-size:35px'></i>
+          <p class="streamers-placeholder-message">Search a streamer public key, tag or use #all to find every public stream.</p>
+        </div>
       </div>
       <div id="search">
         <input id="search-input" type="text" placeholder="Search stream...">

@@ -150,18 +150,22 @@ body {
 }
 
 #search {
-    padding:2vh;
+    padding: 2vh;
+    border: 1px solid #bbb;
+    border-radius: 10px;
+    margin-left: 4vw;
+    margin-right: 4vw;
 }
 
 input[type=text] {
-  padding: 6px;
-  font-size: 125%;
-  border-radius: 5px;
-  border:none;
+    padding: 6px;
+    font-size: 125%;
+    border-radius: 5px;
+    border:none;
 }
 
 input:focus {
-outline: none ! important;
+    outline: none ! important;
 }
 
 #streamers {
@@ -247,6 +251,19 @@ header {
 .tracklist-placeholder-message {
     color: #bbb;
     font-size: 125%;
+    letter-spacing: 1px;
+
+}
+
+#streamers-placeholder {
+    text-align: center;
+    padding: 5vh;
+    margin-top: 10vh;
+}
+
+.streamers-placeholder-message {
+    color: #bbb;
+    font-size: 150%;
     letter-spacing: 1px;
 }
 
