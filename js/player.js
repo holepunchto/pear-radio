@@ -29,6 +29,7 @@ export class Player extends EventEmmiter {
   async play (info) {
     if (!this.intervalIsBuffering) this.intervalIsBuffering = this.trackIsBuffering()
     if (!this.intervalIsFinished) this.intervalIsFinished = this.trackIsFinished()
+    if (info) this.index = this.playlist.indexOf(info.path)
 
     const path = info ? info.path : this.playlist[this.index]
     const stream = await Mp3ReadStream.stream(path)
@@ -40,14 +41,14 @@ export class Player extends EventEmmiter {
     this.currentTrackDuration = metadata.seconds
     this.cleanBuffer()
     this.audio.play()
+
+    return metadata
   }
 
   async playStream (stream) {
     await this.httpAudioStreamer.stream(stream)
     if (!this.intervalIsBuffering) this.intervalIsBuffering = this.trackIsBuffering()
     this.intervalIsFinished = null // only for local
-
-    this.cleanBuffer()
     this.audio.play()
   }
 
@@ -62,18 +63,14 @@ export class Player extends EventEmmiter {
 
   }
 
-  async next () {
-    this.index = this.random ? Math.floor(Math.random() * this.playlist.length) : this.index++ % this.playlist.length
-    await this.play()
+  async forward () {
+    this.index = this.random ? Math.floor(Math.random() * this.playlist.length) : ++this.index % this.playlist.length
+    return this.play()
   }
 
-  forward () {
-    // this.index++
-    // this.index = this.random ? Math.floor(Math.random() * this.playlist.length) : this.index % this.playlist.length
-  }
-
-  backward () {
-
+  async backward () {
+    this.index = this.random ? Math.floor(Math.random() * this.playlist.length) : --this.index % this.playlist.length
+    return this.play()
   }
 
   async addTrack (path) {
@@ -96,7 +93,7 @@ export class Player extends EventEmmiter {
       if (this.audio && this.currentTrackDuration && !this.audio.paused && this.audio.currentTime + 2 >= this.currentTrackDuration) {
         this.audio.currentTime = 0 // This must happen right after track is finished
         this.audio.pause()
-        await this.next()
+        await this.forward()
         this.emit('track-finished', this.index)
       }
     }, 100)

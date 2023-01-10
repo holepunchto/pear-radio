@@ -120,7 +120,7 @@ const addResult = (info) => {
 const play = async (info) => { // Remove previous buffered music
   document.querySelector('#thumbnail-track').innerHTML = info.name || info.file
   document.querySelector('#thumbnail-artist').innerHTML = info.artist || 'Unkown artist'
-  await player.play(info)
+  return player.play(info)
 }
 
 const fade = (in_, out) => {
@@ -184,6 +184,22 @@ window.onload = async () => {
       // await streamer.searchTag(searchText)
     }
   })
+
+  document.querySelector('#forward-controls').onclick = async () => {
+    const metadata = await player.forward()
+    document.querySelector('#thumbnail-track').innerHTML = metadata.name || metadata.file
+    document.querySelector('#thumbnail-artist').innerHTML = metadata.artist || 'Unkown artist'
+    Array.from(document.querySelector('#tracklist').children).forEach(e => e.classList.remove('playing'))
+    document.querySelector('#tracklist').children.item(player.index).classList.add('playing')
+  }
+
+  document.querySelector('#backward-controls').onclick = async () => {
+    const metadata = await player.backward()
+    document.querySelector('#thumbnail-track').innerHTML = metadata.name || metadata.file
+    document.querySelector('#thumbnail-artist').innerHTML = metadata.artist || 'Unkown artist'
+    Array.from(document.querySelector('#tracklist').children).forEach(e => e.classList.remove('playing'))
+    document.querySelector('#tracklist').children.item(player.index).classList.add('playing')
+  }
 
   player.on('track-finished', (index) => {
     Array.from(document.querySelector('#tracklist').children).forEach(e => e.classList.remove('playing'))
