@@ -229,7 +229,7 @@ window.onload = async () => {
   })
 
   setInterval(() => {
-    if (player && player.audio && player.audio.currentTime) {
+    if (player && player.audio && player.audio.currentTime && player.streamer.streaming) {
       const seconds = Math.floor(player.audio.currentTime)
       const elapsed = Math.floor(seconds / 60) + ':' + (seconds % 60 >= 10 ? seconds % 60 : '0' + seconds % 60)
       console.log(elapsed)

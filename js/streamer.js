@@ -48,7 +48,7 @@ export class HttpAudioStreamer {
 export class Mp3ReadStream {
   static async stream (path) {
     const bitRate = (await ffprobe.ffprobe(path)).format.bit_rate
-    const throttle = new Throttle(bitRate / 8)
+    const throttle = new Throttle(bitRate / 6) // TODO check this
     const readStream = fs.createReadStream(path)
     return readStream.pipe(throttle)
   }
@@ -115,8 +115,8 @@ export class Streamer {
     await this.swarm.flush()
   }
 
-  stream (metadata, stream) {
-    if (this.streaming) this.streaming.destroy()
+  async stream (metadata, stream) {
+    if (this.streaming) await this.streaming.destroy()
     this.metadata.append(metadata)
     stream.on('data', data => {
       this.core.append(data)
@@ -124,8 +124,9 @@ export class Streamer {
     this.streaming = stream
   }
 
-  stop () {
-    if (this.streaming) this.streaming.destroy()
+  async stop () {
+    if (this.streaming) await this.streaming.destroy()
+    this.streaming = null
   }
 
   destroy () {

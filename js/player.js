@@ -46,9 +46,11 @@ export class Player extends EventEmmiter {
   }
 
   async playStream (stream) {
+    await this.streamer.stop() // stop streaming if you are going to play another stream
     await this.httpAudioStreamer.stream(stream)
     if (!this.intervalIsBuffering) this.intervalIsBuffering = this.trackIsBuffering()
     this.intervalIsFinished = null // only for local
+    this.cleanBuffer()
     this.audio.play()
   }
 
