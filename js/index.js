@@ -105,7 +105,7 @@ const addResult = (info) => {
 
   result.pause.onclick = async () => {
     listener.destroy()
-    player.pause()
+    player.stop()
 
     Array(result.streamer, result.name, result.description, result.listen, result.playing, result.fav).forEach(e => e.classList.remove('streamer-selected'))
     result.playing.classList.add('disabled')
