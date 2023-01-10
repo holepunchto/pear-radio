@@ -9,7 +9,6 @@
   },
   "holepunch": {
     "gui": {
-      "backgroundColor": "#FFFFFF",
       "height": 960,
       "width": 480
     }

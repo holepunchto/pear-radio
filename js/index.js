@@ -3,6 +3,7 @@ import { Streamer, Listener, HttpAudioStreamer, TagManager, Mp3ReadStream } from
 
 // TODO: only for testing
 const bootstrap = [{ host: '127.0.0.1', port: 49737 }]
+// const bootstrap = undefined
 
 window.onload = async () => {
   const user = new User({ bootstrap })
@@ -191,7 +192,7 @@ window.onload = async () => {
       const pause = document.createElement('i')
 
       fav.classList.add('far', 'fa-heart', 'streamer-like')
-      play.classList.add('fas', 'fa-play', 'streamer-play')
+      play.classList.add('far', ' fa-play-circle', 'streamer-play')
       pause.classList.add('fas', 'fa-pause', 'streamer-pause', 'disabled')
 
       name.innerHTML = info.name
@@ -199,7 +200,7 @@ window.onload = async () => {
       description.innerHTML = info.description.length > 0 ? info.description : 'No description provided.'
       tags.innerHTML = info.tags && info.tags.length > 0 ? info.tags : 'No tags provided.'
       listen.innerHTML = ''
-      playing.innerHTML = 'Connecting...'
+      playing.innerHTML = 'Buffering...'
 
       streamer.classList.add('streamer')
       name.classList.add('streamer-name')
@@ -226,7 +227,7 @@ window.onload = async () => {
     player.src = 'http://localhost:' + httpAudioStreamer.port
     player.setAttribute('type', 'audio/mpeg')
     document.body.appendChild(player)
-    player.volume = 0 // TODO check with others
+    player.volume = 0.5 // TODO check with others
     player.play()
 
     if (!intervalIsBuffering) intervalIsBuffering = trackIsBuffering()
