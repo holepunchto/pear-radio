@@ -30,13 +30,17 @@ export class User {
     return new Promise((resolve, reject) => {
       const socket = this.node.connect(key)
       socket.on('data', (data) => {
-        const info = this._decodeUserInfo(data)
+        const info = this.decodeUserInfo(data)
         resolve(info)
       })
     })
   }
 
-  _decodeUserInfo (data) {
+  encodeUserInfo () {
+    return c.encode(userInfo, this.info)
+  }
+
+  decodeUserInfo (data) {
     try {
       return c.decode(userInfo, data)
     } catch (err) {

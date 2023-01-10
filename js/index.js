@@ -4,7 +4,7 @@ import { Listener, TagManager } from './streamer.js'
 
 const bootstrap = [{ host: '127.0.0.1', port: 49737 }]
 const user = new User({ bootstrap })
-const tagManager = new TagManager()
+const tagManager = new TagManager(user, { bootstrap })
 
 const player = new Player(() => {
   const audio = document.createElement('audio')
@@ -154,6 +154,8 @@ window.onload = async () => {
   const pk = user.server.publicKey.toString('hex')
   user.info = { stream: player.streamer.core.key, metadata: player.streamer.metadata.key, name: pk.substr(0, 6) + '...', description: '', tags: '' }
   console.log(pk)
+
+  await tagManager.ready()
 
   document.addEventListener('dragover', async (e) => {
     e.preventDefault()

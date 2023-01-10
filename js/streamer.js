@@ -1,3 +1,4 @@
+import EventEmmiter from 'events'
 import NodeID3 from 'node-id3'
 import fs from 'fs'
 import { basename } from 'path'
@@ -62,13 +63,43 @@ export class Mp3ReadStream {
   }
 }
 
-export class TagManager {
-  constructor (opts = {}) {
+export class TagManager extends EventEmmiter {
+  constructor (user, opts = {}) {
+    super()
+    this.user = user
     this.swarm = new Hyperswarm(opts)
     this.swarm.on('connection', (conn, info) => this._onConnection(conn, info))
+    this.tags = new Map() // acts as cache memory
   }
 
-  _onConnection (conn, info) {
+  _onConnection (connection, info) {
+    connection.write(this.user.encodeUserInfo())
+    connection.on('data', (encodedUser) => {
+      const decodedUser = this.user.decodeUserInfo(encodedUser)
+      this.emit('stream-found', decodedUser)
+      if (decodedUser.tags) {
+        decodedUser.tags.split(',').forEach(tag => {
+          if (!this.tags.has(tag)) this.tags.set(tag, [])
+          this.tags.get(tag).push(decodedUser)
+        })
+      } else {
+        this.tags.get('#all').push(decodedUser)
+      }
+    })
+  }
+
+  async ready () {
+    this.announce() // announce to the #all channel
+    this.tags.set('#all', [])
+    this.searchByTag('#all')
+  }
+
+  async announce () {
+    const pearRadioTopic = 'pear-radio#all'
+    const hash = Buffer.alloc(32)
+    sodium.crypto_generichash(hash, Buffer.from(pearRadioTopic))
+    this.swarm.join(hash)
+    return this.swarm.flush()
   }
 
   announceTag (tag) {
@@ -80,7 +111,7 @@ export class TagManager {
 
   searchByTag (tag) {
     const hash = Buffer.alloc(32)
-    sodium.crypto_generichash(hash, Buffer.from(tag))
+    sodium.crypto_generichash(hash, Buffer.from('pear-radio' + tag))
     this.swarm.join(hash)
     return this.swarm.flush()
     // TODO how do we return results?
