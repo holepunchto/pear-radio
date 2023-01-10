@@ -86,8 +86,9 @@ export class Player extends EventEmmiter {
     return setInterval(() => {
       try {
         this.audio.buffered.end(0)
+        this.emit('buffering-finished')
       } catch (err) {
-        console.log('buffering...')
+        this.emit('buffering')
       }
     }, 100)
   }

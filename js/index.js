@@ -223,16 +223,17 @@ window.onload = async () => {
   })
 
   player.on('buffering', async () => {
+    document.querySelector('#state').innerHTML = '(Buffering)'
   })
 
   player.on('buffering-finished', async () => {
+    document.querySelector('#state').innerHTML = ''
   })
 
   setInterval(() => {
     if (player && player.audio && player.audio.currentTime && player.streamer.streaming) {
       const seconds = Math.floor(player.audio.currentTime)
       const elapsed = Math.floor(seconds / 60) + ':' + (seconds % 60 >= 10 ? seconds % 60 : '0' + seconds % 60)
-      console.log(elapsed)
       document.querySelector('#elapsed').innerHTML = elapsed
     }
   }, 1000)

@@ -319,3 +319,7 @@ header {
     font-size: 125%;
     font-weight: 400;
 }
+
+#state {
+    margin-left: 2vw;
+}
