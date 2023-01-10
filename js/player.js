@@ -4,9 +4,10 @@ import { Mp3ReadStream, Streamer, HttpAudioStreamer } from './streamer.js'
 const bootstrap = [{ host: '127.0.0.1', port: 49737 }]
 
 export class Player extends EventEmmiter {
-  constructor (audio, document) {
+  constructor (start) {
     super()
-    this.audio = typeof audio === 'function' ? audio() : audio
+    this.start = start
+    this.audio = start()
     this.streamer = new Streamer({ bootstrap })
     this.httpAudioStreamer = new HttpAudioStreamer()
     this.volume = 0.5
@@ -16,14 +17,13 @@ export class Player extends EventEmmiter {
     this.intervalIsFinished = null
     this.intervalIsBuffering = null
     this.currentTrackDuration = null
-
-    this.document = document
   }
 
   async ready () {
     await this.streamer.ready()
     await this.httpAudioStreamer.ready()
     this.audio.src = 'http://localhost:' + this.httpAudioStreamer.port
+    this.audio.volume = this.volume
   }
 
   async play (info) {
@@ -53,11 +53,9 @@ export class Player extends EventEmmiter {
 
   cleanBuffer () {
     this.audio.remove()
-    this.audio = this.document.createElement('audio')
+    this.audio = this.start()
     this.audio.src = 'http://localhost:' + this.httpAudioStreamer.port
-    this.audio.setAttribute('type', 'audio/mpeg')
-    this.document.body.appendChild(this.audio)
-    this.audio.volume = 0.5 // TODO check with others
+    this.audio.volume = this.volume
   }
 
   pause () {
