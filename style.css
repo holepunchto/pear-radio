@@ -105,6 +105,7 @@ body {
 
 .playing {
     background: #e5ebf0;
+    border-radius: 10px;
 }
 
 .tracklist-track {
@@ -174,6 +175,8 @@ input:focus {
     justify-content: flex-start;
     flex-direction: column;
     margin-top: 5vh;
+    margin-left: 2vw;
+    margin-right: 2vw;
 }
 
 .streamer {
@@ -217,6 +220,7 @@ input:focus {
 
 .streamer-selected {
     background-color: #e5ebf0;
+    border-radius: 10px;
 }
 
 header {
