@@ -46,10 +46,10 @@ export class HttpAudioStreamer {
 }
 
 export class Mp3ReadStream {
-  static async stream (track) {
-    const bitRate = (await ffprobe.ffprobe(track)).format.bit_rate
+  static async stream (path) {
+    const bitRate = (await ffprobe.ffprobe(path)).format.bit_rate
     const throttle = new Throttle(bitRate / 8)
-    const readStream = fs.createReadStream(track)
+    const readStream = fs.createReadStream(path)
     return readStream.pipe(throttle)
   }
 
@@ -97,9 +97,6 @@ export class Streamer {
     this.store = new Corestore(ram, opts)
     this.core = null
     this.metadata = null
-    this.playlist = []
-    this.random = false
-    this.index = -1
     this.streaming = null
 
     this.swarm.on('connection', (conn, info) => {
@@ -118,31 +115,13 @@ export class Streamer {
     await this.swarm.flush()
   }
 
-  async next (action) {
+  stream (metadata, stream) {
     if (this.streaming) this.streaming.destroy()
-
-    if (action === 1) {
-      this.index++
-    } else if (action === -1) {
-      this.index--
-    } else {
-      this.index = this.playlist.indexOf(action)
-    }
-
-    this.index = this.random ? Math.floor(Math.random() * this.playlist.length) : this.index % this.playlist.length
-    const track = this.playlist[this.index]
-    const stream = await Mp3ReadStream.stream(track)
-    const trackInfo = await Mp3ReadStream.readTrack(track)
-    this.metadata.append(trackInfo)
+    this.metadata.append(metadata)
     stream.on('data', data => {
       this.core.append(data)
     })
     this.streaming = stream
-    return { track, stream, index: this.index, info: trackInfo }
-  }
-
-  addTrack (track) {
-    this.playlist.push(track)
   }
 
   destroy () {

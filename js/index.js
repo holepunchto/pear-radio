@@ -1,5 +1,6 @@
 import { User } from './user.js'
-import { Streamer, Listener, HttpAudioStreamer, TagManager, Mp3ReadStream } from './streamer.js'
+import { Player } from './player.js'
+import { Listener, TagManager } from './streamer.js'
 
 // TODO: only for testing
 const bootstrap = [{ host: '127.0.0.1', port: 49737 }]
@@ -7,25 +8,16 @@ const bootstrap = [{ host: '127.0.0.1', port: 49737 }]
 
 window.onload = async () => {
   const user = new User({ bootstrap })
-  const streamer = new Streamer({ bootstrap })
-  const httpAudioStreamer = new HttpAudioStreamer()
   const tagManager = new TagManager()
-
-  let currentTrackDuration = null
-  let player = document.querySelector('#player')
-
-  let intervalIsFinished = null
-  let intervalIsBuffering = null
-
-  await streamer.ready()
+  const player = new Player(document.querySelector('#player'), document)
 
   await user.ready()
-  const pk = user.server.publicKey.toString('hex')
-  user.info = { stream: streamer.core.key, metadata: streamer.metadata.key, name: pk.substr(0, 6) + '...', description: '', tags: '' }
-  console.log(pk) // TODO render
+  await player.ready()
 
-  await httpAudioStreamer.ready()
-  document.querySelector('#player').src = 'http://localhost:' + httpAudioStreamer.port
+  const pk = user.server.publicKey.toString('hex')
+
+  user.info = { stream: player.streamer.core.key, metadata: player.streamer.metadata.key, name: pk.substr(0, 6) + '...', description: '', tags: '' }
+  console.log(pk) // TODO render
 
   document.addEventListener('dragover', (e) => {
     e.preventDefault()
@@ -35,10 +27,11 @@ window.onload = async () => {
   document.addEventListener('drop', async (event) => {
     event.preventDefault()
     event.stopPropagation()
+
     document.querySelector('#tracklist-placeholder')?.remove()
     for (const f of event.dataTransfer.files) {
-      addTrack(await Mp3ReadStream.readTrack(f.path))
-      streamer.addTrack(f.path)
+      const metadata = await player.addTrack(f.path)
+      addTrack(metadata)
     }
   })
 
@@ -67,6 +60,7 @@ window.onload = async () => {
   })
 
   // TODO change to resume
+  /*
   document.querySelector('#play-controls').onclick = async () => {
     const { index } = await streamer.next(1)
     Array.from(document.querySelector('#tracklist').children).forEach(e => e.classList.remove('playing'))
@@ -100,6 +94,8 @@ window.onload = async () => {
     document.querySelector('#play-controls').classList.remove('disabled')
     document.querySelector('#pause-controls').classList.add('disabled')
   }
+
+  */
 
   const resetSearchResults = () => {
     document.querySelector('#streamers').innerHTML = ''
@@ -139,8 +135,6 @@ window.onload = async () => {
     track.append(artist)
 
     track.onclick = async () => {
-      const { stream } = await streamer.next(info.path)
-      httpAudioStreamer.stream(stream)
       Array.from(document.querySelector('#tracklist').children).forEach(e => e.classList.remove('playing'))
       track.classList.add('playing')
       play(info)
@@ -164,14 +158,15 @@ window.onload = async () => {
       listener = new Listener(info.stream, info.metadata, { bootstrap })
       await listener.ready()
       const { stream, metadata } = await listener.listen()
+      await player.playStream(stream)
+
       metadata.on('data', (data) => { result.playing.innerHTML = `Playing: ${data.artist || 'Unknown artist'} - ${data.name || 'Unknown track'}` })
-      await httpAudioStreamer.stream(stream)
-      playStream()
     }
 
     result.pause.onclick = async () => {
       listener.destroy()
-      document.querySelector('#player').pause()
+      player.pause()
+
       Array(result.streamer, result.name, result.description, result.listen, result.playing, result.fav).forEach(e => e.classList.remove('streamer-selected'))
       result.playing.classList.add('disabled')
       result.listen.classList.remove('disabled')
@@ -220,66 +215,20 @@ window.onload = async () => {
     }
   }
 
-  function play (info) { // Remove previous buffered music
-    currentTrackDuration = info.seconds
-    player.remove()
-    player = document.createElement('audio')
-    player.src = 'http://localhost:' + httpAudioStreamer.port
-    player.setAttribute('type', 'audio/mpeg')
-    document.body.appendChild(player)
-    player.volume = 0.5 // TODO check with others
-    player.play()
-
-    if (!intervalIsBuffering) intervalIsBuffering = trackIsBuffering()
-    if (!intervalIsFinished) intervalIsFinished = trackIsFinished()
-
+  async function play (info) { // Remove previous buffered music
     document.querySelector('#thumbnail-track').innerHTML = info.name || info.file
     document.querySelector('#thumbnail-artist').innerHTML = info.artist || 'Unkown artist'
+    await player.play(info)
   }
 
-  function playStream () {
-    if (!intervalIsBuffering) intervalIsBuffering = trackIsBuffering()
-    intervalIsFinished = null // only for local
+  player.on('track-finished', (index) => {
+    Array.from(document.querySelector('#tracklist').children).forEach(e => e.classList.remove('playing'))
+    document.querySelector('#tracklist').children.item(index).classList.add('playing')
+  })
 
-    player.remove()
-    player = document.createElement('audio')
-    player.src = 'http://localhost:' + httpAudioStreamer.port
-    player.setAttribute('type', 'audio/mpeg')
-    document.body.appendChild(player)
-    player.volume = 0.5 // TODO check with others
-    player.play()
-  }
+  player.on('buffering', () => {
+  })
 
-  function trackIsBuffering () {
-    return setInterval(() => {
-      try {
-        player.buffered.end(0)
-        // Done
-      } catch (err) {
-        // Buffering...
-        console.log('buffering...')
-      }
-    }, 100)
-  }
-
-  function trackIsFinished () {
-    return setInterval(async () => {
-      if (player && currentTrackDuration && !player.paused && player.currentTime + 2 >= currentTrackDuration) {
-        player.currentTime = 0 // This must happen right after track is finished
-        player.pause()
-
-        const { stream, index, info } = await streamer.next(1)
-        httpAudioStreamer.stream(stream)
-        play(info)
-
-        Array.from(document.querySelector('#tracklist').children).forEach(e => e.classList.remove('playing'))
-        document.querySelector('#tracklist').children.item(index).classList.add('playing')
-      }
-    }, 100)
-  }
-
-  /*
-    addTrack(await Mp3ReadStream.readTrack('/home/rpaezbas/Desktop/music/dakim - youstandit-leftrecord/03 - hounds.mp3'))
-    streamer.addTrack('/home/rpaezbas/Desktop/music/dakim - youstandit-leftrecord/03 - hounds.mp3')
-  */
+  player.on('buffering-finished', () => {
+  })
 }
