@@ -13,15 +13,15 @@ const player = new Player(() => {
   return audio
 })
 
-const addTrack = (info) => {
+const addTrack = (metadata) => {
   const track = document.createElement('div')
   const trackname = document.createElement('p')
   const artist = document.createElement('p')
   const duration = document.createElement('p')
 
-  trackname.innerHTML = info.name ? (info.name.length < 20 ? info.name : info.name.substr(0, 20) + '...') : info.file
-  duration.innerHTML = info.duration
-  artist.innerHTML = info.artist || 'Unknown artist'
+  trackname.innerHTML = metadata.name ? (metadata.name.length < 20 ? metadata.name : metadata.name.substr(0, 20) + '...') : metadata.file
+  duration.innerHTML = metadata.duration
+  artist.innerHTML = metadata.artist || 'Unknown artist'
 
   track.classList.add('tracklist-track')
   trackname.classList.add('tracklist-trackname')
@@ -33,9 +33,7 @@ const addTrack = (info) => {
   track.append(artist)
 
   track.onclick = async () => {
-    Array.from(document.querySelector('#tracklist').children).forEach(e => e.classList.remove('playing'))
-    track.classList.add('playing')
-    play(info)
+    play(metadata)
   }
 
   document.querySelector('#tracklist').append(track)
@@ -117,10 +115,22 @@ const addResult = (info) => {
   }
 }
 
-const play = async (info) => { // Remove previous buffered music
-  document.querySelector('#thumbnail-track').innerHTML = info.name || info.file
-  document.querySelector('#thumbnail-artist').innerHTML = info.artist || 'Unkown artist'
-  return player.play(info)
+const updateThumbnail = (metadata) => {
+  document.querySelector('#thumbnail-track').innerHTML = metadata.name || metadata.file
+  document.querySelector('#thumbnail-artist').innerHTML = metadata.artist || 'Unkown artist'
+  document.querySelector('#duration').innerHTML = metadata.duration
+  document.querySelector('#elapsed').innerHTML = '0:00'
+}
+
+const updatePlaylist = (metadata) => {
+  Array.from(document.querySelector('#tracklist').children).forEach(e => e.classList.remove('playing'))
+  document.querySelector('#tracklist').children.item(player.index).classList.add('playing')
+}
+
+const play = async (metadata) => { // Remove previous buffered music
+  await player.play(metadata)
+  updateThumbnail(metadata)
+  updatePlaylist(metadata)
 }
 
 const fade = (in_, out) => {
@@ -134,16 +144,6 @@ const selectIcon = (icon) => {
   const icons = ['#stream-icon', '#tracklist-icon', '#search-icon', '#favourites-icon']
   icons.forEach(i => document.querySelector(i).classList.remove('selected-header-icon'))
   document.querySelector(icon).classList.add('selected-header-icon')
-}
-
-const updateThumbnail = (metadata) => {
-  document.querySelector('#thumbnail-track').innerHTML = metadata.name || metadata.file
-  document.querySelector('#thumbnail-artist').innerHTML = metadata.artist || 'Unkown artist'
-}
-
-const updatePlaylist = (metadata) => {
-  Array.from(document.querySelector('#tracklist').children).forEach(e => e.classList.remove('playing'))
-  document.querySelector('#tracklist').children.item(player.index).classList.add('playing')
 }
 
 window.onload = async () => {
@@ -227,4 +227,13 @@ window.onload = async () => {
 
   player.on('buffering-finished', async () => {
   })
+
+  setInterval(() => {
+    if (player && player.audio && player.audio.currentTime) {
+      const seconds = Math.floor(player.audio.currentTime)
+      const elapsed = Math.floor(seconds / 60) + ':' + (seconds % 60 >= 10 ? seconds % 60 : '0' + seconds % 60)
+      console.log(elapsed)
+      document.querySelector('#elapsed').innerHTML = elapsed
+    }
+  }, 1000)
 }

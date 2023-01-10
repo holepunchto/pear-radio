@@ -59,10 +59,12 @@ body {
     margin-bottom: 1vh;
     font-weight: 900;
     font-size: 225%;
+    letter-spacing: 7px;
 }
 
 #thumbnail-artist {
     margin-top: 1vh;
+    margin-bottom: 1vh;
     font-size: 150%;
 }
 
@@ -306,4 +308,14 @@ header {
     color: #343434;
     float: right;
     cursor: pointer;
+}
+
+#thumbnail-timer {
+    margin-top: 2vh;
+    margin-bottom: 1vh;
+}
+
+#thumbnail-timer > span {
+    font-size: 125%;
+    font-weight: 400;
 }
