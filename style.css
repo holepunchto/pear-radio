@@ -80,7 +80,7 @@ body {
 }
 
 .control:hover{
-    color: #bbb;
+    color: #e5ebf0;
 }
 
 #bar {
@@ -120,6 +120,7 @@ body {
 
 .tracklist-track:hover {
     background: #e5ebf0;
+    border-radius: 10px;
 }
 
 .tracklist-trackname {
