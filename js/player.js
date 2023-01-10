@@ -59,8 +59,9 @@ export class Player extends EventEmmiter {
     this.audio.volume = this.volume
   }
 
-  pause () {
-
+  stop () {
+    this.audio.pause()
+    this.cleanBuffer()
   }
 
   async forward () {

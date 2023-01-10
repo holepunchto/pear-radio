@@ -136,6 +136,16 @@ const selectIcon = (icon) => {
   document.querySelector(icon).classList.add('selected-header-icon')
 }
 
+const updateThumbnail = (metadata) => {
+  document.querySelector('#thumbnail-track').innerHTML = metadata.name || metadata.file
+  document.querySelector('#thumbnail-artist').innerHTML = metadata.artist || 'Unkown artist'
+}
+
+const updatePlaylist = (metadata) => {
+  Array.from(document.querySelector('#tracklist').children).forEach(e => e.classList.remove('playing'))
+  document.querySelector('#tracklist').children.item(player.index).classList.add('playing')
+}
+
 window.onload = async () => {
   await user.ready()
   await player.ready()
@@ -145,28 +155,27 @@ window.onload = async () => {
   user.info = { stream: player.streamer.core.key, metadata: player.streamer.metadata.key, name: pk.substr(0, 6) + '...', description: '', tags: '' }
   console.log(pk)
 
-  document.addEventListener('dragover', (e) => {
+  document.addEventListener('dragover', async (e) => {
     e.preventDefault()
     e.stopPropagation()
   })
 
-  document.addEventListener('drop', async (event) => {
-    event.preventDefault()
-    event.stopPropagation()
-
+  document.addEventListener('drop', async (e) => {
+    e.preventDefault()
+    e.stopPropagation()
     document.querySelector('#tracklist-placeholder')?.remove()
-    for (const f of event.dataTransfer.files) {
+    for (const f of e.dataTransfer.files) {
       const metadata = await player.addTrack(f.path)
       addTrack(metadata)
     }
   })
 
-  document.querySelector('#tracklist-icon').onclick = () => {
+  document.querySelector('#tracklist-icon').onclick = async () => {
     selectIcon('#tracklist-icon')
     fade(document.querySelector('#stream'), document.querySelector('#listen'))
   }
 
-  document.querySelector('#search-icon').onclick = () => {
+  document.querySelector('#search-icon').onclick = async () => {
     selectIcon('#search-icon')
     document.querySelector('#search-input').focus({ preventScroll: true })
     fade(document.querySelector('#listen'), document.querySelector('#stream'))
@@ -187,28 +196,35 @@ window.onload = async () => {
 
   document.querySelector('#forward-controls').onclick = async () => {
     const metadata = await player.forward()
-    document.querySelector('#thumbnail-track').innerHTML = metadata.name || metadata.file
-    document.querySelector('#thumbnail-artist').innerHTML = metadata.artist || 'Unkown artist'
-    Array.from(document.querySelector('#tracklist').children).forEach(e => e.classList.remove('playing'))
-    document.querySelector('#tracklist').children.item(player.index).classList.add('playing')
+    updateThumbnail(metadata)
+    updatePlaylist(metadata)
   }
 
   document.querySelector('#backward-controls').onclick = async () => {
     const metadata = await player.backward()
-    document.querySelector('#thumbnail-track').innerHTML = metadata.name || metadata.file
-    document.querySelector('#thumbnail-artist').innerHTML = metadata.artist || 'Unkown artist'
-    Array.from(document.querySelector('#tracklist').children).forEach(e => e.classList.remove('playing'))
-    document.querySelector('#tracklist').children.item(player.index).classList.add('playing')
+    updateThumbnail(metadata)
+    updatePlaylist(metadata)
   }
 
-  player.on('track-finished', (index) => {
+  document.querySelector('#stop-controls').onclick = async () => {
+    Array.from(document.querySelector('#tracklist').children).forEach(e => e.classList.remove('playing'))
+    player.stop()
+  }
+
+  document.querySelector('#play-controls').onclick = async () => {
+    const metadata = await player.play()
+    updateThumbnail(metadata)
+    updatePlaylist(metadata)
+  }
+
+  player.on('track-finished', async (index) => {
     Array.from(document.querySelector('#tracklist').children).forEach(e => e.classList.remove('playing'))
     document.querySelector('#tracklist').children.item(index).classList.add('playing')
   })
 
-  player.on('buffering', () => {
+  player.on('buffering', async () => {
   })
 
-  player.on('buffering-finished', () => {
+  player.on('buffering-finished', async () => {
   })
 }
