@@ -62,6 +62,7 @@ export class Player extends EventEmmiter {
   stop () {
     this.audio.pause()
     this.cleanBuffer()
+    this.streamer.stop()
   }
 
   async forward () {

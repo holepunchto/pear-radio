@@ -124,6 +124,10 @@ export class Streamer {
     this.streaming = stream
   }
 
+  stop () {
+    if (this.streaming) this.streaming.destroy()
+  }
+
   destroy () {
     this.store.destroy()
     this.swarm.destroy()
