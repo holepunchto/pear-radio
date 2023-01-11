@@ -48,8 +48,9 @@ export class HttpAudioStreamer {
 
 export class Mp3ReadStream {
   static async stream (path) {
+    const bufferOffset = 1 // TODO tweak value between 0-8, the higher this value, the faster stream but less realtime
     const bitRate = (await ffprobe.ffprobe(path)).format.bit_rate
-    const throttle = new Throttle(bitRate / 6) // TODO check this
+    const throttle = new Throttle(bitRate / 8 - bufferOffset)
     const localStream = fs.createReadStream(path)
     const remoteStream = fs.createReadStream(path).pipe(throttle)
     return { localStream, remoteStream }
