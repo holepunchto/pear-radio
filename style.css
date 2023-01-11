@@ -154,11 +154,10 @@ body {
 }
 
 #search {
-    padding: 2vh;
-    border: 1px solid #e5ebf0;
     border-radius: 10px;
     margin-left: 4vw;
     margin-right: 4vw;
+    display: flex;
 }
 
 #search-input {
@@ -167,6 +166,9 @@ body {
     border-radius: 5px;
     border:none;
     width: 100%;
+    padding: 2vh;
+    border: 1px solid #e5ebf0;
+    box-shadow: 2px 2px #e5ebf0;
 }
 
 input:focus {
@@ -323,4 +325,13 @@ header {
 
 #state {
     margin-left: 2vw;
+}
+
+#search-button {
+    padding: 0px;
+    margin-right: 2vw;
+    background-color: white;
+    border-radius: 10px;
+    border: 1px solid #e5ebf0;
+    box-shadow: 2px 2px #e5ebf0;
 }
