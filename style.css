@@ -187,6 +187,11 @@ input:focus {
     width:100%;
     border-bottom: 1px solid #e5ebf0;
     background-color: white;
+    cursor: pointer;
+}
+
+.streamer:hover {
+    background: #e5ebf0;
 }
 
 .streamer-name {

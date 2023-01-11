@@ -103,7 +103,7 @@ const addResult = (info) => {
   hideStreamersPlaceholder()
   hideSearchingSpinner()
 
-  result.play.onclick = async () => {
+  result.streamer.onclick = async () => {
     Array.from(document.getElementsByClassName('streamer-selected')).forEach((e) => e.classList.remove('streamer-selected'))
     Array(result.streamer, result.name, result.description, result.listen, result.playing, result.fav).forEach(e => e.classList.add('streamer-selected'))
     result.listen.classList.add('disabled')
