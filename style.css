@@ -44,7 +44,7 @@ body {
 }
 
 #thumbnail {
-    margin-top: 5vh;
+    margin-top: 3vh;
     margin-left: 2vh;
     margin-right: 2vh;
     text-align: center;
@@ -107,7 +107,6 @@ body {
 
 .playing {
     background: #e5ebf0;
-    border-radius: 10px;
 }
 
 .tracklist-track {
@@ -122,7 +121,6 @@ body {
 
 .tracklist-track:hover {
     background: #e5ebf0;
-    border-radius: 10px;
 }
 
 .tracklist-trackname {
@@ -334,4 +332,5 @@ header {
     border-radius: 10px;
     border: 1px solid #e5ebf0;
     box-shadow: 2px 2px #e5ebf0;
+    cursor: pointer;
 }
