@@ -39,8 +39,20 @@ const addTrack = (metadata) => {
   document.querySelector('#tracklist').append(track)
 }
 
-const resetSearchResults = () => {
+const showSearchingSpinner = () => {
+  document.querySelector('#streamers-search-spinner').classList.remove('disabled')
+}
+
+const hideSearchingSpinner = () => {
+  document.querySelector('#streamers-search-spinner').classList.add('disabled')
+}
+
+const hideStreamersPlaceholder = () => {
   document.querySelector('#streamers-placeholder').classList.add('disabled')
+}
+
+const resetSearchResults = () => {
+  hideStreamersPlaceholder()
   document.querySelector('#streamers-list').innerHTML = ''
 }
 
@@ -88,7 +100,8 @@ const addResult = (info) => {
   let listener = null
   const result = createSearchResult(info)
 
-  // TODO if (placeholderIsVisible or searchingSpinner is visible) hide
+  hideStreamersPlaceholder()
+  hideSearchingSpinner()
 
   result.play.onclick = async () => {
     Array.from(document.getElementsByClassName('streamer-selected')).forEach((e) => e.classList.remove('streamer-selected'))
@@ -199,6 +212,7 @@ window.onload = async () => {
     } else {
       await tagManager.searchByTag(searchText)
       resetSearchResults()
+      showSearchingSpinner()
       tagManager.tags.get(searchText).map(addResult)
     }
   }

@@ -351,8 +351,8 @@ header {
 }
 
 .spinner {
-    border: 8px solid #f3f3f3; /* Light grey */
-    border-top: 8px solid #bbb; /* Blue */
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #bbb;
     border-radius: 50%;
     width: 20px;
     height: 20px;

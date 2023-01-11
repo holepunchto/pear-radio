@@ -111,7 +111,7 @@ export class TagManager extends EventEmmiter {
   }
 
   searchByTag (tag) {
-    if(tag === '#all') return // searched by default
+    if (tag === '#all') return // searched by default
     if (!this.tags.has(tag)) this.tags.set(tag, [])
     const hash = Buffer.alloc(32)
     sodium.crypto_generichash(hash, Buffer.from('pear-radio' + tag))
