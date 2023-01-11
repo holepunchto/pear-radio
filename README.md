@@ -2,8 +2,6 @@
 
 Pear radio is a Holepunch music audio player/streamer.
 
-![screenshot](https://user-images.githubusercontent.com/15270736/211868865-b51cdfe4-6195-4c21-8323-d7f86dced1ee.png)
-
 ## Streaming and file formats
 
 Pear radio feeds the audio stream to a single Hypercore, listeners replicate the core.
@@ -60,3 +58,8 @@ All streams use the tag #all by default. Streams that do not join #all are consi
 ## Audio capture
 
 For now, Pear Radio only streams audio files, but should not be difficult to capture audio and stream it in the same way.
+
+## UI
+
+<img src="https://user-images.githubusercontent.com/15270736/211868865-b51cdfe4-6195-4c21-8323-d7f86dced1ee.png" width=35% height=35%>
+
