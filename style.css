@@ -334,3 +334,33 @@ header {
     box-shadow: 2px 2px #e5ebf0;
     cursor: pointer;
 }
+
+#streamers-search-spinner {
+    text-align: center;
+    padding: 5vh;
+    margin-top: 20vh;
+    color: #bbb;
+    font-size: 125%;
+    letter-spacing: 1px;
+}
+
+#streamers-search-spinner-message {
+    color: #bbb;
+    font-size: 125%;
+    letter-spacing: 1px;
+}
+
+.spinner {
+    border: 8px solid #f3f3f3; /* Light grey */
+    border-top: 8px solid #bbb; /* Blue */
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 2s linear infinite;
+    margin: auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

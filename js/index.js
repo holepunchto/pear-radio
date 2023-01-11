@@ -40,7 +40,8 @@ const addTrack = (metadata) => {
 }
 
 const resetSearchResults = () => {
-  document.querySelector('#streamers').innerHTML = ''
+  document.querySelector('#streamers-placeholder').classList.add('disabled')
+  document.querySelector('#streamers-list').innerHTML = ''
 }
 
 const createSearchResult = (info) => {
@@ -79,7 +80,7 @@ const createSearchResult = (info) => {
   streamer.append(listen)
   streamer.append(playing)
 
-  document.querySelector('#streamers').append(streamer)
+  document.querySelector('#streamers-list').append(streamer)
   return { streamer, name, description, listen, playing, play, pause, fav }
 }
 
