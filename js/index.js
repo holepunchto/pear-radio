@@ -167,6 +167,7 @@ window.onload = async () => {
   await player.ready()
 
   // TODO remove
+  let lastSearch = null
   const pk = user.server.publicKey.toString('hex')
   user.info = { stream: player.streamer.core.key, metadata: player.streamer.metadata.key, name: pk.substr(0, 6) + '...', description: '', tags: '' }
   console.log(pk)
@@ -197,10 +198,15 @@ window.onload = async () => {
     selectIcon('#search-icon')
     document.querySelector('#search-input').focus({ preventScroll: true })
     fade(document.querySelector('#listen'), document.querySelector('#stream'))
+
+    if (lastSearch) {
+      document.querySelector('#search-input').value = lastSearch
+    }
   }
 
   document.querySelector('#search-button').onclick = async () => {
     const searchText = document.querySelector('#search-input').value
+    lastSearch = searchText
     if (searchText.length === 64) { // Search is a pk
       const info = await user.getUserInfo(Buffer.from(searchText, 'hex'))
       if (info) {
