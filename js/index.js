@@ -87,6 +87,8 @@ const addResult = (info) => {
   let listener = null
   const result = createSearchResult(info)
 
+  // TODO if (placeholderIsVisible or searchingSpinner is visible) hide
+
   result.play.onclick = async () => {
     Array.from(document.getElementsByClassName('streamer-selected')).forEach((e) => e.classList.remove('streamer-selected'))
     Array(result.streamer, result.name, result.description, result.listen, result.playing, result.fav).forEach(e => e.classList.add('streamer-selected'))
@@ -183,18 +185,22 @@ window.onload = async () => {
     fade(document.querySelector('#listen'), document.querySelector('#stream'))
   }
 
-  document.querySelector('#search-input').addEventListener('input', async () => {
+  document.querySelector('#search-button').onclick = async () => {
     const searchText = document.querySelector('#search-input').value
     if (searchText.length === 64) { // Search is a pk
       const info = await user.getUserInfo(Buffer.from(searchText, 'hex'))
       if (info) {
         resetSearchResults()
         addResult(info)
+      } else {
+        // showNoResultsPlaceholder()
       }
     } else {
-      // await streamer.searchTag(searchText)
+      await tagManager.searchByTag(searchText)
+      resetSearchResults()
+      tagManager.tags.get(searchText).map(addResult)
     }
-  })
+  }
 
   document.querySelector('#forward-controls').onclick = async () => {
     const metadata = await player.forward()
@@ -230,6 +236,10 @@ window.onload = async () => {
 
   player.on('buffering-finished', async () => {
     document.querySelector('#state').innerHTML = ''
+  })
+
+  tagManager.on('stream-found', (user) => {
+    // check if im looking for it at the moment, if so, append it
   })
 
   setInterval(() => {
