@@ -32,11 +32,11 @@ export class Player extends EventEmmiter {
     if (info) this.index = this.playlist.indexOf(info.path)
 
     const path = info ? info.path : this.playlist[this.index]
-    const stream = await Mp3ReadStream.stream(path)
+    const { localStream, remoteStream } = await Mp3ReadStream.stream(path)
     const metadata = await Mp3ReadStream.readTrack(path)
 
-    this.streamer.stream(metadata, stream)
-    this.httpAudioStreamer.stream(stream)
+    this.streamer.stream(metadata, remoteStream)
+    this.httpAudioStreamer.stream(localStream)
 
     this.currentTrackDuration = metadata.seconds
     this.cleanBuffer()

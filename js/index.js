@@ -225,7 +225,7 @@ window.onload = async () => {
   })
 
   player.on('buffering', async () => {
-    document.querySelector('#state').innerHTML = '(Buffering)'
+    // document.querySelector('#state').innerHTML = '(Buffering)'
   })
 
   player.on('buffering-finished', async () => {

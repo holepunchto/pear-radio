@@ -50,8 +50,9 @@ export class Mp3ReadStream {
   static async stream (path) {
     const bitRate = (await ffprobe.ffprobe(path)).format.bit_rate
     const throttle = new Throttle(bitRate / 6) // TODO check this
-    const readStream = fs.createReadStream(path)
-    return readStream.pipe(throttle)
+    const localStream = fs.createReadStream(path)
+    const remoteStream = fs.createReadStream(path).pipe(throttle)
+    return { localStream, remoteStream }
   }
 
   static async readTrack (path) {
