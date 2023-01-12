@@ -177,12 +177,17 @@ window.onload = async () => {
   await user.ready()
   await player.ready()
 
-  // TODO remove
   let lastSearch = null
-  const pk = user.server.publicKey.toString('hex')
-  user.info = { stream: player.streamer.core.key, metadata: player.streamer.metadata.key, name: pk.substr(0, 6) + '...', description: '', tags: '' }
+  const defaultName = 'User ' + user.server.publicKey.toString('hex').substr(0, 6)
+  user.info = {
+    stream: player.streamer.core.key,
+    metadata: player.streamer.metadata.key,
+    name: defaultName,
+    description: '',
+    tags: ''
+  }
 
-  document.querySelector('#stream-public-key-message').innerHTML = 'Click here to copy your stream public key: ' + pk.substr(0, 6)
+  document.querySelector('#stream-public-key-message').innerHTML = 'Click here to copy your stream public key: ' + user.keyPair.publicKey.toString('hex').substr(0, 6)
 
   await tagManager.ready()
 
@@ -221,6 +226,10 @@ window.onload = async () => {
     selectIcon('#settings-icon')
     fade('#settings')
     disableScrolling()
+
+    document.querySelector('#settings-username').value = user.info.name || ''
+    document.querySelector('#settings-description').value = user.info.description || ''
+    document.querySelector('#settings-tags').value = user.info.tags || ''
   }
 
   document.querySelector('#search-button').onclick = async () => {
@@ -269,6 +278,28 @@ window.onload = async () => {
     copy(user.server.publicKey.toString('hex'))
     document.querySelector('#stream-public-key').classList.add('stream-public-key-clicked')
     setTimeout(() => document.querySelector('#stream-public-key').classList.remove('stream-public-key-clicked'), 100)
+  }
+
+  document.querySelector('#settings-save').onclick = async () => {
+    const name = document.querySelector('#settings-username').value
+    const description = document.querySelector('#settings-description').value
+    const tags = document.querySelector('#settings-tags').value
+
+    const oldTags = user.info.tags
+
+    user.info.name = name
+    user.info.description = description
+    user.info.tags = tags
+
+    if (oldTags && oldTags !== tags) {
+      oldTags.split(',').map(e => {
+        tagManager.removeTag(e)
+      })
+    }
+
+    tags.split(',').map(e => {
+      tagManager.announceTag(e)
+    })
   }
 
   player.on('track-finished', async (next) => {

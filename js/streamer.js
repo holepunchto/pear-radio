@@ -81,6 +81,7 @@ export class TagManager extends EventEmmiter {
       this.emit('stream-found', decodedUser)
       if (decodedUser.tags) {
         decodedUser.tags.split(',').forEach(tag => {
+          if (!this.tags.has(tag)) this.tags.set(tag, [])
           this.tags.get(tag).push(decodedUser)
         })
       } else {
@@ -117,6 +118,10 @@ export class TagManager extends EventEmmiter {
     sodium.crypto_generichash(hash, Buffer.from('pear-radio' + tag))
     this.swarm.join(hash)
     return this.swarm.flush()
+  }
+
+  removeTag (tag) {
+    return this.swarm.leave(tag)
   }
 
   destroy () {
