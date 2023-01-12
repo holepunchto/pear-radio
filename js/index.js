@@ -270,12 +270,13 @@ window.onload = async () => {
     copy(user.server.publicKey.toString('hex'))
     document.querySelector('#stream-public-key').classList.add('stream-public-key-clicked')
     setTimeout(() => document.querySelector('#stream-public-key').classList.remove('stream-public-key-clicked'), 100)
-
   }
 
-  player.on('track-finished', async (index) => {
+  player.on('track-finished', async (next) => {
+    const { index, metadata } = next
     Array.from(document.querySelector('#tracklist').children).forEach(e => e.classList.remove('playing'))
     document.querySelector('#tracklist').children.item(index).classList.add('playing')
+    updateThumbnail(metadata)
   })
 
   player.on('buffering', async () => {

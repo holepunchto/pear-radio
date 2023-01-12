@@ -17,6 +17,7 @@ export class Player extends EventEmmiter {
     this.intervalIsFinished = null
     this.intervalIsBuffering = null
     this.currentTrackDuration = null
+    this.isPlayingLocal = false
   }
 
   async ready () {
@@ -42,6 +43,7 @@ export class Player extends EventEmmiter {
     this.cleanBuffer()
     this.audio.play()
 
+    this.isPlayingLocal = true
     return metadata
   }
 
@@ -52,6 +54,7 @@ export class Player extends EventEmmiter {
     this.intervalIsFinished = null // only for local
     this.cleanBuffer()
     this.audio.play()
+    this.isPlayingLocal = false
   }
 
   cleanBuffer () {
@@ -65,15 +68,16 @@ export class Player extends EventEmmiter {
     this.audio.pause()
     this.cleanBuffer()
     this.streamer.stop()
+    this.isPlayingLocal = false
   }
 
   async forward () {
-    this.index = this.random ? Math.floor(Math.random() * this.playlist.length) : ++this.index % this.playlist.length
+    this.index = this.random ? Math.floor(Math.random() * this.playlist.length) : (this.index + 1) % this.playlist.length
     return this.play()
   }
 
   async backward () {
-    this.index = this.random ? Math.floor(Math.random() * this.playlist.length) : --this.index % this.playlist.length
+    this.index = this.random ? Math.floor(Math.random() * this.playlist.length) : (this.index - 1) % this.playlist.length
     return this.play()
   }
 
@@ -94,13 +98,16 @@ export class Player extends EventEmmiter {
   }
 
   trackIsFinished () {
+    let last = -1
     return setInterval(async () => {
-      if (this.audio && this.currentTrackDuration && !this.audio.paused && this.audio.currentTime + 2 >= this.currentTrackDuration) {
+      if (this.isPlayingLocal && last && this.audio.currentTime === last) {
         this.audio.currentTime = 0 // This must happen right after track is finished
         this.audio.pause()
-        await this.forward()
-        this.emit('track-finished', this.index)
+        const metadata = await this.forward()
+        this.emit('track-finished', { index: this.index, metadata })
+        last = -1
       }
+      last = this.audio.currentTime
     }, 100)
   }
 }
