@@ -128,7 +128,7 @@ const addResult = (info) => {
     metadata.on('data', (data) => { result.playing.innerHTML = `Playing: ${data.artist || 'Unknown artist'} - ${data.name || 'Unknown track'}` })
   }
 
-  result.pause.onclick = async () => {
+  result.pause.onclick = async (e) => {
     listener.destroy()
     player.stop()
 
@@ -137,6 +137,8 @@ const addResult = (info) => {
     result.listen.classList.remove('disabled')
     result.pause.classList.add('disabled')
     result.play.classList.remove('disabled')
+
+    e.stopPropagation()
   }
 }
 
