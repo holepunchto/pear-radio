@@ -100,23 +100,23 @@ export class TagManager extends EventEmmiter {
     const pearRadioTopic = 'pear-radio#all'
     const hash = Buffer.alloc(32)
     sodium.crypto_generichash(hash, Buffer.from(pearRadioTopic))
-    this.swarm.join(hash)
+    await this.swarm.join(hash)
     return this.swarm.flush()
   }
 
-  announceTag (tag) {
+  async announceTag (tag) {
     const hash = Buffer.alloc(32)
     sodium.crypto_generichash(hash, Buffer.from(tag))
-    this.swarm.join(hash)
+    await this.swarm.join(hash)
     return this.swarm.flush()
   }
 
-  searchByTag (tag) {
+  async searchByTag (tag) {
     if (tag === '#all') return // searched by default
     if (!this.tags.has(tag)) this.tags.set(tag, [])
     const hash = Buffer.alloc(32)
     sodium.crypto_generichash(hash, Buffer.from('pear-radio' + tag))
-    this.swarm.join(hash)
+    await this.swarm.join(hash)
     return this.swarm.flush()
   }
 

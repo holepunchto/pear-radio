@@ -292,13 +292,13 @@ window.onload = async () => {
     user.info.tags = tags
 
     if (oldTags && oldTags !== tags) {
-      oldTags.split(',').map(e => {
-        tagManager.removeTag(e)
+      oldTags.split(',').map(async e => {
+        await tagManager.removeTag(e)
       })
     }
 
-    tags.split(',').map(e => {
-      tagManager.announceTag(e)
+    tags.split(',').map(async e => {
+      await tagManager.announceTag(e)
     })
   }
 
