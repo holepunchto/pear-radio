@@ -1,6 +1,7 @@
 import { User } from './user.js'
 import { Player } from './player.js'
 import { Listener, TagManager } from './streamer.js'
+import copy from 'copy-text-to-clipboard'
 
 const bootstrap = [{ host: '127.0.0.1', port: 49737 }]
 const user = new User({ bootstrap })
@@ -54,6 +55,15 @@ const hideStreamersPlaceholder = () => {
 const resetSearchResults = () => {
   hideStreamersPlaceholder()
   document.querySelector('#streamers-list').innerHTML = ''
+}
+
+
+const disableScrolling = () => {
+  document.querySelector('body').classList.add('stop-scrolling')
+}
+
+const enableScrolling = () => {
+  document.querySelector('body').classList.remove('stop-scrolling')
 }
 
 const createSearchResult = (info) => {
@@ -149,15 +159,17 @@ const play = async (metadata) => { // Remove previous buffered music
   updatePlaylist(metadata)
 }
 
-const fade = (in_, out) => {
-  in_.classList.remove('fade-in', 'fade-out')
-  out.classList.remove('fade-in', 'fade-out')
-  in_.classList.add('fade-in')
-  out.classList.add('fade-out')
+const fade = (view) => {
+  ['#stream','#settings','#listen'].filter(e => e !== view).forEach(e => {
+    console.log('e', e)
+    document.querySelector(e).classList.add('fade-out')
+  })
+  document.querySelector(view).classList.remove('fade-out')
+  document.querySelector(view).classList.add('fade-in')
 }
 
 const selectIcon = (icon) => {
-  const icons = ['#stream-icon', '#tracklist-icon', '#search-icon', '#favourites-icon']
+  const icons = ['#settings-icon', '#tracklist-icon', '#search-icon', '#favourites-icon']
   icons.forEach(i => document.querySelector(i).classList.remove('selected-header-icon'))
   document.querySelector(icon).classList.add('selected-header-icon')
 }
@@ -170,7 +182,8 @@ window.onload = async () => {
   let lastSearch = null
   const pk = user.server.publicKey.toString('hex')
   user.info = { stream: player.streamer.core.key, metadata: player.streamer.metadata.key, name: pk.substr(0, 6) + '...', description: '', tags: '' }
-  console.log(pk)
+
+  document.querySelector('#stream-public-key-message').innerHTML = 'Click here to copy your stream public key: ' + pk.substr(0,6)
 
   await tagManager.ready()
 
@@ -191,17 +204,24 @@ window.onload = async () => {
 
   document.querySelector('#tracklist-icon').onclick = async () => {
     selectIcon('#tracklist-icon')
-    fade(document.querySelector('#stream'), document.querySelector('#listen'))
+    fade('#stream')
+    enableScrolling()
   }
 
   document.querySelector('#search-icon').onclick = async () => {
     selectIcon('#search-icon')
+    fade('#listen')
     document.querySelector('#search-input').focus({ preventScroll: true })
-    fade(document.querySelector('#listen'), document.querySelector('#stream'))
-
     if (lastSearch) {
       document.querySelector('#search-input').value = lastSearch
     }
+    disableScrolling()
+  }
+
+  document.querySelector('#settings-icon').onclick = async () => {
+    selectIcon('#settings-icon')
+    fade('#settings')
+    disableScrolling()
   }
 
   document.querySelector('#search-button').onclick = async () => {
@@ -244,6 +264,13 @@ window.onload = async () => {
     const metadata = await player.play()
     updateThumbnail(metadata)
     updatePlaylist(metadata)
+  }
+
+  document.querySelector('#stream-public-key').onclick = async () => {
+    copy(user.server.publicKey.toString('hex'))
+    document.querySelector('#stream-public-key').classList.add('stream-public-key-clicked')
+    setTimeout(() => document.querySelector('#stream-public-key').classList.remove('stream-public-key-clicked'), 100)
+
   }
 
   player.on('track-finished', async (index) => {

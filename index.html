@@ -11,11 +11,28 @@
   </head>
   <body>
     <header>
-      <i id="stream-icon" class="fas fa-gear header-icon" style='font-size:28px'></i>
+      <i id="settings-icon" class="fas fa-gear header-icon" style='font-size:28px'></i>
       <i id="tracklist-icon" class="fas fa-music header-icon selected-header-icon" style='font-size:28px'></i>
       <i id="search-icon" class="fas fa-search header-icon" style='font-size:28px'></i>
       <i id="favourites-icon" class="far fa-heart header-icon" style='font-size:28px'></i>
     </header>
+    <div id="settings">
+      <form>
+        <label>Username</label>
+        <input type="text" id="username" placeholder="">
+        <label>Description</label>
+        <input type="text" id="description" placeholder="Here the description of your stream...">
+        <label>Tags</label>
+        <input type="text" id="description" placeholder="#tag1,#tag2...">
+
+        <div id="stream-public-key">
+          <i class="fas fa-copy" style="font-size:28px"></i>
+          <p id="stream-public-key-message"></p>
+        </div>
+
+        <button type="button" id="settings-save" class=""> <i id="save-icon" class="far fa-save"></i>save</button>
+      </form>
+    </div>
     <div id="stream">
       <div id="thumbnail">
         <p id="thumbnail-image" style='font-size:24px'></p>

@@ -1,6 +1,5 @@
 * {
     font-family: 'Maven Pro', sans-serif;
-    color: #05070a;
     z-index: 0;
 }
 
@@ -17,6 +16,15 @@ body {
 }
 
 #listen {
+    position: absolute;
+    width: 100%;
+    height: 90%;
+    top: 10%;
+    right: -100%;
+    background: white;
+}
+
+#settings {
     position: absolute;
     width: 100%;
     height: 90%;
@@ -44,7 +52,7 @@ body {
 }
 
 #thumbnail {
-    margin-top: 3vh;
+    margin-top: 6vh;
     margin-left: 2vh;
     margin-right: 2vh;
     text-align: center;
@@ -102,7 +110,6 @@ body {
     display: flex;
     justify-content: flex-start;
     flex-direction: column;
-    height: 50vh;
 }
 
 .playing {
@@ -257,12 +264,14 @@ header {
 
 .fade-in {
     right: 0% !important;
-    transition:right 0.5s ease-in-out;
+    opacity: 100%;
+    transition:all 0.5s ease-in-out;
 }
 
 .fade-out {
     right: -100% !important;
-    transition:right 0.5s ease-in-out;
+    opacity: 0%;
+    transition:all 0.5s ease-in-out;
 }
 
 #tracklist-placeholder {
@@ -368,4 +377,83 @@ header {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+#settings > form {
+    display: flex;
+    flex-direction: column;
+    padding: 1vh 8vw;
+    margin-top: 3vh;
+}
+
+#settings > form > input {
+    padding: 6px;
+    font-size: 125%;
+    border-radius: 5px;
+    border:none;
+    padding: 2vh;
+    border: 1px solid #bbb;
+    box-shadow: 2px 2px #e5ebf0;
+    margin-top: 1vh;
+    margin-bottom: 2vh;
+}
+
+#settings > form > label {
+    color: #05070a;
+    font-size: 125%;
+    margin-bottom: 2vh;
+    font-weight: 500;
+    letter-spacing: 1px;
+    margin-top: 1vh;
+}
+
+#settings > form > button {
+    background: #bbb;
+    color: white;
+    margin-top: 5vh;
+    font-size: 125%;
+    padding: 20px;
+    border: 0px;
+    font-weight: 600;
+    border-radius: 10px;
+    letter-spacing: 3px;
+    border: 1px solid #bbb;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+#save-icon {
+    color: white;
+    font-size: 22px;
+    margin-right: 2vw;
+}
+
+.stop-scrolling {
+  height: 100%;
+  overflow: hidden;
+}
+
+#stream-public-key {
+    background: white;
+    padding: 2vh 4vw;
+    text-align: center;
+    font-size: 125%;
+    font-weight: 400;
+    border-radius: 10px;
+    margin-top: 5vh;
+    border: 1px solid #bbb;
+    box-shadow: 2px 2px #e5ebf0;
+    cursor: pointer;
+    color: #bbb;
+    transition:all 0.1s ease-in-out;
+}
+
+#stream-public-key:hover {
+    color: white;
+    background: #bbb;
+}
+
+.stream-public-key-clicked {
+    transform: scale(1.1) !important;
+    transition:all 0.1s ease-in-out;
 }
