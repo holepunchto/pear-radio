@@ -57,7 +57,6 @@ const resetSearchResults = () => {
   document.querySelector('#streamers-list').innerHTML = ''
 }
 
-
 const disableScrolling = () => {
   document.querySelector('body').classList.add('stop-scrolling')
 }
@@ -160,7 +159,7 @@ const play = async (metadata) => { // Remove previous buffered music
 }
 
 const fade = (view) => {
-  ['#stream','#settings','#listen'].filter(e => e !== view).forEach(e => {
+  ['#stream', '#settings', '#listen'].filter(e => e !== view).forEach(e => {
     console.log('e', e)
     document.querySelector(e).classList.add('fade-out')
   })
@@ -183,7 +182,7 @@ window.onload = async () => {
   const pk = user.server.publicKey.toString('hex')
   user.info = { stream: player.streamer.core.key, metadata: player.streamer.metadata.key, name: pk.substr(0, 6) + '...', description: '', tags: '' }
 
-  document.querySelector('#stream-public-key-message').innerHTML = 'Click here to copy your stream public key: ' + pk.substr(0,6)
+  document.querySelector('#stream-public-key-message').innerHTML = 'Click here to copy your stream public key: ' + pk.substr(0, 6)
 
   await tagManager.ready()
 
