@@ -49,8 +49,8 @@ export class HttpAudioStreamer {
 export class Mp3ReadStream {
   static async stream (path) {
     const bufferOffset = 1 // TODO tweak value between 0-8, the higher this value, the faster stream but less realtime
-    const bitRate = (await ffprobe.ffprobe(path)).format.bit_rate
-    const throttle = new Throttle(bitRate / 8 - bufferOffset)
+    const bitRate = (await ffprobe.ffprobe(path)).format.bit_rate // bits per seconds
+    const throttle = new Throttle(bitRate / (8 - bufferOffset)) // bytes per seconds
     const localStream = fs.createReadStream(path)
     const remoteStream = fs.createReadStream(path).pipe(throttle)
     return { localStream, remoteStream }
@@ -117,7 +117,6 @@ export class TagManager extends EventEmmiter {
     sodium.crypto_generichash(hash, Buffer.from('pear-radio' + tag))
     this.swarm.join(hash)
     return this.swarm.flush()
-    // TODO how do we return results?
   }
 
   destroy () {
