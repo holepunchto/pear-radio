@@ -410,7 +410,7 @@ header {
     display: flex;
     flex-direction: column;
     padding: 1vh 8vw;
-    margin-top: 3vh;
+    margin-top: 1vh;
 }
 
 #settings > form > input {

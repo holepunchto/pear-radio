@@ -9,8 +9,8 @@
   },
   "holepunch": {
     "gui": {
-      "height": 960,
-      "width": 460,
+      "height": 875,
+      "width": 420,
       "resizable": false
     }
   },
