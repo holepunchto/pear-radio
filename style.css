@@ -186,6 +186,7 @@ input::placeholder {
     margin-left: 4vw;
     margin-right: 4vw;
     display: flex;
+    margin-top: 3vh;
 }
 
 #search-input {
@@ -208,9 +209,9 @@ input:focus {
     height: 75vh;
     justify-content: flex-start;
     flex-direction: column;
-    margin-top: 5vh;
     margin-left: 2vw;
     margin-right: 2vw;
+    margin-top: 2vh;
 }
 
 .streamer {
@@ -218,6 +219,8 @@ input:focus {
     border-bottom: 1px solid var(--tertiary-fg-color);
     background-color: var(--main-bg-color);
     cursor: pointer;
+    padding-bottom: 1vh;
+    padding-top: 2vh;
 }
 
 .streamer:hover {
@@ -226,12 +229,12 @@ input:focus {
 
 .streamer-name {
     color: var(--main-fg-color);
-    padding:2vh;
     padding-bottom: 0px;
     font-weight: 600;
     font-size:125%;
-    margin-top:1vh;
+    margin-top: 0vh;
     margin-bottom: 0vh;
+    display: inline;
 }
 
 .streamer-description {
@@ -260,7 +263,6 @@ input:focus {
 
 .streamer-selected {
     background-color: var(--tertiary-fg-color);
-    border-radius: 10px;
 }
 
 header {
@@ -315,7 +317,7 @@ header {
 #streamers-placeholder {
     text-align: center;
     padding: 5vh;
-    margin-top: 10vh;
+    margin-top: 25vh;
 }
 
 .streamers-placeholder-message {
@@ -329,7 +331,8 @@ header {
 }
 
 .streamer-like {
-    margin-left: 5vw;
+    margin-left: 3vw;
+    margin-right: 2vh;
     font-size: 24px;
     float: right;
     cursor: pointer;
@@ -500,4 +503,20 @@ header {
 
 .selected-settings-color {
     color: var(--main-fg-color);
+}
+
+#streamers-title {
+    font-size: 150%;
+    margin-left: 2vh;
+    margin-bottom: 3vh;
+    font-weight: 600;
+    color: var(--main-fg-color);
+}
+
+.streamer-user {
+  display: inline;
+  margin-left: 2vh;
+  font-size: 125%;
+  margin-right: 2vw;
+  color: var(--main-fg-color);
 }

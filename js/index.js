@@ -41,6 +41,14 @@ const addTrack = (metadata) => {
   document.querySelector('#tracklist').append(track)
 }
 
+const showStreamersTitle = () => {
+  document.querySelector('#streamers-title').classList.remove('disabled')
+}
+
+const hideStreamersTitle = () => {
+  document.querySelector('#streamers-title').classList.remove('disabled')
+}
+
 const showSearchingSpinner = () => {
   document.querySelector('#streamers-search-spinner').classList.remove('disabled')
 }
@@ -70,7 +78,7 @@ const darkMode = () => {
   const r = document.querySelector(':root')
   r.style.setProperty('--main-bg-color', '#151623')
   r.style.setProperty('--main-fg-color', '#f0f3f5')
-  r.style.setProperty('--secondary-fg-color', '#42436a')
+  r.style.setProperty('--secondary-fg-color', '#62649e')
   r.style.setProperty('--tertiary-fg-color', '#222338')
 }
 
@@ -93,7 +101,9 @@ const createSearchResult = (info) => {
   const fav = document.createElement('i')
   const play = document.createElement('i')
   const pause = document.createElement('i')
+  const user = document.createElement('i')
 
+  user.classList.add('fas', 'fa-user', 'streamer-user')
   fav.classList.add('far', 'fa-heart', 'streamer-like')
   play.classList.add('far', 'fa-play-circle', 'streamer-play')
   pause.classList.add('fas', 'fa-pause', 'streamer-pause', 'disabled')
@@ -112,6 +122,7 @@ const createSearchResult = (info) => {
   listen.classList.add('listen')
   playing.classList.add('listen', 'disabled')
 
+  streamer.append(user)
   streamer.append(name)
   streamer.append(description)
   streamer.append(tags)
@@ -258,14 +269,18 @@ window.onload = async () => {
       const info = await user.getUserInfo(Buffer.from(searchText, 'hex'))
       if (info) {
         resetSearchResults()
+        showStreamersTitle()
         addResult(info)
       } else {
+        // hideStreamersTitle()
         // showNoResultsPlaceholder()
       }
     } else {
       await tagManager.searchByTag(searchText)
       resetSearchResults()
+      hideStreamersTitle()
       showSearchingSpinner()
+      showStreamersTitle()
       tagManager.tags.get(searchText).map(addResult)
     }
   }
