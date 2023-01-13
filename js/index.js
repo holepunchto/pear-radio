@@ -3,7 +3,8 @@ import { Player } from './player.js'
 import { Listener, TagManager } from './streamer.js'
 import copy from 'copy-text-to-clipboard'
 
-const bootstrap = [{ host: '127.0.0.1', port: 49737 }]
+const bootstrap = process.env.TEST ? [{ host: '127.0.0.1', port: 49737 }] : undefined
+
 const user = new User({ bootstrap })
 const tagManager = new TagManager(user, { bootstrap })
 
