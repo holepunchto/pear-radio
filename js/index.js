@@ -190,7 +190,6 @@ const play = async (metadata) => { // Remove previous buffered music
 
 const fade = (view) => {
   ['#stream', '#settings', '#listen'].filter(e => e !== view).forEach(e => {
-    console.log('e', e)
     document.querySelector(e).classList.add('fade-out')
   })
   document.querySelector(view).classList.remove('fade-out')
@@ -276,7 +275,7 @@ window.onload = async () => {
         // showNoResultsPlaceholder()
       }
     } else {
-      await tagManager.searchByTag(searchText)
+      tagManager.searchByTag(searchText)
       resetSearchResults()
       hideStreamersTitle()
       showSearchingSpinner()
@@ -314,6 +313,18 @@ window.onload = async () => {
     copy(user.server.publicKey.toString('hex'))
     document.querySelector('#stream-public-key').classList.add('stream-public-key-clicked')
     setTimeout(() => document.querySelector('#stream-public-key').classList.remove('stream-public-key-clicked'), 100)
+  }
+
+  document.querySelector('#dark-mode').onclick = async () => {
+    document.querySelector('#dark-mode').classList.add('selected-settings-color')
+    document.querySelector('#light-mode').classList.remove('selected-settings-color')
+    darkMode()
+  }
+
+  document.querySelector('#light-mode').onclick = async () => {
+    document.querySelector('#dark-mode').classList.remove('selected-settings-color')
+    document.querySelector('#light-mode').classList.add('selected-settings-color')
+    lightMode()
   }
 
   document.querySelector('#settings-save').onclick = async () => {
@@ -356,8 +367,17 @@ window.onload = async () => {
     document.querySelector('#state').innerHTML = ''
   })
 
-  tagManager.on('stream-found', (user) => {
-    // check if im looking for it at the moment, if so, append it
+  tagManager.on('stream-found', (info) => {
+    const tags = info.tags ? info.tags.split(',') : null
+    const currentSearch = document.querySelector('#search-input').value
+    if (!info.tags && currentSearch !== '#all') return
+
+    if (currentSearch === '#all' || tags.indexOf(currentSearch) !== -1) {
+      hideStreamersPlaceholder()
+      hideSearchingSpinner()
+      showStreamersTitle()
+      addResult(info)
+    }
   })
 
   setInterval(() => {
@@ -367,16 +387,4 @@ window.onload = async () => {
       document.querySelector('#elapsed').innerHTML = elapsed
     }
   }, 1000)
-
-  document.querySelector('#dark-mode').onclick = async () => {
-    document.querySelector('#dark-mode').classList.add('selected-settings-color')
-    document.querySelector('#light-mode').classList.remove('selected-settings-color')
-    darkMode()
-  }
-
-  document.querySelector('#light-mode').onclick = async () => {
-    document.querySelector('#dark-mode').classList.remove('selected-settings-color')
-    document.querySelector('#light-mode').classList.add('selected-settings-color')
-    lightMode()
-  }
 }
