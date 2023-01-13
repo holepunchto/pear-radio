@@ -75,6 +75,8 @@ export class TagManager extends EventEmmiter {
   }
 
   _onConnection (connection, info) {
+    console.log(connection)
+    console.log(info)
     connection.write(this.user.encodeUserInfo())
     connection.on('data', (encodedUser) => {
       const decodedUser = this.user.decodeUserInfo(encodedUser)
@@ -84,9 +86,8 @@ export class TagManager extends EventEmmiter {
           if (!this.tags.has(tag)) this.tags.set(tag, [])
           this.tags.get(tag).push(decodedUser)
         })
-      } else {
-        this.tags.get('#all').push(decodedUser)
       }
+      this.tags.get('#all').push(decodedUser)
     })
   }
 
