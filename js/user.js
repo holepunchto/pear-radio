@@ -31,6 +31,7 @@ export class User {
       const socket = this.node.connect(key)
       socket.on('data', (data) => {
         const info = this.decodeUserInfo(data)
+        // TODO close socket
         resolve(info)
       })
     })
