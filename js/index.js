@@ -280,7 +280,7 @@ window.onload = async () => {
       resetSearchResults()
       hideStreamersTitle()
       showSearchingSpinner()
-      if(tagManager.tags.get(searchText).length) {
+      if (tagManager.tags.get(searchText).length) {
         showStreamersTitle()
         tagManager.tags.get(searchText).map(addResult)
       }
@@ -336,6 +336,9 @@ window.onload = async () => {
     tags.split(',').map(async e => {
       await tagManager.announceTag(e)
     })
+
+    document.querySelector('#settings-save').classList.add('settings-save-clicked')
+    setTimeout(() => document.querySelector('#settings-save').classList.remove('settings-save-clicked'), 100)
   }
 
   player.on('track-finished', async (next) => {

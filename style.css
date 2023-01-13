@@ -442,7 +442,7 @@ header {
     color: var(--main-bg-color);
 }
 
-#settings > form > button {
+#settings-save {
     background: var(--secondary-fg-color);
     color: var(--main-bg-color);
     margin-top: 5vh;
@@ -455,6 +455,7 @@ header {
     border: 1px solid var(--secondary-fg-color);
     cursor: pointer;
     text-transform: uppercase;
+    transition:transform 0.1s ease-in-out;
 }
 
 #save-icon {
@@ -480,7 +481,7 @@ header {
     box-shadow: 2px 2px var(--tertiary-fg-color);
     cursor: pointer;
     color: var(--secondary-fg-color);
-    transition:all 0.1s ease-in-out;
+    transition:transform 0.1s ease-in-out;
 }
 
 #stream-public-key:hover {
@@ -489,6 +490,11 @@ header {
 }
 
 .stream-public-key-clicked {
+    transform: scale(0.95) !important;
+    transition:all 0.1s ease-in-out;
+}
+
+.settings-save-clicked {
     transform: scale(0.95) !important;
     transition:all 0.1s ease-in-out;
 }
