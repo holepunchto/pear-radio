@@ -11,12 +11,12 @@
   </head>
   <body>
     <header>
-      <i id="settings-icon" class="fas fa-gear header-icon" style='font-size:28px'></i>
-      <i id="tracklist-icon" class="fas fa-music header-icon selected-header-icon" style='font-size:28px'></i>
-      <i id="search-icon" class="fas fa-search header-icon" style='font-size:28px'></i>
-      <i id="favourites-icon" class="far fa-heart header-icon" style='font-size:28px'></i>
+      <i id="settings-icon" class="fas fa-gear header-icon"></i>
+      <i id="tracklist-icon" class="fas fa-music header-icon selected-header-icon"></i>
+      <i id="search-icon" class="fas fa-search header-icon"></i>
+      <i id="favourites-icon" class="far fa-heart header-icon"></i>
     </header>
-    <div id="settings">
+    <div id="settings" class="fade-out">
       <form>
         <label>Username</label>
         <input type="text" id="settings-username" placeholder="">
@@ -24,6 +24,12 @@
         <input type="text" id="settings-description" placeholder="Here the description of your stream...">
         <label>Tags</label>
         <input type="text" id="settings-tags" placeholder="#tag1,#tag2...">
+
+        <div id="settings-color">
+          <span id="dark-mode">Dark mode</span>
+          <span> | </span>
+          <span id="light-mode" class="selected-settings-color">Light mode</span>
+        </div>
 
         <div id="stream-public-key">
           <i class="fas fa-copy" style="font-size:28px"></i>
@@ -33,9 +39,9 @@
         <button type="button" id="settings-save" class=""> <i id="save-icon" class="far fa-save"></i>save</button>
       </form>
     </div>
-    <div id="stream">
+    <div id="stream" class="fade-in">
       <div id="thumbnail">
-        <p id="thumbnail-image" style='font-size:24px'></p>
+        <p id="thumbnail-image"></p>
         <h2 id="thumbnail-track">Track name</h2>
         <p id="thumbnail-artist">Artist</p>
         <div id="thumbnail-timer"><span id="elapsed">0:00</span> / <span id="duration">0:00</span><span id="state"><span></div>
@@ -45,10 +51,10 @@
         <div id="progress"></div>
       </div>
       <div id="controls">
-        <i class="fas fa-fast-backward control" id="backward-controls" style='font-size:22px'></i>
-        <i class="fas fa-play control"  id="play-controls" style='font-size:22px'></i>
-        <i class="fas fa-stop control"  id="stop-controls" style='font-size:22px'></i>
-        <i class="fas fa-fast-forward control" id="forward-controls" style='font-size:22px'></i>
+        <i class="fas fa-fast-backward control" id="backward-controls"></i>
+        <i class="fas fa-play control"  id="play-controls"></i>
+        <i class="fas fa-stop control"  id="stop-controls"></i>
+        <i class="fas fa-fast-forward control" id="forward-controls"></i>
       </div>
       <div id="tracklist">
         <div id="tracklist-placeholder">
@@ -57,10 +63,10 @@
         </div>
       </div>
     </div>
-    <div id="listen">
+    <div id="listen" class="fade-out">
       <div id="streamers">
         <div id="streamers-placeholder">
-          <i class="fas fa-broadcast-tower streamers-placeholder-message" style='font-size:35px'></i>
+          <i class="fas fa-broadcast-tower streamers-placeholder-message" style='font-size:25px'></i>
           <p class="streamers-placeholder-message">Search a streamer public key, tag or use #all to find every public stream.</p>
         </div>
         <div id="streamers-search-spinner" class="disabled">
@@ -71,7 +77,7 @@
       </div>
       <div id="search">
         <button id="search-button">
-          <i class="fas fa-search header-icon" style='font-size:20px'></i>
+          <i class="fas fa-search header-icon"></i>
         </button>
         <input id="search-input" type="text" spellcheck="false" placeholder="Search stream...">
       </div>

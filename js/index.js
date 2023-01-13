@@ -65,6 +65,22 @@ const enableScrolling = () => {
   document.querySelector('body').classList.remove('stop-scrolling')
 }
 
+const darkMode = () => {
+  const r = document.querySelector(':root')
+  r.style.setProperty('--main-bg-color', '#151623')
+  r.style.setProperty('--main-fg-color', '#f0f3f5')
+  r.style.setProperty('--secondary-fg-color', '#42436a')
+  r.style.setProperty('--tertiary-fg-color', '#222338')
+}
+
+const lightMode = () => {
+  const r = document.querySelector(':root')
+  r.style.setProperty('--main-bg-color', 'white')
+  r.style.setProperty('--main-fg-color', '#05070a')
+  r.style.setProperty('--secondary-fg-color', '#bbb')
+  r.style.setProperty('--tertiary-fg-color', '#e5ebfb')
+}
+
 const createSearchResult = (info) => {
   const streamer = document.createElement('div')
   const name = document.createElement('p')
@@ -330,4 +346,16 @@ window.onload = async () => {
       document.querySelector('#elapsed').innerHTML = elapsed
     }
   }, 1000)
+
+  document.querySelector('#dark-mode').onclick = async () => {
+    document.querySelector('#dark-mode').classList.add('selected-settings-color')
+    document.querySelector('#light-mode').classList.remove('selected-settings-color')
+    darkMode()
+  }
+
+  document.querySelector('#light-mode').onclick = async () => {
+    document.querySelector('#dark-mode').classList.remove('selected-settings-color')
+    document.querySelector('#light-mode').classList.add('selected-settings-color')
+    lightMode()
+  }
 }

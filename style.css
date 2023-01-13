@@ -1,10 +1,26 @@
+:root {
+    --main-bg-color: white;
+    --main-fg-color: #05070a;
+    --secondary-fg-color: #bbb;
+    --tertiary-fg-color: #e5ebfb;
+}
+
 * {
     font-family: 'Maven Pro', sans-serif;
     z-index: 0;
 }
 
 body {
-    background: white;
+  background-color: var(--main-bg-color);
+}
+
+input {
+    color: var(--main-fg-color);
+    background: var(--main-bg-color);
+}
+
+input::placeholder {
+    color: var(--secondary-fg-color);
 }
 
 #stream {
@@ -21,7 +37,7 @@ body {
     height: 90%;
     top: 10%;
     right: -100%;
-    background: white;
+    background: var(--main-bg-color);
 }
 
 #settings {
@@ -30,29 +46,30 @@ body {
     height: 90%;
     top: 10%;
     right: -100%;
-    background: white;
+    background: var(--main-bg-color);
 }
 
 #menu-toggle {
     position: absolute;
     top: 0px;
     right: 0px;
-    background: white;
+    background: var(--main-bg-color);
     border: 0px;
-    font-size: 150%;
+    font-size: 100%;
     margin-top: 1vh;
 }
 
 #thumbnail-image {
-    height: 150px;
-    width: 150px;
-    background-color: #bbb;
+    height: 12vh;
+    width: 12vh;
+    background-color: var(--secondary-fg-color);
     border-radius: 50%;
     margin:auto;
+    margin-bottom: 3vh;
 }
 
 #thumbnail {
-    margin-top: 6vh;
+    margin-top: 3vh;
     margin-left: 2vh;
     margin-right: 2vh;
     text-align: center;
@@ -64,16 +81,17 @@ body {
 }
 
 #thumbnail-track {
-    margin-bottom: 1vh;
+    color: var(--main-fg-color);
     font-weight: 900;
-    font-size: 225%;
+    font-size: 150%;
     letter-spacing: 7px;
 }
 
 #thumbnail-artist {
+    color: var(--main-fg-color);
     margin-top: 1vh;
     margin-bottom: 1vh;
-    font-size: 150%;
+    font-size: 125%;
 }
 
 #controls {
@@ -84,22 +102,24 @@ body {
 }
 
 .control {
+    color: var(--main-fg-color);
     margin-left: 4vh;
     margin-right: 4vh;
     cursor: pointer;
+    font-size: 100%;
 }
 
 .control:hover{
-    color: #e5ebf0;
+    color: var(--tertiary-fg-color);
 }
 
 #bar {
     margin: auto;
     height: 0.5vh;
     width: 35vh;
-    background: #05070a;
-    margin-bottom: 5vh;
-    margin-top: 1vh;
+    background-color: var(--main-fg-color);
+    margin-bottom: 3vh;
+    margin-top: 3vh;
     border-radius: 5px;
 }
 
@@ -113,37 +133,40 @@ body {
 }
 
 .playing {
-    background: #e5ebf0;
+    background: var(--tertiary-fg-color);
 }
 
 .tracklist-track {
-    font-size: 125%;
+    font-size: 100%;
     padding-left: 4vh;
     padding-right: 4vh;
     padding-top: 2vh;
     padding-bottom: 2vh;
-    border-bottom: 1px solid #e5ebf0;
+    border-bottom: 1px solid var(--tertiary-fg-color);
     cursor: pointer;
 }
 
 .tracklist-track:hover {
-    background: #e5ebf0;
+    background: var(--tertiary-fg-color);
 }
 
 .tracklist-trackname {
     display: inline;
     font-weight: 500;
+    color: var(--main-fg-color);
 }
 
 .duration {
     display: inline;
     float: right;
     margin-top: 0px;
+    color: var(--main-fg-color);
 }
 
 .tracklist-artist {
     margin-top: 1vh;
     margin-bottom: 0vh;
+    color: var(--secondary-fg-color);
 }
 
 #streaming-status {
@@ -167,13 +190,13 @@ body {
 
 #search-input {
     padding: 6px;
-    font-size: 125%;
+    font-size: 100%;
     border-radius: 5px;
     border:none;
     width: 100%;
     padding: 2vh;
-    border: 1px solid #e5ebf0;
-    box-shadow: 2px 2px #e5ebf0;
+    border: 1px solid var(--tertiary-fg-color);
+    box-shadow: 2px 2px var(--tertiary-fg-color);
 }
 
 input:focus {
@@ -192,50 +215,51 @@ input:focus {
 
 .streamer {
     width:100%;
-    border-bottom: 1px solid #e5ebf0;
-    background-color: white;
+    border-bottom: 1px solid var(--tertiary-fg-color);
+    background-color: var(--main-bg-color);
     cursor: pointer;
 }
 
 .streamer:hover {
-    background: #e5ebf0;
+    background: var(--tertiary-fg-color);
 }
 
 .streamer-name {
-    color: #343434;
+    color: var(--main-fg-color);
     padding:2vh;
     padding-bottom: 0px;
     font-weight: 600;
-    font-size:200%;
+    font-size:125%;
     margin-top:1vh;
     margin-bottom: 0vh;
 }
 
 .streamer-description {
-    font-size:125%;
+    font-size:100%;
     padding-left:2vh;
     font-weight: 200;
     margin-top: 2vh;
-    color: #bbb;
+    color: var(--secondary-fg-color);
 }
 
 .streamer-tags {
-    font-size:125%;
+    font-size:100%;
     padding-left:2vh;
     font-weight: 200;
     margin-top: 1vh;
-    color: #bbb;
+    color: var(--secondary-fg-color);
 }
 
 .listen {
-    margin-top: 3vh;
+    margin-top: 2vh;
     margin-left: 2vh;
-    font-size: 125%;
+    font-size: 100%;
     width: 80vw;
+    color: var(--secondary-fg-color);
 }
 
 .streamer-selected {
-    background-color: #e5ebf0;
+    background-color: var(--tertiary-fg-color);
     border-radius: 10px;
 }
 
@@ -253,25 +277,26 @@ header {
 .header-icon {
     margin-left: 3vh;
     margin-right: 3vh;
-    color: #bbb;
+    color: var(--secondary-fg-color);
     cursor: pointer;
+    font-size: 150%;
 }
 
 .selected-header-icon {
-    color: #05070a;
-    border-bottom: 4px solid #05070a;
+    color: var(--main-fg-color);
+    border-bottom: 4px solid var(--main-fg-color);
 }
 
 .fade-in {
     right: 0% !important;
     opacity: 100%;
-    transition:all 0.5s ease-in-out;
+    transition:right 0.5s, opacity 0.5s ease-in-out;
 }
 
 .fade-out {
     right: -100% !important;
     opacity: 0%;
-    transition:all 0.5s ease-in-out;
+    transition:right 0.5s opacity 0.5s ease-in-out;
 }
 
 #tracklist-placeholder {
@@ -281,8 +306,8 @@ header {
 }
 
 .tracklist-placeholder-message {
-    color: #bbb;
-    font-size: 125%;
+    color: var(--secondary-fg-color);
+    font-size: 100%;
     letter-spacing: 1px;
 
 }
@@ -294,8 +319,8 @@ header {
 }
 
 .streamers-placeholder-message {
-    color: #bbb;
-    font-size: 150%;
+    color: var(--secondary-fg-color);
+    font-size: 100%;
     letter-spacing: 1px;
 }
 
@@ -308,30 +333,32 @@ header {
     font-size: 24px;
     float: right;
     cursor: pointer;
-    color: #343434;
+    color: var(--main-fg-color);
 }
 
 .streamer-play {
     font-size: 24px;
-    color: #343434;
+    color: var(--main-fg-color);
     float: right;
     cursor: pointer;
 }
 
 .streamer-pause {
+    color: var(--main-fg-color);
     font-size: 24px;
-    color: #343434;
+    color: var(--main-fg-color);
     float: right;
     cursor: pointer;
 }
 
 #thumbnail-timer {
-    margin-top: 2vh;
-    margin-bottom: 1vh;
+    color: var(--main-fg-color);
+    margin-top: 3vh;
+    font-size: 125%;
 }
 
 #thumbnail-timer > span {
-    font-size: 125%;
+    font-size: 100%;
     font-weight: 400;
 }
 
@@ -342,10 +369,10 @@ header {
 #search-button {
     padding: 0px;
     margin-right: 2vw;
-    background-color: white;
+    background-color: var(--main-bg-color);
     border-radius: 10px;
-    border: 1px solid #e5ebf0;
-    box-shadow: 2px 2px #e5ebf0;
+    border: 1px solid var(--tertiary-fg-color);
+    box-shadow: 2px 2px var(--tertiary-fg-color);
     cursor: pointer;
 }
 
@@ -353,20 +380,20 @@ header {
     text-align: center;
     padding: 5vh;
     margin-top: 20vh;
-    color: #bbb;
-    font-size: 125%;
+    color: var(--secondary-fg-color);
+    font-size: 100%;
     letter-spacing: 1px;
 }
 
 #streamers-search-spinner-message {
-    color: #bbb;
-    font-size: 125%;
+    color: var(--secondary-fg-color);
+    font-size: 100%;
     letter-spacing: 1px;
 }
 
 .spinner {
-    border: 8px solid #f3f3f3;
-    border-top: 8px solid #bbb;
+    border: 8px solid var(--tertiary-fg-color);
+    border-top: 8px solid var(--secondary-fg-color);
     border-radius: 50%;
     width: 20px;
     height: 20px;
@@ -388,42 +415,46 @@ header {
 
 #settings > form > input {
     padding: 6px;
-    font-size: 125%;
+    font-size: 100%;
     border-radius: 5px;
     border:none;
     padding: 2vh;
-    border: 1px solid #bbb;
-    box-shadow: 2px 2px #e5ebf0;
+    border: 1px solid var(--secondary-fg-color);
+    box-shadow: 2px 2px var(--tertiary-fg-color);
     margin-top: 1vh;
     margin-bottom: 2vh;
 }
 
 #settings > form > label {
-    color: #05070a;
-    font-size: 125%;
+    color: var(--main-fg-color);
+    font-size: 100%;
     margin-bottom: 2vh;
     font-weight: 500;
     letter-spacing: 1px;
     margin-top: 1vh;
 }
 
+#settings > form > button > i {
+    color: var(--main-bg-color);
+}
+
 #settings > form > button {
-    background: #bbb;
-    color: white;
+    background: var(--secondary-fg-color);
+    color: var(--main-bg-color);
     margin-top: 5vh;
-    font-size: 125%;
+    font-size: 100%;
     padding: 20px;
     border: 0px;
     font-weight: 600;
     border-radius: 10px;
     letter-spacing: 3px;
-    border: 1px solid #bbb;
+    border: 1px solid var(--secondary-fg-color);
     cursor: pointer;
     text-transform: uppercase;
 }
 
 #save-icon {
-    color: white;
+    color: var(--main-bg-color);
     font-size: 22px;
     margin-right: 2vw;
 }
@@ -434,26 +465,39 @@ header {
 }
 
 #stream-public-key {
-    background: white;
+    background: var(--main-bg-color);
     padding: 2vh 4vw;
     text-align: center;
-    font-size: 125%;
+    font-size: 100%;
     font-weight: 400;
     border-radius: 10px;
     margin-top: 5vh;
-    border: 1px solid #bbb;
-    box-shadow: 2px 2px #e5ebf0;
+    border: 1px solid var(--secondary-fg-color);
+    box-shadow: 2px 2px var(--tertiary-fg-color);
     cursor: pointer;
-    color: #bbb;
+    color: var(--secondary-fg-color);
     transition:all 0.1s ease-in-out;
 }
 
 #stream-public-key:hover {
-    color: white;
-    background: #bbb;
+    color: var(--main-bg-color);
+    background: var(--secondary-fg-color);
 }
 
 .stream-public-key-clicked {
-    transform: scale(1.1) !important;
+    transform: scale(0.95) !important;
     transition:all 0.1s ease-in-out;
+}
+
+
+#settings-color {
+    margin-top: 3vh;
+    letter-spacing: 1px;
+    color: var(--secondary-fg-color);
+    letter-spacing: 1px;
+    cursor: pointer;
+}
+
+.selected-settings-color {
+    color: var(--main-fg-color);
 }
