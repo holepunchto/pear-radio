@@ -392,11 +392,12 @@ header {
     color: var(--secondary-fg-color);
     font-size: 100%;
     letter-spacing: 1px;
+    margin-bottom: 3vh;
 }
 
 .spinner {
     border: 8px solid var(--tertiary-fg-color);
-    border-top: 8px solid var(--secondary-fg-color);
+    border-top: 8px solid var(--main-bg-color);
     border-radius: 50%;
     width: 20px;
     height: 20px;
@@ -511,6 +512,7 @@ header {
     margin-bottom: 3vh;
     font-weight: 600;
     color: var(--main-fg-color);
+    margin-top: 1vh;
 }
 
 .streamer-user {

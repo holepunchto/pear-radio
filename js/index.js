@@ -46,7 +46,7 @@ const showStreamersTitle = () => {
 }
 
 const hideStreamersTitle = () => {
-  document.querySelector('#streamers-title').classList.remove('disabled')
+  document.querySelector('#streamers-title').classList.add('disabled')
 }
 
 const showSearchingSpinner = () => {
@@ -280,8 +280,10 @@ window.onload = async () => {
       resetSearchResults()
       hideStreamersTitle()
       showSearchingSpinner()
-      showStreamersTitle()
-      tagManager.tags.get(searchText).map(addResult)
+      if(tagManager.tags.get(searchText).length) {
+        showStreamersTitle()
+        tagManager.tags.get(searchText).map(addResult)
+      }
     }
   }
 
