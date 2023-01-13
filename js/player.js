@@ -32,18 +32,19 @@ export class Player extends EventEmmiter {
     if (!this.intervalIsFinished) this.intervalIsFinished = this.trackIsFinished()
     if (info) this.index = this.playlist.indexOf(info.path)
 
+    this.cleanBuffer()
+
     const path = info ? info.path : this.playlist[this.index]
     const { localStream, remoteStream } = await Mp3ReadStream.stream(path)
     const metadata = await Mp3ReadStream.readTrack(path)
 
-    this.streamer.stream(metadata, remoteStream)
-    this.httpAudioStreamer.stream(localStream)
+    await this.streamer.stream(metadata, remoteStream)
+    await this.httpAudioStreamer.stream(localStream)
 
-    this.currentTrackDuration = metadata.seconds
-    this.cleanBuffer()
     this.audio.play()
-
+    this.audio.currentTime = 0.1 // reset play
     this.isPlayingLocal = true
+
     return metadata
   }
 
@@ -101,8 +102,6 @@ export class Player extends EventEmmiter {
     let last = -1
     return setInterval(async () => {
       if (this.isPlayingLocal && last && this.audio.currentTime === last) {
-        this.audio.currentTime = 0 // This must happen right after track is finished
-        this.audio.pause()
         const metadata = await this.forward()
         this.emit('track-finished', { index: this.index, metadata })
         last = -1
