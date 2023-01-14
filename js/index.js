@@ -210,6 +210,7 @@ window.onload = async () => {
 
   await user.ready()
   await player.ready()
+  await tagManager.ready()
 
   const defaultName = 'User ' + user.server.publicKey.toString('hex').substr(0, 6)
 
@@ -224,8 +225,6 @@ window.onload = async () => {
   }
 
   document.querySelector('#stream-public-key-message').innerHTML = 'Click here to copy your stream public key: ' + user.keyPair.publicKey.toString('hex').substr(0, 6)
-
-  await tagManager.ready()
 
   document.addEventListener('dragover', async (e) => {
     e.preventDefault()
