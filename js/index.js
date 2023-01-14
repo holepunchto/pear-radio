@@ -2,6 +2,7 @@ import { User } from './user.js'
 import { Player } from './player.js'
 import { Listener, TagManager } from './streamer.js'
 import copy from 'copy-text-to-clipboard'
+import configuration from './config.js'
 
 const bootstrap = process.env.TEST ? [{ host: '127.0.0.1', port: 49737 }] : undefined
 
@@ -203,17 +204,23 @@ const selectIcon = (icon) => {
 }
 
 window.onload = async () => {
+  let lastSearch = null
+  const { getConfig, setConfig } = await configuration()
+  if (getConfig('darkMode')) darkMode() // do this first so user doesnt notice
+
   await user.ready()
   await player.ready()
 
-  let lastSearch = null
   const defaultName = 'User ' + user.server.publicKey.toString('hex').substr(0, 6)
+
+  if ((getConfig('username')) === null) await setConfig('username', defaultName)
+
   user.info = {
     stream: player.streamer.core.key,
     metadata: player.streamer.metadata.key,
-    name: defaultName,
-    description: '',
-    tags: ''
+    name: getConfig('username'),
+    description: getConfig('description'),
+    tags: getConfig('tags')
   }
 
   document.querySelector('#stream-public-key-message').innerHTML = 'Click here to copy your stream public key: ' + user.keyPair.publicKey.toString('hex').substr(0, 6)
@@ -259,6 +266,14 @@ window.onload = async () => {
     document.querySelector('#settings-username').value = user.info.name || ''
     document.querySelector('#settings-description').value = user.info.description || ''
     document.querySelector('#settings-tags').value = user.info.tags || ''
+
+    if (getConfig('darkMode')) {
+      document.querySelector('#dark-mode').classList.add('selected-settings-color')
+      document.querySelector('#light-mode').classList.remove('selected-settings-color')
+    } else {
+      document.querySelector('#dark-mode').classList.remove('selected-settings-color')
+      document.querySelector('#light-mode').classList.add('selected-settings-color')
+    }
   }
 
   document.querySelector('#search-button').onclick = async () => {
@@ -318,12 +333,14 @@ window.onload = async () => {
   document.querySelector('#dark-mode').onclick = async () => {
     document.querySelector('#dark-mode').classList.add('selected-settings-color')
     document.querySelector('#light-mode').classList.remove('selected-settings-color')
+    await setConfig('darkMode', true)
     darkMode()
   }
 
   document.querySelector('#light-mode').onclick = async () => {
     document.querySelector('#dark-mode').classList.remove('selected-settings-color')
     document.querySelector('#light-mode').classList.add('selected-settings-color')
+    await setConfig('darkMode', false)
     lightMode()
   }
 
@@ -337,6 +354,10 @@ window.onload = async () => {
     user.info.name = name
     user.info.description = description
     user.info.tags = tags
+
+    await setConfig('username', name)
+    await setConfig('description', description)
+    await setConfig('tags', tags)
 
     if (oldTags && oldTags !== tags) {
       oldTags.split(',').map(async e => {
