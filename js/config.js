@@ -2,7 +2,7 @@ import holepunch from 'holepunch://app'
 import simpleConfig from '@rafapaezbas/simple-config'
 
 const defaultConfig = {
-  username: '',
+  username: null,
   description: '',
   tags: '',
   darkMode: false

@@ -6,7 +6,7 @@ const userInfo = compile({
   stream: c.buffer,
   metadata: c.buffer,
   name: c.string,
-  description: c.string,
+  description: opt(c.string),
   tags: opt(c.string)
 })
 
@@ -18,6 +18,7 @@ export class User {
     this.keyPair = opts.keyPair || DHT.keyPair()
     this.server.on('connection', socket => {
       const info = c.encode(userInfo, this.info)
+      console.log('SENT', this.info)
       socket.write(info)
     })
   }
@@ -31,6 +32,7 @@ export class User {
       const socket = this.node.connect(key)
       socket.on('data', (data) => {
         const info = this.decodeUserInfo(data)
+        console.log('RECEIVED', info)
         // TODO close socket
         resolve(info)
       })

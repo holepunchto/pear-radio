@@ -111,7 +111,7 @@ const createSearchResult = (info) => {
 
   name.innerHTML = info.name
   Array(fav, play, pause).forEach(e => name.append(e))
-  description.innerHTML = info.description.length > 0 ? info.description : 'No description provided.'
+  description.innerHTML = info.description && info.description.length > 0 ? info.description : 'No description provided.'
   tags.innerHTML = info.tags && info.tags.length > 0 ? info.tags : 'No tags provided.'
   listen.innerHTML = ''
   playing.innerHTML = 'Buffering...'
@@ -214,7 +214,7 @@ window.onload = async () => {
 
   const defaultName = 'User ' + user.server.publicKey.toString('hex').substr(0, 6)
 
-  if ((getConfig('username')) === null) await setConfig('username', defaultName)
+  if ((getConfig('username')) === null || !getConfig('username') || getConfig('username').length === 0) await setConfig('username', defaultName)
 
   user.info = {
     stream: player.streamer.core.key,
@@ -223,6 +223,8 @@ window.onload = async () => {
     description: getConfig('description'),
     tags: getConfig('tags')
   }
+
+  console.log()
 
   document.querySelector('#stream-public-key-message').innerHTML = 'Click here to copy your stream public key: ' + user.keyPair.publicKey.toString('hex').substr(0, 6)
 
