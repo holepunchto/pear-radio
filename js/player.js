@@ -41,8 +41,7 @@ export class Player extends EventEmmiter {
     await this.streamer.stream(metadata, remoteStream)
     await this.httpAudioStreamer.stream(localStream)
 
-    this.audio.play()
-    this.audio.currentTime = 0.1 // reset play
+    await this.audio.play()
     this.isPlayingLocal = true
 
     return metadata
@@ -54,15 +53,13 @@ export class Player extends EventEmmiter {
     if (!this.intervalIsBuffering) this.intervalIsBuffering = this.trackIsBuffering()
     this.intervalIsFinished = null // only for local
     this.cleanBuffer()
-    this.audio.play()
+    await this.audio.play()
     this.isPlayingLocal = false
   }
 
   cleanBuffer () {
-    this.audio.remove()
-    this.audio = this.start()
-    this.audio.src = 'http://localhost:' + this.httpAudioStreamer.port
-    this.audio.volume = this.volume
+    this.audio.pause()
+    this.audio.load()
   }
 
   stop () {
@@ -105,7 +102,8 @@ export class Player extends EventEmmiter {
   trackIsFinished () {
     let last = -1
     return setInterval(async () => {
-      if (this.isPlayingLocal && last && this.audio.currentTime === last) {
+      console.log(this.audio.currentTime)
+      if (this.isPlayingLocal && last && this.audio.currentTime === last && this.audio.currentTime !== 0.1) {
         const metadata = await this.forward()
         this.emit('track-finished', { index: this.index, metadata })
         last = -1
