@@ -6,7 +6,6 @@ import ffprobe from '@dropb/ffprobe'
 import Hyperswarm from 'hyperswarm'
 import Corestore from 'corestore'
 import ram from 'random-access-memory'
-import Throttle from 'throttle'
 import http from 'http'
 import sodium from 'sodium-native'
 
@@ -48,11 +47,9 @@ export class HttpAudioStreamer {
 
 export class Mp3ReadStream {
   static async stream (path) {
-    const bufferOffset = 7 // TODO tweak value between 0-8, the higher this value, the faster stream but less realtime
     const bitRate = (await ffprobe.ffprobe(path)).format.bit_rate // bits per seconds
-    const throttle = new Throttle(bitRate / (8 - bufferOffset)) // bytes per seconds
     const localStream = fs.createReadStream(path)
-    const remoteStream = fs.createReadStream(path).pipe(throttle)
+    const remoteStream = fs.createReadStream(path, { highWaterMark: Math.floor(bitRate / 8) }) // chunks are ~1 second of audio, helps in sync calculation
     return { localStream, remoteStream }
   }
 
@@ -75,8 +72,6 @@ export class TagManager extends EventEmmiter {
   }
 
   _onConnection (connection, info) {
-    console.log(connection)
-    console.log(info)
     connection.write(this.user.encodeUserInfo())
     connection.on('data', (encodedUser) => {
       const decodedUser = this.user.decodeUserInfo(encodedUser)
@@ -137,6 +132,7 @@ export class Streamer {
     this.core = null
     this.metadata = null
     this.streaming = null
+    this.checkpoint = null // last song starting block
 
     this.swarm.on('connection', (conn, info) => {
       this.store.replicate(conn)
@@ -155,6 +151,7 @@ export class Streamer {
   }
 
   async stream (metadata, stream) {
+    this.checkpoint = this.core.length
     if (this.streaming) await this.streaming.destroy()
     this.metadata.append(metadata)
     stream.on('data', data => {
@@ -199,10 +196,10 @@ export class Listener {
     await this.swarm.flush()
   }
 
-  async listen () {
+  async listen (fromBlock) {
     await this.core.update()
     await this.metadata.update()
-    const stream = this.core.createReadStream({ live: true, start: this.core.length })
+    const stream = this.core.createReadStream({ live: true, start: fromBlock })
     const metadata = this.metadata.createReadStream({ live: true, start: this.metadata.length - 1 })
     return { stream, metadata }
   }

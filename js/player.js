@@ -87,6 +87,10 @@ export class Player extends EventEmmiter {
     return await Mp3ReadStream.readTrack(path)
   }
 
+  currentAudioBlock () {
+    return this.streamer.checkpoint + Math.floor(this.audio.currentTime)
+  }
+
   trackIsBuffering () {
     return setInterval(() => {
       try {

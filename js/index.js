@@ -6,15 +6,15 @@ import configuration from './config.js'
 
 const bootstrap = process.env.TEST ? [{ host: '127.0.0.1', port: 49737 }] : undefined
 
-const user = new User({ bootstrap })
-const tagManager = new TagManager(user, { bootstrap })
-
 const player = new Player(() => {
   const audio = document.createElement('audio')
   audio.setAttribute('type', 'audio/mpeg')
   document.body.appendChild(audio)
   return audio
 })
+
+const user = new User(player, { bootstrap })
+const tagManager = new TagManager(user, { bootstrap })
 
 const addTrack = (metadata) => {
   const track = document.createElement('div')
@@ -151,7 +151,8 @@ const addResult = (info) => {
 
     listener = new Listener(info.stream, info.metadata, { bootstrap })
     await listener.ready()
-    const { stream, metadata } = await listener.listen()
+    const { block } = await user.syncRequest(info.publicKey)
+    const { stream, metadata } = await listener.listen(block)
     await player.playStream(stream)
 
     metadata.on('data', (data) => { result.playing.innerHTML = `Playing: ${data.artist || 'Unknown artist'} - ${data.name || 'Unknown track'}` })
@@ -217,14 +218,13 @@ window.onload = async () => {
   if ((getConfig('username')) === null || !getConfig('username') || getConfig('username').length === 0) await setConfig('username', defaultName)
 
   user.info = {
+    publicKey: user.keyPair.publicKey,
     stream: player.streamer.core.key,
     metadata: player.streamer.metadata.key,
     name: getConfig('username'),
     description: getConfig('description'),
     tags: getConfig('tags')
   }
-
-  console.log()
 
   document.querySelector('#stream-public-key-message').innerHTML = 'Click here to copy your stream public key: ' + user.keyPair.publicKey.toString('hex').substr(0, 6)
 
