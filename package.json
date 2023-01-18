@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "holepunch dev",
     "fix": "standard --fix",
-    "test": "brittle test/*.test.js"
+    "test": "brittle test/*.test.js",
+    "dev": "env TEST=true holepunch dev"
   },
   "holepunch": {
     "gui": {
