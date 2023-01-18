@@ -153,7 +153,7 @@ export class Streamer {
   async stream (metadata, stream) {
     this.checkpoint = this.core.length
     if (this.streaming) await this.streaming.destroy()
-    this.metadata.append(metadata)
+    await this.metadata.append(metadata)
     stream.on('data', data => {
       this.core.append(data)
     })

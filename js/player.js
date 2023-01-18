@@ -102,7 +102,6 @@ export class Player extends EventEmmiter {
   trackIsFinished () {
     let last = -1
     return setInterval(async () => {
-      console.log(this.audio.currentTime)
       if (this.isPlayingLocal && last && this.audio.currentTime === last && this.audio.currentTime !== 0.1) {
         const metadata = await this.forward()
         this.emit('track-finished', { index: this.index, metadata })

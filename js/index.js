@@ -155,7 +155,11 @@ const addResult = (info) => {
     const { stream, metadata } = await listener.listen(block)
     await player.playStream(stream)
 
-    metadata.on('data', (data) => { result.playing.innerHTML = `Playing: ${data.artist || 'Unknown artist'} - ${data.name || 'Unknown track'}` })
+    metadata.on('data', (data) => {
+      player.cleanBuffer()
+      player.audio.play()
+      result.playing.innerHTML = `Playing: ${data.artist || 'Unknown artist'} - ${data.name || 'Unknown track'}`
+    })
   }
 
   result.pause.onclick = async (e) => {
