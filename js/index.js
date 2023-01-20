@@ -151,15 +151,15 @@ const addResult = (info) => {
 
     listener = new Listener(info.stream, info.metadata, { bootstrap })
     await listener.ready()
-    const { block } = await user.syncRequest(info.publicKey)
-    const { stream, metadata } = await listener.listen(block)
-    await player.playStream(stream)
+    const { block, artist, name } = await user.syncRequest(info.publicKey)
+    result.playing.innerHTML = `Playing: ${artist || 'Unknown artist'} - ${name || 'Unknown track'}`
 
-    metadata.on('data', (data) => {
+    const stream = await listener.listen(block, (data) => {
       player.cleanBuffer()
       player.audio.play()
       result.playing.innerHTML = `Playing: ${data.artist || 'Unknown artist'} - ${data.name || 'Unknown track'}`
     })
+    await player.playStream(stream)
   }
 
   result.pause.onclick = async (e) => {

@@ -13,7 +13,9 @@ const userInfo = compile({
 })
 
 const syncResponse = compile({
-  block: (c.uint)
+  block: (c.uint),
+  artist: opt(c.string),
+  name: opt(c.string)
 })
 
 export class User {
@@ -33,7 +35,8 @@ export class User {
 
     this.server.respond('sync-request', async (req) => {
       const block = this.player.currentAudioBlock()
-      return c.encode(syncResponse, { block })
+      const { artist, name } = await this.player.streamer.getMetadata()
+      return c.encode(syncResponse, { block, artist, name })
     })
 
     await this.server.listen(this.keyPair)

@@ -160,6 +160,10 @@ export class Streamer {
     this.streaming = stream
   }
 
+  getMetadata () { // Return current track metadata
+    return this.metadata.get(this.metadata.length - 1)
+  }
+
   async stop () {
     if (this.streaming) await this.streaming.destroy()
     this.streaming = null
@@ -196,12 +200,14 @@ export class Listener {
     await this.swarm.flush()
   }
 
-  async listen (fromBlock) {
-    await this.core.update()
-    await this.metadata.update()
+  async listen (fromBlock, metadataCallback) {
     const stream = this.core.createReadStream({ live: true, start: fromBlock })
-    const metadata = this.metadata.createReadStream({ live: true, start: this.metadata.length - 1 })
-    return { stream, metadata }
+    this.metadata.createReadStream({ live: true, start: this.metadata.length - 1 })
+    this.metadata.on('append', async () => {
+      const data = await this.metadata.get(this.metadata.length - 1)
+      metadataCallback(data)
+    })
+    return stream
   }
 
   destroy () {
