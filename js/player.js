@@ -27,7 +27,7 @@ export class Player extends EventEmmiter {
     this.audio.volume = this.volume
   }
 
-  async play (info) {
+  async play (info, opts = {}) {
     if (!this.intervalIsBuffering) this.intervalIsBuffering = this.trackIsBuffering()
     if (!this.intervalIsFinished) this.intervalIsFinished = this.trackIsFinished()
     if (info) this.index = this.playlist.indexOf(info.path)
@@ -38,7 +38,7 @@ export class Player extends EventEmmiter {
     const { localStream, remoteStream } = await Mp3ReadStream.stream(path)
     const metadata = await Mp3ReadStream.readTrack(path)
 
-    await this.streamer.stream(metadata, remoteStream)
+    await this.streamer.stream(metadata, remoteStream, opts)
     await this.httpAudioStreamer.stream(localStream)
 
     await this.audio.play()
@@ -69,14 +69,14 @@ export class Player extends EventEmmiter {
     this.isPlayingLocal = false
   }
 
-  async forward () {
+  async forward (opts) {
     this.index = this.random ? Math.floor(Math.random() * this.playlist.length) : (this.index + 1) % this.playlist.length
-    return this.play()
+    return this.play(null, opts)
   }
 
-  async backward () {
+  async backward (opts) {
     this.index = this.random ? Math.floor(Math.random() * this.playlist.length) : (this.index - 1) % this.playlist.length
-    return this.play()
+    return this.play(null, opts)
   }
 
   async addTrack (path) {

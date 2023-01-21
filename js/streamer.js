@@ -150,10 +150,11 @@ export class Streamer {
     await this.swarm.flush()
   }
 
-  async stream (metadata, stream) {
+  async stream (metadata, stream, opts = {}) {
     this.checkpoint = this.core.length
     if (this.streaming) await this.streaming.destroy()
-    await this.metadata.append(metadata)
+    if (opts.forceRemoteCleanBuffer) metadata.cleanBuffer = true
+    await this.metadata.append({ artist: metadata.artist, name: metadata.name, cleanBuffer: metadata.cleanBuffer })
     stream.on('data', data => {
       this.core.append(data)
     })

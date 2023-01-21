@@ -36,7 +36,7 @@ const addTrack = (metadata) => {
   track.append(artist)
 
   track.onclick = async () => {
-    play(metadata)
+    play(metadata, { forceRemoteCleanBuffer: true })
   }
 
   document.querySelector('#tracklist').append(track)
@@ -155,8 +155,11 @@ const addResult = (info) => {
     result.playing.innerHTML = `Playing: ${artist || 'Unknown artist'} - ${name || 'Unknown track'}`
 
     const stream = await listener.listen(block, (data) => {
-      player.cleanBuffer()
-      player.audio.play()
+      console.log(data)
+      if (data.cleanBuffer) {
+        player.cleanBuffer()
+        player.audio.play()
+      }
       result.playing.innerHTML = `Playing: ${data.artist || 'Unknown artist'} - ${data.name || 'Unknown track'}`
     })
     await player.playStream(stream)
@@ -188,8 +191,8 @@ const updatePlaylist = (metadata) => {
   document.querySelector('#tracklist').children.item(player.index).classList.add('playing')
 }
 
-const play = async (metadata) => { // Remove previous buffered music
-  await player.play(metadata)
+const play = async (metadata, opts) => { // Remove previous buffered music
+  await player.play(metadata, opts)
   updateThumbnail(metadata)
   updatePlaylist(metadata)
 }
@@ -307,13 +310,13 @@ window.onload = async () => {
   }
 
   document.querySelector('#forward-controls').onclick = async () => {
-    const metadata = await player.forward()
+    const metadata = await player.forward({ forceRemoteCleanBuffer: true })
     updateThumbnail(metadata)
     updatePlaylist(metadata)
   }
 
   document.querySelector('#backward-controls').onclick = async () => {
-    const metadata = await player.backward()
+    const metadata = await player.backward({ forceRemoteCleanBuffer: true })
     updateThumbnail(metadata)
     updatePlaylist(metadata)
   }
