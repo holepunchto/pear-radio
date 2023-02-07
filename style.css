@@ -1,5 +1,5 @@
 :root {
-    --main-bg-color: white;
+    --main-bg-color: #f9f9f9;
     --main-fg-color: #05070a;
     --secondary-fg-color: #bbb;
     --tertiary-fg-color: #e5ebfb;
@@ -84,7 +84,7 @@ input::placeholder {
     color: var(--main-fg-color);
     font-weight: 900;
     font-size: 150%;
-    letter-spacing: 7px;
+    line-height: 15px;
 }
 
 #thumbnail-artist {
@@ -92,6 +92,7 @@ input::placeholder {
     margin-top: 1vh;
     margin-bottom: 1vh;
     font-size: 125%;
+    letter-spacing: 7px;
 }
 
 #controls {

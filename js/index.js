@@ -85,7 +85,7 @@ const darkMode = () => {
 
 const lightMode = () => {
   const r = document.querySelector(':root')
-  r.style.setProperty('--main-bg-color', 'white')
+  r.style.setProperty('--main-bg-color', '#f9f9f9')
   r.style.setProperty('--main-fg-color', '#05070a')
   r.style.setProperty('--secondary-fg-color', '#bbb')
   r.style.setProperty('--tertiary-fg-color', '#e5ebfb')
