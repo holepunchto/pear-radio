@@ -3,10 +3,9 @@
   "main": "index.html",
   "type": "module",
   "scripts": {
-    "dev": "holepunch dev",
+    "dev": "env TEST=true holepunch dev",
     "fix": "standard --fix",
-    "test": "brittle test/*.test.js",
-    "dev": "env TEST=true holepunch dev"
+    "test": "brittle test/*.test.js"
   },
   "holepunch": {
     "gui": {
@@ -31,6 +30,7 @@
     "compact-encoding-struct": "^1.3.0",
     "copy-text-to-clipboard": "^3.0.1",
     "corestore": "^6.4.0",
+    "hypercore-crypto": "^3.3.1",
     "hyperswarm": "^4.3.5",
     "install": "^0.13.0",
     "node-id3": "^0.2.5",

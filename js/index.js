@@ -3,217 +3,223 @@ import { Player } from './player.js'
 import { Listener, TagManager } from './streamer.js'
 import copy from 'copy-text-to-clipboard'
 import configuration from './config.js'
+import { keyPair, randomBytes } from 'hypercore-crypto'
 
-const bootstrap = process.env.TEST ? [{ host: '127.0.0.1', port: 49737 }] : undefined
-
-const player = new Player(() => {
-  const audio = document.createElement('audio')
-  audio.setAttribute('type', 'audio/mpeg')
-  document.body.appendChild(audio)
-  return audio
-})
-
-const user = new User(player, { bootstrap })
-const tagManager = new TagManager(user, { bootstrap })
-
-const addTrack = (metadata) => {
-  const track = document.createElement('div')
-  const trackname = document.createElement('p')
-  const artist = document.createElement('p')
-  const duration = document.createElement('p')
-
-  trackname.innerHTML = metadata.name ? (metadata.name.length < 20 ? metadata.name : metadata.name.substr(0, 20) + '...') : metadata.file
-  duration.innerHTML = metadata.duration
-  artist.innerHTML = metadata.artist || 'Unknown artist'
-
-  track.classList.add('tracklist-track')
-  trackname.classList.add('tracklist-trackname')
-  duration.classList.add('duration')
-  artist.classList.add('tracklist-artist')
-
-  track.append(trackname)
-  track.append(duration)
-  track.append(artist)
-
-  track.onclick = async () => {
-    play(metadata, { forceRemoteCleanBuffer: true })
-  }
-
-  document.querySelector('#tracklist').append(track)
-}
-
-const showStreamersTitle = () => {
-  document.querySelector('#streamers-title').classList.remove('disabled')
-}
-
-const hideStreamersTitle = () => {
-  document.querySelector('#streamers-title').classList.add('disabled')
-}
-
-const showSearchingSpinner = () => {
-  document.querySelector('#streamers-search-spinner').classList.remove('disabled')
-}
-
-const hideSearchingSpinner = () => {
-  document.querySelector('#streamers-search-spinner').classList.add('disabled')
-}
-
-const hideStreamersPlaceholder = () => {
-  document.querySelector('#streamers-placeholder').classList.add('disabled')
-}
-
-const resetSearchResults = () => {
-  hideStreamersPlaceholder()
-  document.querySelector('#streamers-list').innerHTML = ''
-}
-
-const disableScrolling = () => {
-  document.querySelector('body').classList.add('stop-scrolling')
-}
-
-const enableScrolling = () => {
-  document.querySelector('body').classList.remove('stop-scrolling')
-}
-
-const darkMode = () => {
-  const r = document.querySelector(':root')
-  r.style.setProperty('--main-bg-color', '#151623')
-  r.style.setProperty('--main-fg-color', '#f0f3f5')
-  r.style.setProperty('--secondary-fg-color', '#62649e')
-  r.style.setProperty('--tertiary-fg-color', '#222338')
-}
-
-const lightMode = () => {
-  const r = document.querySelector(':root')
-  r.style.setProperty('--main-bg-color', '#f9f9f9')
-  r.style.setProperty('--main-fg-color', '#05070a')
-  r.style.setProperty('--secondary-fg-color', '#bbb')
-  r.style.setProperty('--tertiary-fg-color', '#e5ebfb')
-}
-
-const createSearchResult = (info) => {
-  const streamer = document.createElement('div')
-  const name = document.createElement('p')
-  const description = document.createElement('p')
-  const tags = document.createElement('p')
-  const listen = document.createElement('p')
-  const playing = document.createElement('p')
-
-  const fav = document.createElement('i')
-  const play = document.createElement('i')
-  const pause = document.createElement('i')
-  const user = document.createElement('i')
-
-  user.classList.add('fas', 'fa-user', 'streamer-user')
-  fav.classList.add('far', 'fa-heart', 'streamer-like')
-  play.classList.add('far', 'fa-play-circle', 'streamer-play')
-  pause.classList.add('fas', 'fa-pause', 'streamer-pause', 'disabled')
-
-  name.innerHTML = info.name
-  Array(fav, play, pause).forEach(e => name.append(e))
-  description.innerHTML = info.description && info.description.length > 0 ? info.description : 'No description provided.'
-  tags.innerHTML = info.tags && info.tags.length > 0 ? info.tags : 'No tags provided.'
-  listen.innerHTML = ''
-  playing.innerHTML = 'Buffering...'
-
-  streamer.classList.add('streamer')
-  name.classList.add('streamer-name')
-  description.classList.add('streamer-description')
-  tags.classList.add('streamer-tags')
-  listen.classList.add('listen')
-  playing.classList.add('listen', 'disabled')
-
-  streamer.append(user)
-  streamer.append(name)
-  streamer.append(description)
-  streamer.append(tags)
-  streamer.append(listen)
-  streamer.append(playing)
-
-  document.querySelector('#streamers-list').append(streamer)
-  return { streamer, name, description, listen, playing, play, pause, fav }
-}
-
-const addResult = (info) => {
-  let listener = null
-  const result = createSearchResult(info)
-
-  hideStreamersPlaceholder()
-  hideSearchingSpinner()
-
-  result.streamer.onclick = async () => {
-    Array.from(document.getElementsByClassName('streamer-selected')).forEach((e) => e.classList.remove('streamer-selected'))
-    Array(result.streamer, result.name, result.description, result.listen, result.playing, result.fav).forEach(e => e.classList.add('streamer-selected'))
-    result.listen.classList.add('disabled')
-    result.playing.classList.remove('disabled')
-    result.play.classList.add('disabled')
-    result.pause.classList.remove('disabled')
-
-    listener = new Listener(info.stream, info.metadata, { bootstrap })
-    await listener.ready()
-    const { block, artist, name } = await user.syncRequest(info.publicKey)
-    result.playing.innerHTML = `Playing: ${artist || 'Unknown artist'} - ${name || 'Unknown track'}`
-
-    const stream = await listener.listen(block, (data) => {
-      console.log(data)
-      if (data.cleanBuffer) {
-        player.cleanBuffer()
-        player.audio.play()
-      }
-      result.playing.innerHTML = `Playing: ${data.artist || 'Unknown artist'} - ${data.name || 'Unknown track'}`
-    })
-    await player.playStream(stream)
-  }
-
-  result.pause.onclick = async (e) => {
-    listener.destroy()
-    player.stop()
-
-    Array(result.streamer, result.name, result.description, result.listen, result.playing, result.fav).forEach(e => e.classList.remove('streamer-selected'))
-    result.playing.classList.add('disabled')
-    result.listen.classList.remove('disabled')
-    result.pause.classList.add('disabled')
-    result.play.classList.remove('disabled')
-
-    e.stopPropagation()
-  }
-}
-
-const updateThumbnail = (metadata) => {
-  document.querySelector('#thumbnail-track').innerHTML = metadata.name || metadata.file
-  document.querySelector('#thumbnail-artist').innerHTML = metadata.artist || 'Unkown artist'
-  document.querySelector('#duration').innerHTML = metadata.duration
-  document.querySelector('#elapsed').innerHTML = '0:00'
-}
-
-const updatePlaylist = (metadata) => {
-  Array.from(document.querySelector('#tracklist').children).forEach(e => e.classList.remove('playing'))
-  document.querySelector('#tracklist').children.item(player.index).classList.add('playing')
-}
-
-const play = async (metadata, opts) => { // Remove previous buffered music
-  await player.play(metadata, opts)
-  updateThumbnail(metadata)
-  updatePlaylist(metadata)
-}
-
-const fade = (view) => {
-  ['#stream', '#settings', '#listen'].filter(e => e !== view).forEach(e => {
-    document.querySelector(e).classList.add('fade-out')
-  })
-  document.querySelector(view).classList.remove('fade-out')
-  document.querySelector(view).classList.add('fade-in')
-}
-
-const selectIcon = (icon) => {
-  const icons = ['#settings-icon', '#tracklist-icon', '#search-icon', '#favourites-icon']
-  icons.forEach(i => document.querySelector(i).classList.remove('selected-header-icon'))
-  document.querySelector(icon).classList.add('selected-header-icon')
-}
+const bootstrap = process.env.TEST ? [{ host: '127.0.0.1', port: 49736 }] : undefined
 
 window.onload = async () => {
-  let lastSearch = null
   const { getConfig, setConfig } = await configuration()
+
+  if (!getConfig('seed')) {
+    setConfig('seed', randomBytes(32).toString('hex'))
+  }
+
+  const player = new Player(() => {
+    const audio = document.createElement('audio')
+    audio.setAttribute('type', 'audio/mpeg')
+    document.body.appendChild(audio)
+    return audio
+  })
+
+  const user = new User(player, { bootstrap, keyPair: keyPair(Buffer.from(getConfig('seed'), 'hex')) })
+  const tagManager = new TagManager(user, { bootstrap })
+
+  const addTrack = (metadata) => {
+    const track = document.createElement('div')
+    const trackname = document.createElement('p')
+    const artist = document.createElement('p')
+    const duration = document.createElement('p')
+
+    trackname.innerHTML = metadata.name ? (metadata.name.length < 20 ? metadata.name : metadata.name.substr(0, 20) + '...') : metadata.file
+    duration.innerHTML = metadata.duration
+    artist.innerHTML = metadata.artist || 'Unknown artist'
+
+    track.classList.add('tracklist-track')
+    trackname.classList.add('tracklist-trackname')
+    duration.classList.add('duration')
+    artist.classList.add('tracklist-artist')
+
+    track.append(trackname)
+    track.append(duration)
+    track.append(artist)
+
+    track.onclick = async () => {
+      play(metadata, { forceRemoteCleanBuffer: true })
+    }
+
+    document.querySelector('#tracklist').append(track)
+  }
+
+  const showStreamersTitle = () => {
+    document.querySelector('#streamers-title').classList.remove('disabled')
+  }
+
+  const hideStreamersTitle = () => {
+    document.querySelector('#streamers-title').classList.add('disabled')
+  }
+
+  const showSearchingSpinner = () => {
+    document.querySelector('#streamers-search-spinner').classList.remove('disabled')
+  }
+
+  const hideSearchingSpinner = () => {
+    document.querySelector('#streamers-search-spinner').classList.add('disabled')
+  }
+
+  const hideStreamersPlaceholder = () => {
+    document.querySelector('#streamers-placeholder').classList.add('disabled')
+  }
+
+  const resetSearchResults = () => {
+    hideStreamersPlaceholder()
+    document.querySelector('#streamers-list').innerHTML = ''
+  }
+
+  const disableScrolling = () => {
+    document.querySelector('body').classList.add('stop-scrolling')
+  }
+
+  const enableScrolling = () => {
+    document.querySelector('body').classList.remove('stop-scrolling')
+  }
+
+  const darkMode = () => {
+    const r = document.querySelector(':root')
+    r.style.setProperty('--main-bg-color', '#151623')
+    r.style.setProperty('--main-fg-color', '#f0f3f5')
+    r.style.setProperty('--secondary-fg-color', '#62649e')
+    r.style.setProperty('--tertiary-fg-color', '#222338')
+  }
+
+  const lightMode = () => {
+    const r = document.querySelector(':root')
+    r.style.setProperty('--main-bg-color', '#f9f9f9')
+    r.style.setProperty('--main-fg-color', '#05070a')
+    r.style.setProperty('--secondary-fg-color', '#bbb')
+    r.style.setProperty('--tertiary-fg-color', '#e5ebfb')
+  }
+
+  const createSearchResult = (info) => {
+    const streamer = document.createElement('div')
+    const name = document.createElement('p')
+    const description = document.createElement('p')
+    const tags = document.createElement('p')
+    const listen = document.createElement('p')
+    const playing = document.createElement('p')
+
+    const fav = document.createElement('i')
+    const play = document.createElement('i')
+    const pause = document.createElement('i')
+    const user = document.createElement('i')
+
+    user.classList.add('fas', 'fa-user', 'streamer-user')
+    fav.classList.add('far', 'fa-heart', 'streamer-like')
+    play.classList.add('far', 'fa-play-circle', 'streamer-play')
+    pause.classList.add('fas', 'fa-pause', 'streamer-pause', 'disabled')
+
+    name.innerHTML = info.name
+    Array(fav, play, pause).forEach(e => name.append(e))
+    description.innerHTML = info.description && info.description.length > 0 ? info.description : 'No description provided.'
+    tags.innerHTML = info.tags && info.tags.length > 0 ? info.tags : 'No tags provided.'
+    listen.innerHTML = ''
+    playing.innerHTML = 'Buffering...'
+
+    streamer.classList.add('streamer')
+    name.classList.add('streamer-name')
+    description.classList.add('streamer-description')
+    tags.classList.add('streamer-tags')
+    listen.classList.add('listen')
+    playing.classList.add('listen', 'disabled')
+
+    streamer.append(user)
+    streamer.append(name)
+    streamer.append(description)
+    streamer.append(tags)
+    streamer.append(listen)
+    streamer.append(playing)
+
+    document.querySelector('#streamers-list').append(streamer)
+    return { streamer, name, description, listen, playing, play, pause, fav }
+  }
+
+  const addResult = (info) => {
+    let listener = null
+    const result = createSearchResult(info)
+
+    hideStreamersPlaceholder()
+    hideSearchingSpinner()
+
+    result.streamer.onclick = async () => {
+      Array.from(document.getElementsByClassName('streamer-selected')).forEach((e) => e.classList.remove('streamer-selected'))
+      Array(result.streamer, result.name, result.description, result.listen, result.playing, result.fav).forEach(e => e.classList.add('streamer-selected'))
+      result.listen.classList.add('disabled')
+      result.playing.classList.remove('disabled')
+      result.play.classList.add('disabled')
+      result.pause.classList.remove('disabled')
+
+      listener = new Listener(info.stream, info.metadata, { bootstrap })
+      await listener.ready()
+      const { block, artist, name } = await user.syncRequest(info.publicKey)
+      result.playing.innerHTML = `Playing: ${artist || 'Unknown artist'} - ${name || 'Unknown track'}`
+
+      const stream = await listener.listen(block, (data) => {
+        console.log(data)
+        if (data.cleanBuffer) {
+          player.cleanBuffer()
+          player.audio.play()
+        }
+        result.playing.innerHTML = `Playing: ${data.artist || 'Unknown artist'} - ${data.name || 'Unknown track'}`
+      })
+      await player.playStream(stream)
+    }
+
+    result.pause.onclick = async (e) => {
+      listener.destroy()
+      player.stop()
+
+      Array(result.streamer, result.name, result.description, result.listen, result.playing, result.fav).forEach(e => e.classList.remove('streamer-selected'))
+      result.playing.classList.add('disabled')
+      result.listen.classList.remove('disabled')
+      result.pause.classList.add('disabled')
+      result.play.classList.remove('disabled')
+
+      e.stopPropagation()
+    }
+  }
+
+  const updateThumbnail = (metadata) => {
+    document.querySelector('#thumbnail-track').innerHTML = metadata.name || metadata.file
+    document.querySelector('#thumbnail-artist').innerHTML = metadata.artist || 'Unkown artist'
+    document.querySelector('#duration').innerHTML = metadata.duration
+    document.querySelector('#elapsed').innerHTML = '0:00'
+  }
+
+  const updatePlaylist = (metadata) => {
+    Array.from(document.querySelector('#tracklist').children).forEach(e => e.classList.remove('playing'))
+    document.querySelector('#tracklist').children.item(player.index).classList.add('playing')
+  }
+
+  const play = async (metadata, opts) => { // Remove previous buffered music
+    await player.play(metadata, opts)
+    updateThumbnail(metadata)
+    updatePlaylist(metadata)
+  }
+
+  const fade = (view) => {
+    ['#stream', '#settings', '#listen'].filter(e => e !== view).forEach(e => {
+      document.querySelector(e).classList.add('fade-out')
+    })
+    document.querySelector(view).classList.remove('fade-out')
+    document.querySelector(view).classList.add('fade-in')
+  }
+
+  const selectIcon = (icon) => {
+    const icons = ['#settings-icon', '#tracklist-icon', '#search-icon', '#favourites-icon']
+    icons.forEach(i => document.querySelector(i).classList.remove('selected-header-icon'))
+    document.querySelector(icon).classList.add('selected-header-icon')
+  }
+
+  let lastSearch = null
   if (getConfig('darkMode')) darkMode() // do this first so user doesnt notice
 
   await user.ready()
