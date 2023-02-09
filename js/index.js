@@ -14,6 +14,10 @@ window.onload = async () => {
     setConfig('seed', randomBytes(32).toString('hex'))
   }
 
+  if (!getConfig('favourites')) {
+    setConfig('favourites', JSON.stringify([]))
+  }
+
   const player = new Player(() => {
     const audio = document.createElement('audio')
     audio.setAttribute('type', 'audio/mpeg')
@@ -185,6 +189,19 @@ window.onload = async () => {
 
       e.stopPropagation()
     }
+
+    result.fav.onclick = async (e) => {
+      const favs = JSON.parse(getConfig('favourites'))
+      const publicKey = info.publicKey.toString('hex')
+      const name = info.name
+      const description = info.description
+      const tags = info.tags
+      if (!favs.find(e => e.publicKey === publicKey)) {
+        favs.push({ publicKey, name, description, tags })
+        setConfig('favourites', JSON.stringify(favs))
+      }
+      e.stopPropagation()
+    }
   }
 
   const updateThumbnail = (metadata) => {
@@ -270,6 +287,10 @@ window.onload = async () => {
       document.querySelector('#search-input').value = lastSearch
     }
     disableScrolling()
+  }
+
+  document.querySelector('#favourites-icon').onclick = async () => {
+    console.log(getConfig('favourites'))
   }
 
   document.querySelector('#settings-icon').onclick = async () => {

@@ -84,7 +84,6 @@ input::placeholder {
     color: var(--main-fg-color);
     font-weight: 900;
     font-size: 150%;
-    line-height: 15px;
 }
 
 #thumbnail-artist {
