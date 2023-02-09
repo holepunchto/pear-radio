@@ -18,14 +18,16 @@ window.onload = async () => {
     setConfig('favourites', JSON.stringify([]))
   }
 
+  const userKeyPair = keyPair(Buffer.from(getConfig('seed'), 'hex'))
+
   const player = new Player(() => {
     const audio = document.createElement('audio')
     audio.setAttribute('type', 'audio/mpeg')
     document.body.appendChild(audio)
     return audio
-  })
+  }, userKeyPair)
 
-  const user = new User(player, { bootstrap, keyPair: keyPair(Buffer.from(getConfig('seed'), 'hex')) })
+  const user = new User(player, { bootstrap, keyPair: userKeyPair })
   const tagManager = new TagManager(user, { bootstrap })
 
   const addTrack = (metadata) => {
@@ -161,7 +163,7 @@ window.onload = async () => {
       result.play.classList.add('disabled')
       result.pause.classList.remove('disabled')
 
-      listener = new Listener(info.stream, info.metadata, { bootstrap })
+      listener = new Listener(info.publicKey, { bootstrap })
       await listener.ready()
       const { block, artist, name } = await user.syncRequest(info.publicKey)
       result.playing.innerHTML = `Playing: ${artist || 'Unknown artist'} - ${name || 'Unknown track'}`
@@ -249,8 +251,6 @@ window.onload = async () => {
 
   user.info = {
     publicKey: user.keyPair.publicKey,
-    stream: player.streamer.core.key,
-    metadata: player.streamer.metadata.key,
     name: getConfig('username'),
     description: getConfig('description'),
     tags: getConfig('tags')

@@ -5,8 +5,6 @@ import RPC from '@hyperswarm/rpc'
 
 const userInfo = compile({
   publicKey: c.buffer,
-  stream: c.buffer,
-  metadata: c.buffer,
   name: c.string,
   description: opt(c.string),
   tags: opt(c.string)
@@ -20,7 +18,7 @@ const syncResponse = compile({
 
 export class User {
   constructor (player, opts = {}) {
-    this.info = { publicKey: null, stream: null, metadata: null, name: null, description: null, tags: null }
+    this.info = { publicKey: null, name: null, description: null, tags: null }
     this.keyPair = opts.keyPair || DHT.keyPair()
     this.rpc = new RPC({ keyPair: this.keyPair, ...opts })
     this.server = this.rpc.createServer()

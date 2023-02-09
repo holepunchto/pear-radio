@@ -31,6 +31,7 @@
     "copy-text-to-clipboard": "^3.0.1",
     "corestore": "^6.4.0",
     "hypercore-crypto": "^3.3.1",
+    "hypercore-crypto-tweak": "github:holepunchto/hypercore-crypto-tweak",
     "hyperswarm": "^4.3.5",
     "install": "^0.13.0",
     "node-id3": "^0.2.5",

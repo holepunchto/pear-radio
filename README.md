@@ -15,17 +15,14 @@ Users are defined by a DHT key pair and the encoded information:
 
 ```
 const userInfo = compile({
-  stream: c.buffer,
-  metadata: c.buffer,
+  publicKey: c.buffer,
   name: c.string,
   description: c.string,
   tags: opt(c.string)
 })
 ```
 
-`Stream` and `metadata` are the public keys of the user cores, `stream` contains binary audio data, and `metadata` the title and artist of the current song played. Both cores and replicated and read by listeners.
-
-This two public keys could be derived from the user key pair using sodium-native 4 tweak api.
+From the user public key, pear-radio derives two more keys: the stream key stream (core containing the music binary data) and the metadata key (json encoded core containing music metadata)
 
 ## Tags
 

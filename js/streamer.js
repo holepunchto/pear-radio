@@ -8,6 +8,10 @@ import Corestore from 'corestore'
 import ram from 'random-access-memory'
 import http from 'http'
 import sodium from 'sodium-native'
+import tweak from 'hypercore-crypto-tweak'
+
+const PEAR_RADIO_STREAM = 'pear_radio_stream'
+const PEAR_RADIO_METADATA = 'pear_radio_metadata'
 
 export class HttpAudioStreamer {
   constructor () {
@@ -126,9 +130,10 @@ export class TagManager extends EventEmmiter {
 }
 
 export class Streamer {
-  constructor (opts = {}) {
+  constructor (keyPair, opts = {}) {
     this.swarm = new Hyperswarm(opts)
     this.store = new Corestore(ram, opts)
+    this.keyPair = keyPair
     this.core = null
     this.metadata = null
     this.streaming = null
@@ -141,8 +146,8 @@ export class Streamer {
 
   async ready () {
     await this.store.ready()
-    this.core = this.store.get({ name: 'stream', valueEncoding: 'binary' })
-    this.metadata = this.store.get({ name: 'metadata', valueEncoding: 'json' })
+    this.core = this.store.get(tweak(this.keyPair, PEAR_RADIO_STREAM))
+    this.metadata = this.store.get({ ...tweak(this.keyPair, PEAR_RADIO_METADATA), valueEncoding: 'json' })
     await this.core.ready()
     await this.metadata.ready()
     this.swarm.join(this.core.discoveryKey)
@@ -177,9 +182,8 @@ export class Streamer {
 }
 
 export class Listener {
-  constructor (key, metadataKey, opts = {}) {
-    this.key = key
-    this.metadataKey = metadataKey
+  constructor (userPublicKey, opts = {}) {
+    this.userPublicKey = userPublicKey
     this.swarm = new Hyperswarm(opts)
     this.store = new Corestore(ram, opts)
     this.core = null
@@ -192,8 +196,8 @@ export class Listener {
 
   async ready () {
     await this.store.ready()
-    this.core = this.store.get({ key: this.key, valueEncoding: 'binary' })
-    this.metadata = this.store.get({ key: this.metadataKey, valueEncoding: 'json' })
+    this.core = this.store.get(tweak(this.userPublicKey, PEAR_RADIO_STREAM))
+    this.metadata = this.store.get({ ...tweak(this.userPublicKey, PEAR_RADIO_METADATA), valueEncoding: 'json' })
     await this.core.ready()
     await this.metadata.ready()
     this.swarm.join(this.core.discoveryKey)
