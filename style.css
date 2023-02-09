@@ -40,6 +40,15 @@ input::placeholder {
     background: var(--main-bg-color);
 }
 
+#favourites {
+    position: absolute;
+    width: 100%;
+    height: 90%;
+    top: 10%;
+    right: -100%;
+    background: var(--main-bg-color);
+}
+
 #settings {
     position: absolute;
     width: 100%;
@@ -326,6 +335,18 @@ header {
     letter-spacing: 1px;
 }
 
+#favourites-placeholder {
+    text-align: center;
+    padding: 5vh;
+    margin-top: 25vh;
+}
+
+.favourites-placeholder-message {
+    color: var(--secondary-fg-color);
+    font-size: 100%;
+    letter-spacing: 1px;
+}
+
 .disabled {
     display: none !important;
 }
@@ -512,7 +533,7 @@ header {
     color: var(--main-fg-color);
 }
 
-#streamers-title {
+#streamers-title, #favourites-title {
     font-size: 150%;
     margin-left: 2vh;
     margin-bottom: 3vh;

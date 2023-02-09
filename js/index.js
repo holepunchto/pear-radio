@@ -206,6 +206,56 @@ window.onload = async () => {
     }
   }
 
+  const listFavourites = (favourites) => {
+    if (!favourites.length) return
+
+    document.getElementById('favourites-placeholder').classList.add('disabled')
+    document.getElementById('favourites-title').classList.remove('disabled')
+    document.getElementById('favourites-list').innerHTML = ''
+
+    favourites.forEach(e => {
+      const streamer = document.createElement('div')
+      const name = document.createElement('p')
+      const description = document.createElement('p')
+      const tags = document.createElement('p')
+      const listen = document.createElement('p')
+      const playing = document.createElement('p')
+
+      const fav = document.createElement('i')
+      const play = document.createElement('i')
+      const pause = document.createElement('i')
+      const user = document.createElement('i')
+
+      user.classList.add('fas', 'fa-user', 'streamer-user')
+      fav.classList.add('fas', 'fa-heart', 'streamer-like')
+      play.classList.add('far', 'fa-play-circle', 'streamer-play')
+      pause.classList.add('fas', 'fa-pause', 'streamer-pause', 'disabled')
+
+      name.innerHTML = e.name
+      Array(fav, play, pause).forEach(e => name.append(e))
+      description.innerHTML = e.description && e.description.length > 0 ? e.description : 'No description provided.'
+      tags.innerHTML = e.tags && e.tags.length > 0 ? e.tags : 'No tags provided.'
+      listen.innerHTML = ''
+      playing.innerHTML = 'Buffering...'
+
+      streamer.classList.add('streamer')
+      name.classList.add('streamer-name')
+      description.classList.add('streamer-description')
+      tags.classList.add('streamer-tags')
+      listen.classList.add('listen')
+      playing.classList.add('listen', 'disabled')
+
+      streamer.append(user)
+      streamer.append(name)
+      streamer.append(description)
+      streamer.append(tags)
+      streamer.append(listen)
+      streamer.append(playing)
+
+      document.querySelector('#favourites-list').append(streamer)
+    })
+  }
+
   const updateThumbnail = (metadata) => {
     document.querySelector('#thumbnail-track').innerHTML = metadata.name || metadata.file
     document.querySelector('#thumbnail-artist').innerHTML = metadata.artist || 'Unkown artist'
@@ -225,7 +275,7 @@ window.onload = async () => {
   }
 
   const fade = (view) => {
-    ['#stream', '#settings', '#listen'].filter(e => e !== view).forEach(e => {
+    ['#stream', '#settings', '#listen', '#favourites'].filter(e => e !== view).forEach(e => {
       document.querySelector(e).classList.add('fade-out')
     })
     document.querySelector(view).classList.remove('fade-out')
@@ -290,7 +340,10 @@ window.onload = async () => {
   }
 
   document.querySelector('#favourites-icon').onclick = async () => {
+    selectIcon('#favourites-icon')
+    fade('#favourites')
     console.log(getConfig('favourites'))
+    listFavourites(JSON.parse(getConfig('favourites')))
   }
 
   document.querySelector('#settings-icon').onclick = async () => {

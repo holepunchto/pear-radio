@@ -83,6 +83,14 @@
         <input id="search-input" type="text" spellcheck="false" placeholder="Search stream...">
       </div>
     </div>
+    <div id="favourites">
+      <div id="favourites-placeholder">
+        <i class="far fa-heart favourites-placeholder-message" style='font-size:25px'></i>
+        <p class="favourites-placeholder-message">You don't have any favourites yet.</p>
+      </div>
+      <p id="favourites-title" class="disabled">Favourites</p>
+      <div id="favourites-list"></div>
+    </div>
   </body>
   <audio id="player" type="audio/mpeg"></audio>
   <script type="module" src="./js/index.js"></script>
