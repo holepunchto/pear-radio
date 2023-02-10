@@ -169,7 +169,6 @@ window.onload = async () => {
       result.playing.innerHTML = `Playing: ${artist || 'Unknown artist'} - ${name || 'Unknown track'}`
 
       const stream = await listener.listen(block, (data) => {
-        console.log(data)
         if (data.cleanBuffer) {
           player.cleanBuffer()
           player.audio.play()
@@ -193,6 +192,7 @@ window.onload = async () => {
     }
 
     result.fav.onclick = async (e) => {
+      result.fav.classList.replace('far', 'fas')
       const favs = JSON.parse(getConfig('favourites'))
       const publicKey = info.publicKey.toString('hex')
       const name = info.name
