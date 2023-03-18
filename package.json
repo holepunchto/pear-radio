@@ -33,9 +33,7 @@
     "hypercore-crypto-tweak": "github:holepunchto/hypercore-crypto-tweak",
     "hyperdht": "^6.5.2",
     "hyperswarm": "^4.3.5",
-    "install": "^0.13.0",
     "node-id3": "^0.2.5",
-    "npm": "^9.3.0",
     "random-access-memory": "^6.1.0",
     "sodium-native": "^3.4.1"
   }
