@@ -148,48 +148,51 @@ window.onload = async () => {
     return { streamer, name, description, listen, playing, play, pause, fav }
   }
 
+  const onResultClick = async (listener, result, publicKey) => {
+    Array.from(document.getElementsByClassName('streamer-selected')).forEach((e) => e.classList.remove('streamer-selected'))
+    Array(result.streamer, result.name, result.description, result.listen, result.playing, result.fav).forEach(e => e.classList.add('streamer-selected'))
+    result.listen.classList.add('disabled')
+    result.playing.classList.remove('disabled')
+    result.play.classList.add('disabled')
+    result.pause.classList.remove('disabled')
+
+    listener = new Listener(publicKey, { bootstrap })
+    await listener.ready()
+    const { block, artist, name } = await user.syncRequest(publicKey)
+    result.playing.innerHTML = `Playing: ${artist || 'Unknown artist'} - ${name || 'Unknown track'}`
+
+    const stream = await listener.listen(block, (data) => {
+      if (data.cleanBuffer) {
+        player.cleanBuffer()
+        player.audio.play()
+      }
+      result.playing.innerHTML = `Playing: ${data.artist || 'Unknown artist'} - ${data.name || 'Unknown track'}`
+    })
+    await player.playStream(stream)
+  }
+
+  const onResultPauseClick = (event, listener, result) => {
+    if (listener) listener.destroy()
+    player.stop()
+
+    Array(result.streamer, result.name, result.description, result.listen, result.playing, result.fav).forEach(e => e.classList.remove('streamer-selected'))
+    result.playing.classList.add('disabled')
+    result.listen.classList.remove('disabled')
+    result.pause.classList.add('disabled')
+    result.play.classList.remove('disabled')
+
+    event.stopPropagation()
+  }
+
   const addResult = (info) => {
-    let listener = null
+    const listener = null
     const result = createSearchResult(info)
 
     hideStreamersPlaceholder()
     hideSearchingSpinner()
 
-    result.streamer.onclick = async () => {
-      Array.from(document.getElementsByClassName('streamer-selected')).forEach((e) => e.classList.remove('streamer-selected'))
-      Array(result.streamer, result.name, result.description, result.listen, result.playing, result.fav).forEach(e => e.classList.add('streamer-selected'))
-      result.listen.classList.add('disabled')
-      result.playing.classList.remove('disabled')
-      result.play.classList.add('disabled')
-      result.pause.classList.remove('disabled')
-
-      listener = new Listener(info.publicKey, { bootstrap })
-      await listener.ready()
-      const { block, artist, name } = await user.syncRequest(info.publicKey)
-      result.playing.innerHTML = `Playing: ${artist || 'Unknown artist'} - ${name || 'Unknown track'}`
-
-      const stream = await listener.listen(block, (data) => {
-        if (data.cleanBuffer) {
-          player.cleanBuffer()
-          player.audio.play()
-        }
-        result.playing.innerHTML = `Playing: ${data.artist || 'Unknown artist'} - ${data.name || 'Unknown track'}`
-      })
-      await player.playStream(stream)
-    }
-
-    result.pause.onclick = async (e) => {
-      listener.destroy()
-      player.stop()
-
-      Array(result.streamer, result.name, result.description, result.listen, result.playing, result.fav).forEach(e => e.classList.remove('streamer-selected'))
-      result.playing.classList.add('disabled')
-      result.listen.classList.remove('disabled')
-      result.pause.classList.add('disabled')
-      result.play.classList.remove('disabled')
-
-      e.stopPropagation()
-    }
+    result.streamer.onclick = async () => await onResultClick(listener, result, info.publicKey)
+    result.pause.onclick = async (e) => onResultPauseClick(e, listener, result)
 
     result.fav.onclick = async (e) => {
       result.fav.classList.replace('far', 'fas')
@@ -214,6 +217,7 @@ window.onload = async () => {
     document.getElementById('favourites-list').innerHTML = ''
 
     favourites.forEach(e => {
+      const listener = null
       const streamer = document.createElement('div')
       const name = document.createElement('p')
       const description = document.createElement('p')
@@ -251,6 +255,10 @@ window.onload = async () => {
       streamer.append(tags)
       streamer.append(listen)
       streamer.append(playing)
+
+      const result = { streamer, name, description, tags, listen, playing, play, pause, fav }
+      streamer.onclick = async () => onResultClick(listener, result, Buffer.from(e.publicKey, 'hex'))
+      pause.onclick = async (e) => onResultPauseClick(e, listener, result)
 
       document.querySelector('#favourites-list').append(streamer)
     })
