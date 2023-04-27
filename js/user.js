@@ -1,6 +1,6 @@
 import c from 'compact-encoding'
 import { compile, opt } from 'compact-encoding-struct'
-import DHT from '@hyperswarm/dht'
+import DHT from 'hyperdht'
 import RPC from '@hyperswarm/rpc'
 
 const userInfo = compile({

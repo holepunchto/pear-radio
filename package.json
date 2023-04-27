@@ -23,7 +23,6 @@
   },
   "dependencies": {
     "@dropb/ffprobe": "^2.0.1",
-    "@hyperswarm/dht": "^6.4.1",
     "@hyperswarm/rpc": "^3.1.0",
     "@rafapaezbas/simple-config": "^2.2.0",
     "compact-encoding": "^2.11.0",
@@ -32,10 +31,9 @@
     "corestore": "^6.4.0",
     "hypercore-crypto": "^3.3.1",
     "hypercore-crypto-tweak": "github:holepunchto/hypercore-crypto-tweak",
+    "hyperdht": "^6.5.2",
     "hyperswarm": "^4.3.5",
-    "install": "^0.13.0",
     "node-id3": "^0.2.5",
-    "npm": "^9.3.0",
     "random-access-memory": "^6.1.0",
     "sodium-native": "^3.4.1"
   }
