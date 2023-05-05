@@ -12,7 +12,8 @@
       "height": 875,
       "width": 420,
       "resizable": false
-    }
+    },
+    "entrypoints": []
   },
   "author": "",
   "license": "MIT",
