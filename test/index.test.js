@@ -1,5 +1,5 @@
 import test from 'brittle' // https://github.com/holepunchto/brittle
-import joyrider from 'joyrider' // https://github.com/holepunchto/joyrider
+import joyrider from '@holepunchto/joyrider' // https://github.com/holepunchto/joyrider
 
 const rider = joyrider(import.meta.url)
 

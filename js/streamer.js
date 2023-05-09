@@ -8,7 +8,7 @@ import Corestore from 'corestore'
 import ram from 'random-access-memory'
 import http from 'http'
 import sodium from 'sodium-native'
-import tweak from 'hypercore-crypto-tweak'
+import tweak from '@holepunchto/hypercore-crypto-tweak'
 
 const PEAR_RADIO_STREAM = 'pear_radio_stream'
 const PEAR_RADIO_METADATA = 'pear_radio_metadata'

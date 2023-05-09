@@ -1,5 +1,6 @@
 {
-  "name": "pear-radio",
+  "name": "@holepunchto/pear-radio",
+  "version": "1.0.0",
   "main": "index.html",
   "type": "module",
   "scripts": {
