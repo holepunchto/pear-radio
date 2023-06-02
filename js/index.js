@@ -300,8 +300,6 @@ window.onload = async () => {
   if (getConfig('darkMode')) darkMode() // do this first so user doesnt notice
 
   await user.ready()
-  await player.ready()
-  await tagManager.ready()
 
   const defaultName = 'User ' + user.server.publicKey.toString('hex').substr(0, 6)
 
@@ -496,6 +494,9 @@ window.onload = async () => {
       addResult(info)
     }
   })
+
+  await player.ready()
+  await tagManager.ready()
 
   setInterval(() => {
     if (player && player.audio && player.audio.currentTime && player.streamer.streaming) {
