@@ -3,7 +3,7 @@
   "main": "index.html",
   "type": "module",
   "scripts": {
-    "dev": "env TEST=true holepunch dev",
+    "dev": "env TEST=true pear dev",
     "fix": "standard --fix",
     "test": "brittle test/*.test.js"
   },

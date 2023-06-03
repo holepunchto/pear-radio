@@ -111,8 +111,8 @@ window.onload = async () => {
     const description = document.createElement('p')
     const tags = document.createElement('p')
     const listen = document.createElement('p')
-    const playing = document.createElement('p')
     const lastPlayedTracks = document.createElement('div')
+    const playing = document.createElement('p')
 
     const fav = document.createElement('i')
     const play = document.createElement('i')
@@ -136,16 +136,16 @@ window.onload = async () => {
     description.classList.add('streamer-description')
     tags.classList.add('streamer-tags')
     listen.classList.add('listen')
-    playing.classList.add('listen', 'main-fg-color', 'disabled')
     lastPlayedTracks.classList.add('listen')
+    playing.classList.add('listen', 'main-fg-color', 'disabled')
 
     streamer.append(user)
     streamer.append(name)
     streamer.append(description)
     streamer.append(tags)
     streamer.append(listen)
-    streamer.append(playing)
     streamer.append(lastPlayedTracks)
+    streamer.append(playing)
 
     document.querySelector('#streamers-list').append(streamer)
     return { streamer, name, description, listen, playing, lastPlayedTracks, play, pause, fav }
@@ -153,7 +153,7 @@ window.onload = async () => {
 
   const onResultClick = async (listener, result, publicKey) => {
     Array.from(document.getElementsByClassName('streamer-selected')).forEach((e) => e.classList.remove('streamer-selected'))
-    Array(result.streamer, result.name, result.description, result.listen, result.playing, result.fav).forEach(e => e.classList.add('streamer-selected'))
+    Array(result.streamer, result.name, result.description, result.listen, result.playing, result.lastPlayedTracks, result.fav).forEach(e => e.classList.add('streamer-selected'))
     result.listen.classList.add('disabled')
     result.playing.classList.remove('disabled')
     result.play.classList.add('disabled')
@@ -176,7 +176,7 @@ window.onload = async () => {
         result.lastPlayedTracks.append(header)
         lastPlayedTracks.forEach(metadata => {
           const track = document.createElement('p')
-          track.innerHTML = `${metadata.artist} - ${metadata.name}`
+          track.innerHTML = `${metadata.artist || 'Unknown artist'} - ${metadata.name || 'Unknown track'}`
           result.lastPlayedTracks.append(track)
         })
       }
@@ -375,7 +375,6 @@ window.onload = async () => {
   document.querySelector('#favourites-icon').onclick = async () => {
     selectIcon('#favourites-icon')
     fade('#favourites')
-    console.log(getConfig('favourites'))
     listFavourites(JSON.parse(getConfig('favourites')))
   }
 
@@ -524,8 +523,6 @@ window.onload = async () => {
 
   await player.ready()
   await tagManager.ready()
-
-  console.log('wo')
 
   setInterval(() => {
     if (player && player.audio && player.audio.currentTime && player.streamer.streaming) {

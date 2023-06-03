@@ -1,7 +1,7 @@
 import EventEmmiter from 'events'
 import { Mp3ReadStream, Streamer, HttpAudioStreamer } from './streamer.js'
 
-const bootstrap = process.env.TEST ? [{ host: '127.0.0.1', port: 49737 }] : undefined
+const bootstrap = process.env.TEST ? [{ host: '127.0.0.1', port: 49736 }] : undefined
 
 export class Player extends EventEmmiter {
   constructor (start, userKeyPair) {
