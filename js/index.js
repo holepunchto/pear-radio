@@ -127,7 +127,7 @@ window.onload = async () => {
     name.innerHTML = info.name
     Array(fav, play, pause).forEach(e => name.append(e))
     description.innerHTML = info.description && info.description.length > 0 ? info.description : 'No description provided.'
-    tags.innerHTML = info.tags && info.tags.length > 0 ? info.tags : 'No tags provided.'
+    tags.innerHTML = info.tags && info.tags.length > 0 ? info.tags.replaceAll(',', ', ').replaceAll('  ', ' ') : 'No tags provided.' // add space after comma and remove double spaces
     listen.innerHTML = ''
     playing.innerHTML = 'Buffering...'
 
@@ -152,12 +152,22 @@ window.onload = async () => {
   }
 
   const onResultClick = async (listener, result, publicKey) => {
+    if (listener) await listener.destroy() // destroy prev listener
+
+    Array.from(document.getElementsByClassName('streamer-selected')).forEach((e) => { // Reset previous stream
+      if (e.classList.contains('listen')) e.classList.add('disabled')
+      if (e.classList.contains('fa-pause')) e.classList.add('disabled')
+      if (e.classList.contains('fa-play-circle')) e.classList.remove('disabled')
+    })
+
     Array.from(document.getElementsByClassName('streamer-selected')).forEach((e) => e.classList.remove('streamer-selected'))
-    Array(result.streamer, result.name, result.description, result.listen, result.playing, result.lastPlayedTracks, result.fav).forEach(e => e.classList.add('streamer-selected'))
+    Array(result.streamer, result.name, result.description, result.listen, result.playing, result.lastPlayedTracks, result.fav, result.play, result.pause).forEach(e => e.classList.add('streamer-selected'))
     result.listen.classList.add('disabled')
     result.playing.classList.remove('disabled')
     result.play.classList.add('disabled')
     result.pause.classList.remove('disabled')
+
+    result.playing.innerHTML = 'Buffering...' // reset
 
     listener = new Listener(publicKey, { bootstrap })
     await listener.ready()
@@ -166,6 +176,7 @@ window.onload = async () => {
 
     const showLastPlayedTracks = (lastPlayedTracks) => {
       result.lastPlayedTracks.innerHTML = '' // reset
+      result.lastPlayedTracks.classList.remove('disabled')
       if (!lastPlayedTracks.length) {
         const placeholder = document.createElement('p')
         placeholder.innerHTML = 'Not avalilable'
