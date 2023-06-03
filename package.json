@@ -5,7 +5,10 @@
   "scripts": {
     "dev": "env TEST=true pear dev",
     "fix": "standard --fix",
-    "test": "brittle test/*.test.js"
+    "test": "brittle test/*.test.js",
+    "stage": "pear stage pear-radio-channel",
+    "release": "pear release pear-radio-channel",
+    "seed": "pear seed pear-radio-channel"
   },
   "holepunch": {
     "gui": {
