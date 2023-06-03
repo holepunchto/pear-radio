@@ -270,6 +270,10 @@ input:focus {
     color: var(--secondary-fg-color);
 }
 
+.main-fg-color {
+    color: var(--main-fg-color);
+}
+
 .streamer-selected {
     background-color: var(--tertiary-fg-color);
 }

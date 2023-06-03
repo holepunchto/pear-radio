@@ -112,6 +112,7 @@ window.onload = async () => {
     const tags = document.createElement('p')
     const listen = document.createElement('p')
     const playing = document.createElement('p')
+    const lastPlayedTracks = document.createElement('div')
 
     const fav = document.createElement('i')
     const play = document.createElement('i')
@@ -135,7 +136,8 @@ window.onload = async () => {
     description.classList.add('streamer-description')
     tags.classList.add('streamer-tags')
     listen.classList.add('listen')
-    playing.classList.add('listen', 'disabled')
+    playing.classList.add('listen', 'main-fg-color', 'disabled')
+    lastPlayedTracks.classList.add('listen')
 
     streamer.append(user)
     streamer.append(name)
@@ -143,9 +145,10 @@ window.onload = async () => {
     streamer.append(tags)
     streamer.append(listen)
     streamer.append(playing)
+    streamer.append(lastPlayedTracks)
 
     document.querySelector('#streamers-list').append(streamer)
-    return { streamer, name, description, listen, playing, play, pause, fav }
+    return { streamer, name, description, listen, playing, lastPlayedTracks, play, pause, fav }
   }
 
   const onResultClick = async (listener, result, publicKey) => {
@@ -159,14 +162,38 @@ window.onload = async () => {
     listener = new Listener(publicKey, { bootstrap })
     await listener.ready()
     const { block, artist, name } = await user.syncRequest(publicKey)
-    result.playing.innerHTML = `Playing: ${artist || 'Unknown artist'} - ${name || 'Unknown track'}`
+    result.playing.innerHTML = `Now playing: ${artist || 'Unknown artist'} - ${name || 'Unknown track'}`
+
+    const showLastPlayedTracks = (lastPlayedTracks) => {
+      result.lastPlayedTracks.innerHTML = '' // reset
+      if (!lastPlayedTracks.length) {
+        const placeholder = document.createElement('p')
+        placeholder.innerHTML = 'Not avalilable'
+        result.lastPlayedTracks.append(placeholder)
+      } else {
+        const header = document.createElement('p')
+        header.innerHTML = 'Last played tracks:'
+        result.lastPlayedTracks.append(header)
+        lastPlayedTracks.forEach(metadata => {
+          const track = document.createElement('p')
+          track.innerHTML = `${metadata.artist} - ${metadata.name}`
+          result.lastPlayedTracks.append(track)
+        })
+      }
+    }
+
+    const lastPlayedTracks = await listener.getLastPlayedTracks(5)
+    showLastPlayedTracks(lastPlayedTracks.slice(1)) // remove first because its currently playing, its already displayed in Playing:...
 
     const stream = await listener.listen(block, (data) => {
       if (data.cleanBuffer) {
         player.cleanBuffer()
         player.audio.play()
       }
-      result.playing.innerHTML = `Playing: ${data.artist || 'Unknown artist'} - ${data.name || 'Unknown track'}`
+      result.playing.innerHTML = `Now playing: ${data.artist || 'Unknown artist'} - ${data.name || 'Unknown track'}`
+      lastPlayedTracks.unshift(data)
+      if (lastPlayedTracks.length > 5) lastPlayedTracks.pop()
+      showLastPlayedTracks(lastPlayedTracks.slice(1))
     })
     await player.playStream(stream)
   }
@@ -497,6 +524,8 @@ window.onload = async () => {
 
   await player.ready()
   await tagManager.ready()
+
+  console.log('wo')
 
   setInterval(() => {
     if (player && player.audio && player.audio.currentTime && player.streamer.streaming) {

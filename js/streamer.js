@@ -215,6 +215,16 @@ export class Listener {
     return stream
   }
 
+  async getLastPlayedTracks (n) { // max n of tracks
+    const tracks = []
+    await this.metadata.update()
+    for (let i = 0; i < n; i++) {
+      if (i + 1 > this.metadata.length) break
+      tracks.push(await this.metadata.get(this.metadata.length - i - 1))
+    }
+    return tracks
+  }
+
   destroy () {
     this.swarm.destroy()
     this.store.close()
