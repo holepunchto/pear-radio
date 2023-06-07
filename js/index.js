@@ -229,7 +229,14 @@ window.onload = async () => {
     hideStreamersPlaceholder()
     hideSearchingSpinner()
 
-    result.streamer.onclick = async () => await onResultClick(listener, result, info.publicKey)
+    result.streamer.onclick = async () => {
+      try {
+        await onResultClick(listener, result, info.publicKey)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
     result.pause.onclick = async (e) => onResultPauseClick(e, listener, result)
 
     result.fav.onclick = async (e) => {
