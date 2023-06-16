@@ -161,6 +161,7 @@ window.onload = async () => {
     })
 
     Array.from(document.getElementsByClassName('streamer-selected')).forEach((e) => e.classList.remove('streamer-selected'))
+    console.log(result)
     Array(result.streamer, result.name, result.description, result.listen, result.playing, result.lastPlayedTracks, result.fav, result.play, result.pause).forEach(e => e.classList.add('streamer-selected'))
     result.listen.classList.add('disabled')
     result.playing.classList.remove('disabled')
@@ -268,6 +269,7 @@ window.onload = async () => {
       const description = document.createElement('p')
       const tags = document.createElement('p')
       const listen = document.createElement('p')
+      const lastPlayedTracks = document.createElement('div')
       const playing = document.createElement('p')
 
       const fav = document.createElement('i')
@@ -292,6 +294,7 @@ window.onload = async () => {
       description.classList.add('streamer-description')
       tags.classList.add('streamer-tags')
       listen.classList.add('listen')
+      lastPlayedTracks.classList.add('listen')
       playing.classList.add('listen', 'disabled')
 
       streamer.append(user)
@@ -299,9 +302,10 @@ window.onload = async () => {
       streamer.append(description)
       streamer.append(tags)
       streamer.append(listen)
+      streamer.append(lastPlayedTracks)
       streamer.append(playing)
 
-      const result = { streamer, name, description, tags, listen, playing, play, pause, fav }
+      const result = { streamer, name, description, tags, listen, playing, lastPlayedTracks, play, pause, fav }
       streamer.onclick = async () => onResultClick(listener, result, Buffer.from(e.publicKey, 'hex'))
       pause.onclick = async (e) => onResultPauseClick(e, listener, result)
 
