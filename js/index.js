@@ -105,7 +105,7 @@ window.onload = async () => {
     r.style.setProperty('--tertiary-fg-color', '#e5ebfb')
   }
 
-  const createSearchResult = (info) => {
+  const createStreamerResult = (info) => {
     const streamer = document.createElement('div')
     const name = document.createElement('p')
     const description = document.createElement('p')
@@ -147,7 +147,6 @@ window.onload = async () => {
     streamer.append(lastPlayedTracks)
     streamer.append(playing)
 
-    document.querySelector('#streamers-list').append(streamer)
     return { streamer, name, description, listen, playing, lastPlayedTracks, play, pause, fav }
   }
 
@@ -225,8 +224,8 @@ window.onload = async () => {
 
   const addResult = (info) => {
     const listener = null
-    const result = createSearchResult(info)
-
+    const result = createStreamerResult(info)
+    document.querySelector('#streamers-list').append(result.streamer)
     hideStreamersPlaceholder()
     hideSearchingSpinner()
 
@@ -264,52 +263,10 @@ window.onload = async () => {
 
     favourites.forEach(e => {
       const listener = null
-      const streamer = document.createElement('div')
-      const name = document.createElement('p')
-      const description = document.createElement('p')
-      const tags = document.createElement('p')
-      const listen = document.createElement('p')
-      const lastPlayedTracks = document.createElement('div')
-      const playing = document.createElement('p')
-
-      const fav = document.createElement('i')
-      const play = document.createElement('i')
-      const pause = document.createElement('i')
-      const user = document.createElement('i')
-
-      user.classList.add('fas', 'fa-user', 'streamer-user')
-      fav.classList.add('fas', 'fa-heart', 'streamer-like')
-      play.classList.add('far', 'fa-play-circle', 'streamer-play')
-      pause.classList.add('fas', 'fa-pause', 'streamer-pause', 'disabled')
-
-      name.innerHTML = e.name
-      Array(fav, play, pause).forEach(e => name.append(e))
-      description.innerHTML = e.description && e.description.length > 0 ? e.description : 'No description provided.'
-      tags.innerHTML = e.tags && e.tags.length > 0 ? e.tags : 'No tags provided.'
-      listen.innerHTML = ''
-      playing.innerHTML = 'Buffering...'
-
-      streamer.classList.add('streamer')
-      name.classList.add('streamer-name')
-      description.classList.add('streamer-description')
-      tags.classList.add('streamer-tags')
-      listen.classList.add('listen')
-      lastPlayedTracks.classList.add('listen')
-      playing.classList.add('listen', 'disabled')
-
-      streamer.append(user)
-      streamer.append(name)
-      streamer.append(description)
-      streamer.append(tags)
-      streamer.append(listen)
-      streamer.append(lastPlayedTracks)
-      streamer.append(playing)
-
-      const result = { streamer, name, description, tags, listen, playing, lastPlayedTracks, play, pause, fav }
-      streamer.onclick = async () => onResultClick(listener, result, Buffer.from(e.publicKey, 'hex'))
-      pause.onclick = async (e) => onResultPauseClick(e, listener, result)
-
-      document.querySelector('#favourites-list').append(streamer)
+      const result = createStreamerResult(e)
+      result.streamer.onclick = async () => onResultClick(listener, result, Buffer.from(e.publicKey, 'hex'))
+      result.pause.onclick = async (e) => onResultPauseClick(e, listener, result)
+      document.querySelector('#favourites-list').append(result.streamer)
     })
   }
 
