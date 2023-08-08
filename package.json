@@ -6,9 +6,9 @@
     "dev": "env TEST=true pear dev",
     "fix": "standard --fix",
     "test": "brittle test/*.test.js",
-    "stage": "pear stage pear-radio-channel",
-    "release": "pear release pear-radio-channel",
-    "seed": "pear seed pear-radio-channel"
+    "stage": "rm -r -f node_modules && npm i --omit=dev && pear stage pear-radio-channel-2",
+    "release": "pear release pear-radio-channel-2",
+    "seed": "pear seed pear-radio-channel-2"
   },
   "holepunch": {
     "gui": {
