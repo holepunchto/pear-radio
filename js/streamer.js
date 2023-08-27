@@ -14,15 +14,18 @@ const PEAR_RADIO_STREAM = 'pear_radio_stream'
 const PEAR_RADIO_METADATA = 'pear_radio_metadata'
 
 export class HttpAudioStreamer {
-  constructor () {
+  constructor (opts = {}) {
     this.listeners = []
     this.streaming = null
+    this.cli = opts.cli
+    this.buffer = []
     this.server = http.createServer((req, res) => {
       res.writeHead(200, {
         'Content-Type': 'audio/mp3',
         'Transfer-Encoding': 'chunked'
       })
       this.listeners.push(res)
+      if (this.cli) this.buffer.forEach(e => res.write(e))
     })
   }
 
@@ -39,6 +42,7 @@ export class HttpAudioStreamer {
     if (this.streaming) await this.streaming.destroy()
     this.streaming = readStream
     readStream.on('data', data => {
+      if (this.cli) this.buffer.push(data)
       this.listeners.forEach(l => l.write(data))
     })
   }
