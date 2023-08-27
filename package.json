@@ -2,6 +2,9 @@
   "name": "pear-radio",
   "main": "index.html",
   "type": "module",
+  "bin": {
+    "pear-radio": "./bin/index.mjs"
+  },
   "scripts": {
     "dev": "env TEST=true pear dev",
     "fix": "standard --fix",

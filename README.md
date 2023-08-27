@@ -2,6 +2,11 @@
 
 Pear radio is a Holepunch music audio player/streamer.
 
+```
+npm install -g https://github.com/holepunchto/pear-radio
+pear-radio [streamer-pk]
+```
+
 ## Streaming and file formats
 
 Pear radio feeds the audio stream to a single Hypercore, listeners replicate the core.
