@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { User } from '../js/user.js'
 import { Listener, HttpAudioStreamer } from '../js/streamer.js'
 import { keyPair, randomBytes } from 'hypercore-crypto'
