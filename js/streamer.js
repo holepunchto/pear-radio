@@ -150,8 +150,10 @@ export class Streamer {
 
   async ready () {
     await this.store.ready()
-    this.core = this.store.get(tweak(this.keyPair, PEAR_RADIO_STREAM))
-    this.metadata = this.store.get({ ...tweak(this.keyPair, PEAR_RADIO_METADATA), valueEncoding: 'json' })
+    const { keyPair: coreKeyPair, sign: coreSign } = tweak(this.keyPair, PEAR_RADIO_STREAM) // TODO update if hypercore-crypto-tweak updates
+    const { keyPair: metadataKeyPair, sign: metadataSign } = tweak(this.keyPair, PEAR_RADIO_METADATA)
+    this.core = this.store.get({ keyPair: coreKeyPair, auth: { sign: coreSign } })
+    this.metadata = this.store.get({ keyPair: metadataKeyPair, auth: { sign: metadataSign }, valueEncoding: 'json' })
     await this.core.ready()
     await this.metadata.ready()
     this.swarm.join(this.core.discoveryKey)
