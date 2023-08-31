@@ -9,6 +9,7 @@ import ram from 'random-access-memory'
 import http from 'http'
 import sodium from 'sodium-native'
 import tweak from 'hypercore-crypto-tweak'
+import { Chat } from './chat.js'
 
 const PEAR_RADIO_STREAM = 'pear_radio_stream'
 const PEAR_RADIO_METADATA = 'pear_radio_metadata'
@@ -142,6 +143,7 @@ export class Streamer {
     this.metadata = null
     this.streaming = null
     this.checkpoint = null // last song starting block
+    this.chat = new Chat(this.keyPair, { store: this.store })
 
     this.swarm.on('connection', (conn, info) => {
       this.store.replicate(conn)
@@ -156,6 +158,7 @@ export class Streamer {
     this.metadata = this.store.get({ keyPair: metadataKeyPair, auth: { sign: metadataSign }, valueEncoding: 'json' })
     await this.core.ready()
     await this.metadata.ready()
+    await this.chat.ready()
     this.swarm.join(this.core.discoveryKey)
     this.swarm.join(this.metadata.discoveryKey)
     await this.swarm.flush()

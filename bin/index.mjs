@@ -3,6 +3,7 @@
 import { User } from '../js/user.js'
 import { Listener, HttpAudioStreamer } from '../js/streamer.js'
 import { keyPair, randomBytes } from 'hypercore-crypto'
+import { Chat } from '../js/chat.js'
 
 const args = process.argv
 const bootstrap = process.env.TEST ? [{ host: '127.0.0.1', port: 49736 }] : undefined
@@ -22,6 +23,9 @@ const playRemote = async (key, opts = {}) => {
   httpAudioStreamer.stream(stream)
   console.log('Streaming to http://localhost:' + httpAudioStreamer.port)
   console.log(artist + ' - ' + name)
+
+  const chat = new Chat(userKeyPair, { bootstrap: key, store: listener.store })
+  await chat.ready()
 }
 
 const key = Buffer.from(args[2], 'hex')

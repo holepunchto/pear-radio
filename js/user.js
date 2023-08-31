@@ -34,6 +34,7 @@ export class User {
     this.server.respond('sync-request', async (req) => {
       const block = this.player.currentAudioBlock()
       const { artist, name } = await this.player.streamer.getMetadata()
+      await this.player.streamer.chat.addWriter(req)
       return c.encode(syncResponse, { block, artist, name })
     })
 
@@ -48,7 +49,7 @@ export class User {
 
   async syncRequest (key) {
     if (!this.connections.has(key)) this.connections.set(key, this.rpc.connect(key))
-    const encodedSyncResponse = await this.connections.get(key).request('sync-request', Buffer.alloc(0))
+    const encodedSyncResponse = await this.connections.get(key).request('sync-request', this.keyPair.publicKey)
     return this.decodeSyncResponse(encodedSyncResponse)
   }
 
