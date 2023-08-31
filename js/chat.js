@@ -2,16 +2,18 @@ import Corestore from 'corestore'
 import ram from 'random-access-memory'
 import Autobase from '@holepunchto/autobase'
 import tweak from 'hypercore-crypto-tweak'
+import EventEmmiter from 'events'
 
-export class Chat {
+export class Chat extends EventEmmiter {
   constructor (userKeyPair, opts = {}) {
+    super()
     this.bootstrap = opts.bootstrap ? tweak({ publicKey: opts.bootstrap }, 'CHAT-' + opts.bootstrap.toString('hex')).publicKey : undefined
     this.store = opts.store || new Corestore(ram)
 
     const tweakedKeyPair = tweak(userKeyPair, 'CHAT-' + userKeyPair.publicKey.toString('hex'))
     this._localKeyPair = tweakedKeyPair.keyPair
     this._auth = { sign: tweakedKeyPair.sign }
-    this.base = new Autobase(this.store, this.bootstrap, { apply: this._apply, open: this._open }, { localKeyPair: { keyPair: this._localKeyPair, auth: this._auth } })
+    this.base = new Autobase(this.store, this.bootstrap, { apply: this._apply.bind(this), open: this._open }, { localKeyPair: { keyPair: this._localKeyPair, auth: this._auth } })
   }
 
   async ready () {
@@ -26,6 +28,11 @@ export class Chat {
 
   addMessage (message) {
     return this.base.append('msg ' + message)
+  }
+
+  getMessages () {
+    const length = this.base.view.length
+    return Promise.all([...Array(length).keys()].map(i => this.base.view.get(i)))
   }
 
   _open (store) {
@@ -43,6 +50,7 @@ export class Chat {
       }
       if (op === 'msg') {
         view.append(val)
+        this.emit('message', val)
       }
     }
   }
