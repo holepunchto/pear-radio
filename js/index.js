@@ -183,6 +183,8 @@ window.onload = async () => {
   }
 
   const renderChat = ({ name, description, tags }) => {
+    document.getElementById('chat-placeholder').classList.add('disabled')
+    document.getElementById('chat-content').classList.remove('disabled')
     document.getElementById('chat-title-name').innerHTML = name
     document.getElementById('chat-title-description').innerHTML = description
     document.getElementById('chat-title-tags').innerHTML = tags
@@ -234,6 +236,9 @@ window.onload = async () => {
     const lastPlayedTracks = await listener.getLastPlayedTracks(5)
     showLastPlayedTracks(lastPlayedTracks.slice(1)) // remove first because its currently playing, its already displayed in Playing:...
 
+    renderChat(info)
+    chat = await createChat(user.keyPair, info.publicKey, listener.store)
+
     const stream = await listener.listen(block, (data) => {
       if (data.cleanBuffer) {
         player.cleanBuffer()
@@ -246,16 +251,13 @@ window.onload = async () => {
     })
 
     await player.playStream(stream)
-
-    renderChat(info)
-    chat = await createChat(user.keyPair, info.publicKey, listener.store)
   }
 
   const onResultPauseClick = (event, listener, result) => {
     if (listener) listener.destroy()
     player.stop()
 
-    Array(result.streamer, result.name, result.description, result.listen, result.playing, result.fav).forEach(e => e.classList.remove('streamer-selected'))
+    Array.from(document.getElementsByClassName('streamer-selected')).forEach((e) => e.classList.remove('streamer-selected'))
     result.playing.classList.add('disabled')
     result.listen.classList.remove('disabled')
     result.pause.classList.add('disabled')

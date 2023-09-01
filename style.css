@@ -222,7 +222,7 @@ input:focus {
     outline: none ! important;
 }
 
-#streamers, #chat-messages {
+#streamers {
     display: flex;
     height: 75vh;
     justify-content: flex-start;
@@ -364,7 +364,6 @@ header {
     text-align: center;
     padding: 5vh;
     margin-top: 25vh;
-    display: none;
 }
 
 .chat-placeholder-message {
@@ -582,6 +581,9 @@ header {
     padding-left: 12px;
     border-radius: 8px;
     margin-bottom: 1vh;
+    margin-left: 3vw;
+    margin-right: 3vw;
+    margin-top: 4vh;
 }
 
 #chat-title-name {
@@ -618,9 +620,11 @@ header {
 #messages-list > div > span {
     font-weight: 600;
     color: var(--secondary-fg-color);
-    margin-right: 3px;
+    margin-right: 2vw;
 }
 
 #messages-list {
-    margin-left: 2vw;
+    margin-left: 4vw;
+    height: 57vh;
+    overflow: auto;
 }
