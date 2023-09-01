@@ -21,6 +21,10 @@ export class Chat extends EventEmmiter {
     await this.base.ready()
   }
 
+  async destroy () {
+    // TODO close autobase
+  }
+
   addWriter (userPublicKey) {
     const keyPair = tweak({ publicKey: userPublicKey }, 'CHAT-' + userPublicKey.toString('hex'))
     return this.base.append('add ' + keyPair.publicKey.toString('hex'))

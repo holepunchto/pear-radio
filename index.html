@@ -91,6 +91,27 @@
       <p id="favourites-title" class="disabled">Favourites</p>
       <div id="favourites-list"></div>
     </div>
+    <div id="chat">
+      <div id="chat-messages">
+        <div id="chat-placeholder">
+          <i class="far fa-comment chat-placeholder-message" style='font-size:25px'></i>
+          <p class="chat-placeholder-message">Connect to a stream and chat.</p>
+        </div>
+        <div id="chat-title">
+          <p id="chat-title-name"></p>
+          <p id="chat-title-description"></p>
+          <p id="chat-title-tags"></p>
+        </div>
+        <div id="messages-list">
+        </div>
+      </div>
+      <div id="comment">
+        <button id="send-message-button">
+          <i class="fa fa-paper-plane header-icon"></i>
+        </button>
+        <input id="comment-input" type="text" spellcheck="false" placeholder="Comment...">
+      </div>
+    </div>
   </body>
   <audio id="player" type="audio/mpeg"></audio>
   <script type="module" src="./js/index.js"></script>

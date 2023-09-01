@@ -4,6 +4,7 @@ import { Listener, TagManager } from './streamer.js'
 import copy from 'copy-text-to-clipboard'
 import configuration from './config.js'
 import { keyPair, randomBytes } from 'hypercore-crypto'
+import { Chat } from '../js/chat.js'
 
 const bootstrap = process.env.TEST ? [{ host: '127.0.0.1', port: 49736 }] : undefined
 
@@ -29,6 +30,9 @@ window.onload = async () => {
 
   const user = new User(player, { bootstrap, keyPair: userKeyPair })
   const tagManager = new TagManager(user, { bootstrap })
+
+  // TODO do the same for listener
+  let chat = null
 
   const addTrack = (metadata) => {
     const track = document.createElement('div')
@@ -147,11 +151,46 @@ window.onload = async () => {
     streamer.append(lastPlayedTracks)
     streamer.append(playing)
 
-    return { streamer, name, description, listen, playing, lastPlayedTracks, play, pause, fav }
+    return { streamer, name, description, listen, playing, lastPlayedTracks, play, pause, fav, tags }
   }
 
-  const onResultClick = async (listener, result, publicKey) => {
+  const addChatMessage = (username, msg) => {
+    const div = document.createElement('div')
+    const icon = document.createElement('i')
+    const user = document.createElement('span')
+    const message = document.createElement('p')
+
+    icon.classList.add('fas', 'fa-user')
+    user.innerHTML = username
+    message.innerHTML = msg
+
+    div.append(icon)
+    div.append(user)
+    div.append(message)
+
+    document.getElementById('messages-list').append(div)
+  }
+
+  const createChat = (userKeyPair, streamerKey, store) => {
+    const chat = new Chat(userKeyPair, { bootstrap: streamerKey, store })
+    // TODO set chat update interval?
+    // TODO remove this
+    chat.on('message', (msg) => {
+      addChatMessage('anonymous', msg)
+    })
+
+    return chat
+  }
+
+  const renderChat = ({ name, description, tags }) => {
+    document.getElementById('chat-title-name').innerHTML = name
+    document.getElementById('chat-title-description').innerHTML = description
+    document.getElementById('chat-title-tags').innerHTML = tags
+  }
+
+  const onResultClick = async (listener, result, info) => {
     if (listener) await listener.destroy() // destroy prev listener
+    if (chat) await chat.destroy()
 
     Array.from(document.getElementsByClassName('streamer-selected')).forEach((e) => { // Reset previous stream
       if (e.classList.contains('listen')) e.classList.add('disabled')
@@ -160,7 +199,6 @@ window.onload = async () => {
     })
 
     Array.from(document.getElementsByClassName('streamer-selected')).forEach((e) => e.classList.remove('streamer-selected'))
-    console.log(result)
     Array(result.streamer, result.name, result.description, result.listen, result.playing, result.lastPlayedTracks, result.fav, result.play, result.pause).forEach(e => e.classList.add('streamer-selected'))
     result.listen.classList.add('disabled')
     result.playing.classList.remove('disabled')
@@ -169,9 +207,9 @@ window.onload = async () => {
 
     result.playing.innerHTML = 'Buffering...' // reset
 
-    listener = new Listener(publicKey, { bootstrap })
+    listener = new Listener(info.publicKey, { bootstrap })
     await listener.ready()
-    const { block, artist, name } = await user.syncRequest(publicKey)
+    const { block, artist, name } = await user.syncRequest(info.publicKey)
     result.playing.innerHTML = `Now playing: ${artist || 'Unknown artist'} - ${name || 'Unknown track'}`
 
     const showLastPlayedTracks = (lastPlayedTracks) => {
@@ -206,7 +244,11 @@ window.onload = async () => {
       if (lastPlayedTracks.length > 5) lastPlayedTracks.pop()
       showLastPlayedTracks(lastPlayedTracks.slice(1))
     })
+
     await player.playStream(stream)
+
+    renderChat(info)
+    chat = await createChat(user.keyPair, info.publicKey, listener.store)
   }
 
   const onResultPauseClick = (event, listener, result) => {
@@ -231,13 +273,13 @@ window.onload = async () => {
 
     result.streamer.onclick = async () => {
       try {
-        await onResultClick(listener, result, info.publicKey)
+        await onResultClick(listener, result, info)
       } catch (err) {
         console.log(err)
       }
     }
 
-    result.pause.onclick = async (e) => onResultPauseClick(e, listener, result)
+    result.pause.onclick = async (event) => onResultPauseClick(event, listener, result)
 
     result.fav.onclick = async (e) => {
       result.fav.classList.replace('far', 'fas')
@@ -261,11 +303,11 @@ window.onload = async () => {
     document.getElementById('favourites-title').classList.remove('disabled')
     document.getElementById('favourites-list').innerHTML = ''
 
-    favourites.forEach(e => {
+    favourites.forEach(info => {
       const listener = null
-      const result = createStreamerResult(e)
-      result.streamer.onclick = async () => onResultClick(listener, result, Buffer.from(e.publicKey, 'hex'))
-      result.pause.onclick = async (e) => onResultPauseClick(e, listener, result)
+      const result = createStreamerResult(info)
+      result.streamer.onclick = async () => onResultClick(listener, result, info)
+      result.pause.onclick = async (event) => onResultPauseClick(event, listener, result)
       document.querySelector('#favourites-list').append(result.streamer)
     })
   }
@@ -289,7 +331,7 @@ window.onload = async () => {
   }
 
   const fade = (view) => {
-    ['#stream', '#settings', '#listen', '#favourites'].filter(e => e !== view).forEach(e => {
+    ['#stream', '#settings', '#listen', '#favourites', '#chat'].filter(e => e !== view).forEach(e => {
       document.querySelector(e).classList.add('fade-out')
     })
     document.querySelector(view).classList.remove('fade-out')
@@ -297,7 +339,7 @@ window.onload = async () => {
   }
 
   const selectIcon = (icon) => {
-    const icons = ['#settings-icon', '#tracklist-icon', '#search-icon', '#favourites-icon']
+    const icons = ['#settings-icon', '#tracklist-icon', '#search-icon', '#favourites-icon', '#chat-icon']
     icons.forEach(i => document.querySelector(i).classList.remove('selected-header-icon'))
     document.querySelector(icon).classList.add('selected-header-icon')
   }
@@ -357,6 +399,11 @@ window.onload = async () => {
     listFavourites(JSON.parse(getConfig('favourites')))
   }
 
+  document.querySelector('#chat-icon').onclick = async () => {
+    selectIcon('#chat-icon')
+    fade('#chat')
+  }
+
   document.querySelector('#settings-icon').onclick = async () => {
     selectIcon('#settings-icon')
     fade('#settings')
@@ -398,6 +445,12 @@ window.onload = async () => {
         tagManager.tags.get(searchText).map(addResult)
       }
     }
+  }
+
+  document.querySelector('#send-message-button').onclick = async () => {
+    const message = document.querySelector('#comment-input').value
+    addChatMessage('user', message)
+    document.querySelector('#comment-input').value = ''
   }
 
   document.querySelector('#forward-controls').onclick = async () => {

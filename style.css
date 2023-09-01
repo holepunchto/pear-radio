@@ -49,6 +49,15 @@ input::placeholder {
     background: var(--main-bg-color);
 }
 
+#chat {
+    position: absolute;
+    width: 100%;
+    height: 90%;
+    top: 10%;
+    right: -100%;
+    background: var(--main-bg-color);
+}
+
 #settings {
     position: absolute;
     width: 100%;
@@ -190,7 +199,7 @@ input::placeholder {
     width: 0px;
 }
 
-#search {
+#search, #comment {
     border-radius: 10px;
     margin-left: 4vw;
     margin-right: 4vw;
@@ -198,7 +207,7 @@ input::placeholder {
     margin-top: 3vh;
 }
 
-#search-input {
+#search-input, #comment-input {
     padding: 6px;
     font-size: 100%;
     border-radius: 5px;
@@ -213,7 +222,7 @@ input:focus {
     outline: none ! important;
 }
 
-#streamers {
+#streamers, #chat-messages {
     display: flex;
     height: 75vh;
     justify-content: flex-start;
@@ -351,6 +360,19 @@ header {
     letter-spacing: 1px;
 }
 
+#chat-placeholder {
+    text-align: center;
+    padding: 5vh;
+    margin-top: 25vh;
+    display: none;
+}
+
+.chat-placeholder-message {
+    color: var(--secondary-fg-color);
+    font-size: 100%;
+    letter-spacing: 1px;
+}
+
 .disabled {
     display: none !important;
 }
@@ -394,7 +416,7 @@ header {
     margin-left: 2vw;
 }
 
-#search-button {
+#search-button, #send-message-button {
     padding: 0px;
     margin-right: 2vw;
     background-color: var(--main-bg-color);
@@ -552,4 +574,53 @@ header {
   font-size: 125%;
   margin-right: 2vw;
   color: var(--main-fg-color);
+}
+
+#chat-title {
+    background: #e9e9e9;
+    padding: 6px;
+    padding-left: 12px;
+    border-radius: 8px;
+    margin-bottom: 1vh;
+}
+
+#chat-title-name {
+    color: var(--main-fg-color);
+    font-weight: bold;
+}
+
+#chat-title-description {
+    color: var(--main-fg-color);
+    font-weight: 600;
+}
+
+#chat-title-tags {
+    color: var(--main-fg-color);
+    font-weight: 600;
+}
+
+#messages-list > div {
+    margin-left: 1vw;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    border-radius: 4px;
+}
+
+#messages-list > div > p {
+    display: inline;
+}
+
+#messages-list > div > i {
+    color: var(--secondary-fg-color);
+    margin-right: 13px;
+}
+
+#messages-list > div > span {
+    font-weight: 600;
+    color: var(--secondary-fg-color);
+    margin-right: 3px;
+}
+
+#messages-list {
+    margin-left: 2vw;
 }
