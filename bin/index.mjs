@@ -33,9 +33,9 @@ const playRemote = async (key, opts = {}) => {
   })
 
   setInterval(async () => {
-    // await chat.base.update()
-    // if (!chat.base.writable) await once(chat.base, 'writable')
-    // chat.addMessage(Date.now().toString())
+    await chat.base.update()
+    if (!chat.base.writable) await once(chat.base, 'writable')
+    chat.addMessage(Date.now().toString())
   }, 1000)
 }
 
