@@ -179,6 +179,7 @@ window.onload = async () => {
   const createChat = (userKeyPair, streamerKey, store) => {
     const chat = new Chat(userKeyPair, { bootstrap: streamerKey, store })
     chat.on('message', async () => {
+      resetChatMessages()
       const messages = await chat.getMessages()
       messages.forEach(e => {
         const { user: username, msg } = chat.parseMessage(e.toString())

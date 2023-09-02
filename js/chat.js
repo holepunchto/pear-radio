@@ -55,7 +55,7 @@ export class Chat extends EventEmmiter {
       const op = v.split(' ')[0]
       const val = v.split(' ').splice(1).join(' ')
       if (op === 'add') {
-        await base.addWriter(Buffer.from(val, 'hex'), { indexer: true })
+        await base.addWriter(Buffer.from(val, 'hex'), { indexer: false }) // only indexer i sthe streamer
         continue
       }
       if (op === 'msg') {
