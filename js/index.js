@@ -55,6 +55,7 @@ window.onload = async () => {
 
     track.onclick = async () => {
       play(metadata, { forceRemoteCleanBuffer: true })
+      renderChat(user.info)
     }
 
     document.querySelector('#tracklist').append(track)
@@ -83,6 +84,10 @@ window.onload = async () => {
   const resetSearchResults = () => {
     hideStreamersPlaceholder()
     document.querySelector('#streamers-list').innerHTML = ''
+  }
+
+  const resetChatMessages = () => {
+    document.querySelector('#messages-list').innerHTML = ''
   }
 
   const disableScrolling = () => {
@@ -173,10 +178,12 @@ window.onload = async () => {
 
   const createChat = (userKeyPair, streamerKey, store) => {
     const chat = new Chat(userKeyPair, { bootstrap: streamerKey, store })
-    // TODO set chat update interval?
-    // TODO remove this
-    chat.on('message', (msg) => {
-      addChatMessage('anonymous', msg)
+    chat.on('message', async () => {
+      const messages = await chat.getMessages()
+      messages.forEach(e => {
+        const { user: username, msg } = chat.parseMessage(e.toString())
+        addChatMessage(username, msg)
+      })
     })
 
     return chat
@@ -185,7 +192,7 @@ window.onload = async () => {
   const renderChat = ({ name, description, tags }) => {
     document.getElementById('chat-placeholder').classList.add('disabled')
     document.getElementById('chat-content').classList.remove('disabled')
-    document.getElementById('chat-title-name').innerHTML = name
+    document.getElementById('chat-title-name').innerHTML = name + ' (Live chat)'
     document.getElementById('chat-title-description').innerHTML = description
     document.getElementById('chat-title-tags').innerHTML = tags
   }
@@ -451,8 +458,12 @@ window.onload = async () => {
 
   document.querySelector('#send-message-button').onclick = async () => {
     const message = document.querySelector('#comment-input').value
-    addChatMessage('user', message)
     document.querySelector('#comment-input').value = ''
+    if (user.player.isPlayingLocal) {
+      user.player.streamer.chat.addMessage(message, user.info.name)
+    } else {
+      chat.addMessage(message, user.info.name)
+    }
   }
 
   document.querySelector('#forward-controls').onclick = async () => {
@@ -557,6 +568,17 @@ window.onload = async () => {
 
   await player.ready()
   await tagManager.ready()
+
+  user.player.streamer.chat.on('message', async () => {
+    if (player.isPlayingLocal) {
+      resetChatMessages()
+      const messages = await player.streamer.chat.getMessages()
+      messages.forEach(e => {
+        const { user: username, msg } = player.streamer.chat.parseMessage(e.toString())
+        addChatMessage(username, msg)
+      })
+    }
+  })
 
   setInterval(() => {
     if (player && player.audio && player.audio.currentTime && player.streamer.streaming) {

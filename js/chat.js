@@ -30,13 +30,19 @@ export class Chat extends EventEmmiter {
     return this.base.append('add ' + keyPair.publicKey.toString('hex'))
   }
 
-  addMessage (message) {
-    return this.base.append('msg ' + message)
+  addMessage (message, username) {
+    return this.base.append(`msg ${username}: ${message}`)
   }
 
   getMessages () {
     const length = this.base.view.length
     return Promise.all([...Array(length).keys()].map(i => this.base.view.get(i)))
+  }
+
+  parseMessage (message) {
+    const user = message.split(':')[0]
+    const msg = message.split(':').splice(1).join(' ')
+    return { user, msg }
   }
 
   _open (store) {
@@ -47,14 +53,14 @@ export class Chat extends EventEmmiter {
     for (const { value } of nodes) {
       const v = value.toString()
       const op = v.split(' ')[0]
-      const val = v.split(' ')[1]
+      const val = v.split(' ').splice(1).join(' ')
       if (op === 'add') {
         await base.addWriter(Buffer.from(val, 'hex'), { indexer: true })
         continue
       }
       if (op === 'msg') {
         view.append(val)
-        this.emit('message', val)
+        this.emit('message', this.parseMessage(val)) // TODO change
       }
     }
   }
