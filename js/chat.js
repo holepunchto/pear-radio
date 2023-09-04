@@ -13,7 +13,7 @@ export class Chat extends EventEmmiter {
     const tweakedKeyPair = tweak(userKeyPair, 'CHAT-' + userKeyPair.publicKey.toString('hex'))
     this._localKeyPair = tweakedKeyPair.keyPair
     this._auth = { sign: tweakedKeyPair.sign }
-    this.base = new Autobase(this.store, this.bootstrap, { apply: this._apply.bind(this), open: this._open, keyPair: this._localKeyPair, auth: this._auth, ackInterval: 500 })
+    this.base = new Autobase(this.store, this.bootstrap, { apply: this._apply.bind(this), open: this._open, keyPair: this._localKeyPair, auth: this._auth, ackInterval: 100, ackThreshold: 0 })
   }
 
   async ready () {
@@ -55,7 +55,7 @@ export class Chat extends EventEmmiter {
       const op = v.split(' ')[0]
       const val = v.split(' ').splice(1).join(' ')
       if (op === 'add') {
-        await base.addWriter(Buffer.from(val, 'hex'), { indexer: false }) // only indexer i sthe streamer
+        await base.addWriter(Buffer.from(val, 'hex'), { isIndexer: false }) // only indexer is sthe streamer
         continue
       }
       if (op === 'msg') {
