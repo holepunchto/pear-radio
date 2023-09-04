@@ -13,7 +13,7 @@ export class Chat extends EventEmmiter {
     const tweakedKeyPair = tweak(userKeyPair, 'CHAT-' + userKeyPair.publicKey.toString('hex'))
     this._localKeyPair = tweakedKeyPair.keyPair
     this._auth = { sign: tweakedKeyPair.sign }
-    this.base = new Autobase(this.store, this.bootstrap, { apply: this._apply.bind(this), open: this._open, keyPair: this._localKeyPair, auth: this._auth })
+    this.base = new Autobase(this.store, this.bootstrap, { apply: this._apply.bind(this), open: this._open, keyPair: this._localKeyPair, auth: this._auth, ackInterval: 500 })
   }
 
   async ready () {
