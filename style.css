@@ -12,6 +12,7 @@
 
 body {
   background-color: var(--main-bg-color);
+  overflow: hidden;
 }
 
 input {
@@ -148,6 +149,8 @@ input::placeholder {
     display: flex;
     justify-content: flex-start;
     flex-direction: column;
+    overflow: auto;
+    height: 36vh;
 }
 
 .playing {
@@ -172,6 +175,7 @@ input::placeholder {
     display: inline;
     font-weight: 500;
     color: var(--main-fg-color);
+    text-overflow: ellipsis;
 }
 
 .duration {
@@ -196,7 +200,16 @@ input::placeholder {
 }
 
 ::-webkit-scrollbar {
-    width: 0px;
+    width: 7px;
+    height: 7px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--main-bg-color);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--secondary-fg-color);
 }
 
 #search, #comment {
@@ -625,6 +638,7 @@ header {
 
 #messages-list {
     margin-left: 4vw;
-    height: 57vh;
+    height: 65vh;
     overflow: auto;
+    margin-right: 10px;
 }

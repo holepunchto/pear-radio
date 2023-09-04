@@ -40,7 +40,8 @@ window.onload = async () => {
     const artist = document.createElement('p')
     const duration = document.createElement('p')
 
-    trackname.innerHTML = metadata.name ? (metadata.name.length < 20 ? metadata.name : metadata.name.substr(0, 20) + '...') : metadata.file
+    const name = metadata.name || metadata.file
+    trackname.innerHTML = name.length < 30 ? name : name.substr(0, 30) + '...'
     duration.innerHTML = metadata.duration
     artist.innerHTML = metadata.artist || 'Unknown artist'
 
@@ -194,8 +195,6 @@ window.onload = async () => {
     document.getElementById('chat-placeholder').classList.add('disabled')
     document.getElementById('chat-content').classList.remove('disabled')
     document.getElementById('chat-title-name').innerHTML = name + ' (Live chat)'
-    document.getElementById('chat-title-description').innerHTML = description
-    document.getElementById('chat-title-tags').innerHTML = tags
   }
 
   const onResultClick = async (listener, result, info) => {
