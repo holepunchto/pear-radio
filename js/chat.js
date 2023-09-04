@@ -41,7 +41,7 @@ export class Chat extends EventEmmiter {
 
   parseMessage (message) {
     const user = message.split(':')[0]
-    const msg = message.split(':').splice(1).join(' ')
+    const msg = message.split(':').splice(1).join(':')
     return { user, msg }
   }
 
