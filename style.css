@@ -1,3 +1,14 @@
+@font-face {
+    font-family: 'Maven Pro';
+    src: url(./assets/MavenPro-Regular.ttf);
+}
+
+@font-face {
+    font-family: 'Maven Pro';
+    src: url(./assets/MavenPro-Bold.ttf);
+    font-weight: bold;
+}
+
 :root {
     --main-bg-color: #f9f9f9;
     --main-fg-color: #05070a;
@@ -158,7 +169,7 @@ input::placeholder {
 }
 
 .tracklist-track {
-    font-size: 100%;
+    font-size: 110%;
     padding-left: 4vh;
     padding-right: 4vh;
     padding-top: 2vh;
@@ -173,7 +184,6 @@ input::placeholder {
 
 .tracklist-trackname {
     display: inline;
-    font-weight: 500;
     color: var(--main-fg-color);
     text-overflow: ellipsis;
 }
