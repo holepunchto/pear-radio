@@ -8,8 +8,8 @@ import Corestore from 'corestore'
 import ram from 'random-access-memory'
 import http from 'http'
 import sodium from 'sodium-native'
-import tweak from 'hypercore-crypto-tweak'
 import { Chat } from './chat.js'
+import { createManifest } from './manifest.js'
 
 const PEAR_RADIO_STREAM = 'pear_radio_stream'
 const PEAR_RADIO_METADATA = 'pear_radio_metadata'
@@ -152,10 +152,8 @@ export class Streamer {
 
   async ready () {
     await this.store.ready()
-    const { keyPair: coreKeyPair, sign: coreSign } = tweak(this.keyPair, PEAR_RADIO_STREAM) // TODO update if hypercore-crypto-tweak updates
-    const { keyPair: metadataKeyPair, sign: metadataSign } = tweak(this.keyPair, PEAR_RADIO_METADATA)
-    this.core = this.store.get({ keyPair: coreKeyPair, auth: { sign: coreSign } })
-    this.metadata = this.store.get({ keyPair: metadataKeyPair, auth: { sign: metadataSign }, valueEncoding: 'json' })
+    this.core = this.store.get({ key: this.keyPair.publicKey, keyPair: this.keyPair, manifest: createManifest(this.keyPair.publicKey, PEAR_RADIO_STREAM) })
+    this.metadata = this.store.get({ key: this.keyPair.publicKey, keyPair: this.keyPair, manifest: createManifest(this.keyPair.publicKey, PEAR_RADIO_METADATA), valueEncoding: 'json' })
     await this.core.ready()
     await this.metadata.ready()
     await this.chat.ready()
@@ -205,8 +203,8 @@ export class Listener {
 
   async ready () {
     await this.store.ready()
-    this.core = this.store.get(tweak(this.userPublicKey, PEAR_RADIO_STREAM))
-    this.metadata = this.store.get({ ...tweak(this.userPublicKey, PEAR_RADIO_METADATA), valueEncoding: 'json' })
+    this.core = this.store.get({ keyPair: { publicKey: this.userPublicKey }, manifest: createManifest(this.userPublicKey, PEAR_RADIO_STREAM) })
+    this.metadata = this.store.get({ keyPair: { publicKey: this.userPublicKey }, manifest: createManifest(this.userPublicKey, PEAR_RADIO_METADATA), valueEncoding: 'json' })
     await this.core.ready()
     await this.metadata.ready()
     this.swarm.join(this.core.discoveryKey)
