@@ -3,17 +3,16 @@ import ram from 'random-access-memory'
 import Autobase from '@holepunchto/autobase'
 import tweak from 'hypercore-crypto-tweak'
 import EventEmmiter from 'events'
+import { createManifest } from './manifest.js'
 
 export class Chat extends EventEmmiter {
   constructor (userKeyPair, opts = {}) {
     super()
-    this.bootstrap = opts.bootstrap ? tweak({ publicKey: opts.bootstrap }, 'CHAT-' + opts.bootstrap.toString('hex')).publicKey : undefined
+    const namespace = ('PEAR_RADIO_CHAT').padEnd(32, '\0')
+    this.bootstrap = opts.bootstrap ? tweak({ publicKey: opts.bootstrap }, namespace).publicKey : undefined
     this.store = opts.store || new Corestore(ram)
-
-    const tweakedKeyPair = tweak(userKeyPair, 'CHAT-' + userKeyPair.publicKey.toString('hex'))
-    this._localKeyPair = tweakedKeyPair.keyPair
-    this._auth = { sign: tweakedKeyPair.sign }
-    this.base = new Autobase(this.store, this.bootstrap, { apply: this._apply.bind(this), open: this._open, keyPair: this._localKeyPair, auth: this._auth, ackInterval: 100, ackThreshold: 0 })
+    const hypercoreOpts = { key: userKeyPair.publicKey, keyPair: userKeyPair, manifest: createManifest(userKeyPair.publicKey, namespace) }
+    this.base = new Autobase(this.store, this.bootstrap, { ...hypercoreOpts, apply: this._apply.bind(this), open: this._open, ackInterval: 100, ackThreshold: 0 })
   }
 
   async ready () {
@@ -26,7 +25,8 @@ export class Chat extends EventEmmiter {
   }
 
   addWriter (userPublicKey) {
-    const keyPair = tweak({ publicKey: userPublicKey }, 'CHAT-' + userPublicKey.toString('hex'))
+    const namespace = ('PEAR_RADIO_CHAT').padEnd(32, '\0')
+    const keyPair = tweak({ publicKey: userPublicKey }, namespace)
     return this.base.append('add ' + keyPair.publicKey.toString('hex'))
   }
 
@@ -59,7 +59,7 @@ export class Chat extends EventEmmiter {
         continue
       }
       if (op === 'msg') {
-        view.append(val)
+        await view.append(val)
         this.emit('message', this.parseMessage(val)) // TODO change
       }
     }

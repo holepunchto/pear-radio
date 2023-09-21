@@ -5,6 +5,8 @@ import { Listener, HttpAudioStreamer } from '../js/streamer.js'
 import { keyPair, randomBytes } from 'hypercore-crypto'
 import { Chat } from '../js/chat.js'
 import { once } from 'events'
+import Corestore from 'corestore'
+import ram from 'random-access-memory'
 
 const args = process.argv
 const bootstrap = process.env.TEST ? [{ host: '127.0.0.1', port: 49736 }] : undefined
@@ -14,6 +16,7 @@ const user = new User(null, { bootstrap, keyPair: userKeyPair })
 const httpAudioStreamer = new HttpAudioStreamer({ cli: true })
 
 const playRemote = async (key, opts = {}) => {
+  /*
   const listener = new Listener(key, { bootstrap })
   await listener.ready()
   const { block, artist, name } = await user.syncRequest(key)
@@ -24,8 +27,10 @@ const playRemote = async (key, opts = {}) => {
   httpAudioStreamer.stream(stream)
   console.log('Streaming to http://localhost:' + httpAudioStreamer.port)
   console.log(artist + ' - ' + name)
-
-  const chat = new Chat(userKeyPair, { bootstrap: key, store: listener.store })
+  */
+  const store = new Corestore(ram)
+  await store.ready()
+  const chat = new Chat(userKeyPair, { bootstrap: key, store: store })
   await chat.ready()
 
   chat.on('message', (msg) => {
@@ -39,5 +44,5 @@ const playRemote = async (key, opts = {}) => {
   }, 1000)
 }
 
-const key = Buffer.from(args[2], 'hex')
+const key = new Uint8Array(Buffer.from(args[2], 'hex'))
 await playRemote(key)
