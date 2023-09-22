@@ -41,7 +41,6 @@
     "corestore": "^6.15.4",
     "hypercore": "^10.25.0",
     "hypercore-crypto": "^3.3.1",
-    "hypercore-crypto-tweak": "github:holepunchto/hypercore-crypto-tweak",
     "hyperdht": "^6.5.2",
     "hyperswarm": "^4.3.5",
     "node-id3": "^0.2.5",

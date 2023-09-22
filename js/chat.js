@@ -1,33 +1,33 @@
 import Corestore from 'corestore'
 import ram from 'random-access-memory'
 import Autobase from '@holepunchto/autobase'
-import tweak from 'hypercore-crypto-tweak'
 import EventEmmiter from 'events'
-import { createManifest } from './manifest.js'
+import { createManifest, tweak } from './manifest.js'
 
 export class Chat extends EventEmmiter {
   constructor (userKeyPair, opts = {}) {
     super()
-    const namespace = ('PEAR_RADIO_CHAT').padEnd(32, '\0')
-    this.bootstrap = opts.bootstrap ? tweak({ publicKey: opts.bootstrap }, namespace).publicKey : undefined
+    const namespace = 'pear_radio_chat'
     this.store = opts.store || new Corestore(ram)
     const hypercoreOpts = { key: userKeyPair.publicKey, keyPair: userKeyPair, manifest: createManifest(userKeyPair.publicKey, namespace) }
-    this.base = new Autobase(this.store, this.bootstrap, { ...hypercoreOpts, apply: this._apply.bind(this), open: this._open, ackInterval: 100, ackThreshold: 0 })
+    this.base = new Autobase(this.store, opts.bootstrap, { ...hypercoreOpts, apply: this._apply.bind(this), open: this._open, ackInterval: 100, ackThreshold: 0 })
   }
 
   async ready () {
     await this.store.ready()
     await this.base.ready()
+    console.log('base local', this.base.local.key.toString('hex'))
+    console.log('base bootstrap', this.base.bootstrap.toString('hex'))
   }
 
   async destroy () {
     // TODO close autobase
   }
 
-  addWriter (userPublicKey) {
-    const namespace = ('PEAR_RADIO_CHAT').padEnd(32, '\0')
-    const keyPair = tweak({ publicKey: userPublicKey }, namespace)
-    return this.base.append('add ' + keyPair.publicKey.toString('hex'))
+  async addWriter (userPublicKey) {
+    const namespace = 'pear_radio_chat'
+    const publicKey = await tweak(userPublicKey, namespace)
+    return this.base.append('add ' + publicKey.toString('hex'))
   }
 
   addMessage (message, username) {

@@ -5,6 +5,7 @@ import copy from 'copy-text-to-clipboard'
 import configuration from './config.js'
 import { keyPair, randomBytes } from 'hypercore-crypto'
 import { Chat } from '../js/chat.js'
+import { tweak } from './manifest.js'
 
 const bootstrap = process.env.TEST ? [{ host: '127.0.0.1', port: 49736 }] : undefined
 
@@ -177,8 +178,11 @@ window.onload = async () => {
     document.getElementById('messages-list').append(div)
   }
 
-  const createChat = (userKeyPair, streamerKey, store) => {
-    const chat = new Chat(userKeyPair, { bootstrap: streamerKey, store })
+  const createChat = async (userKeyPair, streamerKey, store) => {
+    const namespace = 'pear_radio_chat'
+    const bootstrap = await tweak(streamerKey, namespace)
+    console.log('streamer key', streamerKey.toString('hex'))
+    const chat = new Chat(userKeyPair, { bootstrap, store })
     chat.on('message', async () => {
       resetChatMessages()
       const messages = await chat.getMessages()
