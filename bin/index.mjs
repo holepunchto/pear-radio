@@ -27,6 +27,7 @@ const playRemote = async (key, opts = {}) => {
   console.log('Streaming to http://localhost:' + httpAudioStreamer.port)
   console.log(artist + ' - ' + name)
 
+  /*
   const namespace = 'pear_radio_chat'
   const streamerChatKey = await tweak(key, namespace)
   const chat = new Chat(userKeyPair, { bootstrap: streamerChatKey, store: listener.store })
@@ -41,6 +42,7 @@ const playRemote = async (key, opts = {}) => {
     if (!chat.base.writable) await once(chat.base, 'writable')
     chat.addMessage(Date.now().toString())
   }, 1000)
+  */
 }
 
 const key = Buffer.from(args[2], 'hex')
