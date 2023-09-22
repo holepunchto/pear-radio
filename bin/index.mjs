@@ -5,7 +5,6 @@ import { Listener, HttpAudioStreamer } from '../js/streamer.js'
 import { keyPair, randomBytes } from 'hypercore-crypto'
 import { Chat } from '../js/chat.js'
 import { once } from 'events'
-import Corestore from 'corestore'
 import ram from 'random-access-memory'
 import { tweak } from '../js/manifest.js'
 
@@ -27,12 +26,10 @@ const playRemote = async (key, opts = {}) => {
   httpAudioStreamer.stream(stream)
   console.log('Streaming to http://localhost:' + httpAudioStreamer.port)
   console.log(artist + ' - ' + name)
-  const store = new Corestore(ram)
-  await store.ready()
 
   const namespace = 'pear_radio_chat'
   const streamerChatKey = await tweak(key, namespace)
-  const chat = new Chat(userKeyPair, { bootstrap: streamerChatKey, store })
+  const chat = new Chat(userKeyPair, { bootstrap: streamerChatKey, store: listener.store })
   await chat.ready()
 
   chat.on('message', (msg) => {

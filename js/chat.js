@@ -10,14 +10,12 @@ export class Chat extends EventEmmiter {
     const namespace = 'pear_radio_chat'
     this.store = opts.store || new Corestore(ram)
     const hypercoreOpts = { key: userKeyPair.publicKey, keyPair: userKeyPair, manifest: createManifest(userKeyPair.publicKey, namespace) }
-    this.base = new Autobase(this.store, opts.bootstrap, { ...hypercoreOpts, apply: this._apply.bind(this), open: this._open, ackInterval: 100, ackThreshold: 0 })
+    this.base = new Autobase(this.store, opts.bootstrap, { ...hypercoreOpts, apply: this._apply.bind(this), open: this._open, ackInterval: 100, ackThreshold: 1 })
   }
 
   async ready () {
     await this.store.ready()
     await this.base.ready()
-    console.log('base local', this.base.local.key.toString('hex'))
-    console.log('base bootstrap', this.base.bootstrap.toString('hex'))
   }
 
   async destroy () {
@@ -51,11 +49,12 @@ export class Chat extends EventEmmiter {
 
   async _apply (nodes, view, base) {
     for (const { value } of nodes) {
+      console.log('value', value)
       const v = value.toString()
       const op = v.split(' ')[0]
       const val = v.split(' ').splice(1).join(' ')
       if (op === 'add') {
-        await base.addWriter(Buffer.from(val, 'hex'), { isIndexer: false }) // only indexer is sthe streamer
+        await base.addWriter(Buffer.from(val, 'hex'), { indexer: false }) // only indexer is sthe streamer
         continue
       }
       if (op === 'msg') {

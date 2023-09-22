@@ -181,7 +181,6 @@ window.onload = async () => {
   const createChat = async (userKeyPair, streamerKey, store) => {
     const namespace = 'pear_radio_chat'
     const bootstrap = await tweak(streamerKey, namespace)
-    console.log('streamer key', streamerKey.toString('hex'))
     const chat = new Chat(userKeyPair, { bootstrap, store })
     chat.on('message', async () => {
       resetChatMessages()

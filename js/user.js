@@ -34,7 +34,8 @@ export class User {
     this.server.respond('sync-request', async (req) => {
       const block = this.player.currentAudioBlock()
       const { artist, name } = await this.player.streamer.getMetadata()
-      await this.player.streamer.chat.addWriter(req)
+      // TODO check better fix, avoids race seems like adding the writer to fast does not have a effect for the added writer
+      setTimeout(async () => await this.player.streamer.chat.addWriter(req), 3000)
       return c.encode(syncResponse, { block, artist, name })
     })
 
