@@ -6,6 +6,7 @@ import configuration from './config.js'
 import { keyPair, randomBytes } from 'hypercore-crypto'
 import { Chat } from '../js/chat.js'
 import { tweak } from './manifest.js'
+import { fileURLToPath } from 'url'
 
 const bootstrap = process.env.TEST ? [{ host: '127.0.0.1', port: 49736 }] : undefined
 
@@ -376,17 +377,26 @@ window.onload = async () => {
 
   document.addEventListener('dragover', async (e) => {
     e.preventDefault()
-    e.stopPropagation()
   })
 
   document.addEventListener('drop', async (e) => {
     e.preventDefault()
-    e.stopPropagation()
-    document.querySelector('#tracklist-placeholder')?.remove()
-    for (const f of e.dataTransfer.files) {
-      const metadata = await player.addTrack(f.path)
+
+    // This is a hack, drag-and-drop is very buggy in eletron, for some reason, sometimes it detects the files with wrong mime type 'plain/text'.
+    // In that case, dataTransfer files is empty, and we have to get the file URI and translate it into a path :(
+    // it stills bugs sometimes with the bug "0:-29:525:44"
+
+    const path = e.dataTransfer.files && e.dataTransfer.files.length ? e.dataTransfer.files[0].path : undefined
+    if (path) {
+      const metadata = await player.addTrack(path)
+      addTrack(metadata)
+    } else {
+      const uri = await new Promise((resolve) => e.dataTransfer.items[0].getAsString(async (p) => resolve(p)))
+      const metadata = await player.addTrack(fileURLToPath(uri))
       addTrack(metadata)
     }
+
+    document.querySelector('#tracklist-placeholder')?.remove()
   })
 
   document.querySelector('#tracklist-icon').onclick = async () => {
