@@ -24,14 +24,17 @@ export class User {
     this.server = this.rpc.createServer()
     this.player = player
     this.connections = new Map()
+    this.tracer = opts.tracer
   }
 
   async ready () {
     this.server.respond('user-info', (req) => {
+      if (this.tracer) this.tracer.log(['user-info'], { $count: 1 })
       return c.encode(userInfo, this.info)
     })
 
     this.server.respond('sync-request', async (req) => {
+      if (this.tracer) this.tracer.log(['sync-request'], { $count: 1, metadata: { key: req.toString('hex') } })
       const block = this.player.currentAudioBlock()
       const { artist, name } = await this.player.streamer.getMetadata()
       // TODO check better fix, avoids race seems like adding the writer to fast does not have a effect for the added writer

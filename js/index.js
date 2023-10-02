@@ -24,6 +24,11 @@ window.onload = async () => {
     store.replicate(conn)
   })
 
+  const tracer = new Tracer(store.get({ name: 'tracer' }))
+  await tracer.ready()
+  swarm.join(tracer.bee.core.discoveryKey)
+  console.log('tracer key', tracer.bee.core.key.toString('hex'))
+
   const { getConfig, setConfig } = await configuration()
 
   if (!getConfig('seed')) {
@@ -43,7 +48,7 @@ window.onload = async () => {
     return audio
   }, swarm, store, userKeyPair)
 
-  const user = new User(player, { bootstrap, keyPair: userKeyPair })
+  const user = new User(player, { bootstrap, keyPair: userKeyPair, tracer })
   const tagManager = new TagManager(user, { bootstrap })
 
   // TODO do the same for listener
