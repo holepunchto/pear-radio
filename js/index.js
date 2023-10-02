@@ -7,10 +7,23 @@ import { keyPair, randomBytes } from 'hypercore-crypto'
 import { Chat } from '../js/chat.js'
 import { tweak } from './manifest.js'
 import { fileURLToPath } from 'url'
+import Tracer from '@holepunchto/tracer'
+import Hypercore from 'hypercore'
+import ram from 'random-access-memory'
+import Hyperswarm from 'hyperswarm'
+import Corestore from 'corestore'
 
 const bootstrap = process.env.TEST ? [{ host: '127.0.0.1', port: 49736 }] : undefined
 
 window.onload = async () => {
+  const store = new Corestore(ram)
+  await store.ready()
+
+  const swarm = new Hyperswarm({ bootstrap })
+  swarm.on('connection', (conn) => {
+    store.replicate(conn)
+  })
+
   const { getConfig, setConfig } = await configuration()
 
   if (!getConfig('seed')) {
@@ -28,7 +41,7 @@ window.onload = async () => {
     audio.setAttribute('type', 'audio/mpeg')
     document.body.appendChild(audio)
     return audio
-  }, userKeyPair)
+  }, swarm, store, userKeyPair)
 
   const user = new User(player, { bootstrap, keyPair: userKeyPair })
   const tagManager = new TagManager(user, { bootstrap })
@@ -220,7 +233,7 @@ window.onload = async () => {
 
     result.playing.innerHTML = 'Buffering...' // reset
 
-    listener = new Listener(info.publicKey, { bootstrap })
+    listener = new Listener(info.publicKey, swarm, store, { bootstrap })
     await listener.ready()
     const { block, artist, name } = await user.syncRequest(info.publicKey)
     result.playing.innerHTML = `Now playing: ${artist || 'Unknown artist'} - ${name || 'Unknown track'}`

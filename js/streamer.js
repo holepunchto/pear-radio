@@ -4,8 +4,6 @@ import fs from 'fs'
 import { basename } from 'path'
 import ffprobe from '@dropb/ffprobe'
 import Hyperswarm from 'hyperswarm'
-import Corestore from 'corestore'
-import ram from 'random-access-memory'
 import http from 'http'
 import sodium from 'sodium-native'
 import { Chat } from './chat.js'
@@ -135,19 +133,15 @@ export class TagManager extends EventEmmiter {
 }
 
 export class Streamer {
-  constructor (keyPair, opts = {}) {
-    this.swarm = new Hyperswarm(opts)
-    this.store = new Corestore(ram, opts)
+  constructor (keyPair, swarm, store, opts = {}) {
+    this.swarm = swarm
+    this.store = store
     this.keyPair = keyPair
     this.core = null
     this.metadata = null
     this.streaming = null
     this.checkpoint = null // last song starting block
     this.chat = new Chat(this.keyPair, { store: this.store })
-
-    this.swarm.on('connection', (conn, info) => {
-      this.store.replicate(conn)
-    })
   }
 
   async ready () {
@@ -189,16 +183,12 @@ export class Streamer {
 }
 
 export class Listener {
-  constructor (userPublicKey, opts = {}) {
+  constructor (userPublicKey, swarm, store, opts = {}) {
     this.userPublicKey = userPublicKey
-    this.swarm = new Hyperswarm(opts)
-    this.store = new Corestore(ram, opts)
+    this.swarm = swarm
+    this.store = store
     this.core = null
     this.metadata = null
-
-    this.swarm.on('connection', conn => {
-      this.store.replicate(conn)
-    })
   }
 
   async ready () {

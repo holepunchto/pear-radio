@@ -34,6 +34,7 @@
   "dependencies": {
     "@dropb/ffprobe": "^2.0.1",
     "@holepunchto/autobase": "github:holepunchto/autobase-next",
+    "@holepunchto/tracer": "github:holepunchto/tracer#prometheus-exporter",
     "@hyperswarm/rpc": "^3.1.0",
     "@rafapaezbas/simple-config": "^2.2.0",
     "compact-encoding": "^2.11.0",

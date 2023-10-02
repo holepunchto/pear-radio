@@ -7,6 +7,8 @@ import { Chat } from '../js/chat.js'
 import { once } from 'events'
 import ram from 'random-access-memory'
 import { tweak } from '../js/manifest.js'
+import Hyperswarm from 'hyperswarm'
+import Corestore from 'corestore'
 
 const args = process.argv
 const bootstrap = process.env.TEST ? [{ host: '127.0.0.1', port: 49736 }] : undefined
@@ -15,8 +17,16 @@ const user = new User(null, { bootstrap, keyPair: userKeyPair })
 
 const httpAudioStreamer = new HttpAudioStreamer({ cli: true })
 
+const store = new Corestore(ram)
+await store.ready()
+
+const swarm = new Hyperswarm({ bootstrap })
+swarm.on('connection', (conn) => {
+  store.replicate(conn)
+})
+
 const playRemote = async (key, opts = {}) => {
-  const listener = new Listener(key, { bootstrap })
+  const listener = new Listener(key, swarm, store, { bootstrap })
   await listener.ready()
   const { block, artist, name } = await user.syncRequest(key)
   const stream = await listener.listen(block, ({ artist, name }) => {
@@ -27,7 +37,6 @@ const playRemote = async (key, opts = {}) => {
   console.log('Streaming to http://localhost:' + httpAudioStreamer.port)
   console.log(artist + ' - ' + name)
 
-  /*
   const namespace = 'pear_radio_chat'
   const streamerChatKey = await tweak(key, namespace)
   const chat = new Chat(userKeyPair, { bootstrap: streamerChatKey, store: listener.store })
@@ -36,13 +45,6 @@ const playRemote = async (key, opts = {}) => {
   chat.on('message', (msg) => {
     console.log('message:', msg)
   })
-
-  setInterval(async () => {
-    await chat.base.update()
-    if (!chat.base.writable) await once(chat.base, 'writable')
-    chat.addMessage(Date.now().toString())
-  }, 1000)
-  */
 }
 
 const key = Buffer.from(args[2], 'hex')
