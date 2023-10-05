@@ -80,8 +80,9 @@ export class Player extends EventEmmiter {
   }
 
   async addTrack (path) {
+    const metadata = await Mp3ReadStream.readTrack(path)
     this.playlist.push(path)
-    return await Mp3ReadStream.readTrack(path)
+    return metadata
   }
 
   currentAudioBlock () {
