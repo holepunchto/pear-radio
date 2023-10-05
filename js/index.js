@@ -524,19 +524,30 @@ window.onload = async () => {
     setTimeout(() => document.querySelector('#stream-public-key').classList.remove('stream-public-key-clicked'), 100)
   }
 
-  document.querySelector('#dark-mode').onclick = async () => {
+  const setDarkMode = async () => {
     document.querySelector('#dark-mode').classList.add('selected-settings-color')
     document.querySelector('#light-mode').classList.remove('selected-settings-color')
     await setConfig('darkMode', true)
     darkMode()
   }
 
-  document.querySelector('#light-mode').onclick = async () => {
+  const setLightMode = async () => {
     document.querySelector('#dark-mode').classList.remove('selected-settings-color')
     document.querySelector('#light-mode').classList.add('selected-settings-color')
     await setConfig('darkMode', false)
     lightMode()
   }
+
+  document.querySelector('#dark-mode').onclick = setDarkMode
+  document.querySelector('#light-mode').onclick = setLightMode
+
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+    if (event.matches) {
+      setDarkMode()
+    } else {
+      setLightMode()
+    }
+  })
 
   document.querySelector('#settings-save').onclick = async () => {
     const name = document.querySelector('#settings-username').value
