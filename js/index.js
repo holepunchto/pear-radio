@@ -75,6 +75,7 @@ window.onload = async () => {
 
     track.onclick = async () => {
       play(metadata, { forceRemoteCleanBuffer: true })
+      renderChat(user.info)
     }
 
     document.querySelector('#tracklist').append(track)
