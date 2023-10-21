@@ -57,6 +57,14 @@ export class Player extends EventEmmiter {
     this.isPlayingLocal = false
   }
 
+  async syncRequest (req) {
+    const block = this.currentAudioBlock()
+    const { artist, name } = await this.streamer.getMetadata()
+    // TODO check better fix, avoids race seems like adding the writer to fast does not have a effect for the added writer
+    setTimeout(async () => await this.streamer.chat.addWriter(req), 3000)
+    return c.encode(syncResponse, { block, artist, name })
+  }
+
   cleanBuffer () {
     this.audio.pause()
     this.audio.load()

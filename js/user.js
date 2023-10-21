@@ -1,20 +1,7 @@
 import c from 'compact-encoding'
-import { compile, opt } from 'compact-encoding-struct'
 import DHT from 'hyperdht'
 import RPC from '@hyperswarm/rpc'
-
-const userInfo = compile({
-  publicKey: c.buffer,
-  name: c.string,
-  description: opt(c.string),
-  tags: opt(c.string)
-})
-
-const syncResponse = compile({
-  block: (c.uint),
-  artist: opt(c.string),
-  name: opt(c.string)
-})
+import { userInfo, syncResponse } from './lib/encoding.js'
 
 export class User {
   constructor (player, opts = {}) {
@@ -35,11 +22,7 @@ export class User {
 
     this.server.respond('sync-request', async (req) => {
       if (this.tracer) this.tracer.log('sync-request', { $count: 1, metadata: { key: req.toString('hex') } })
-      const block = this.player.currentAudioBlock()
-      const { artist, name } = await this.player.streamer.getMetadata()
-      // TODO check better fix, avoids race seems like adding the writer to fast does not have a effect for the added writer
-      setTimeout(async () => await this.player.streamer.chat.addWriter(req), 3000)
-      return c.encode(syncResponse, { block, artist, name })
+      return (await this.player.syncRequest(req))
     })
 
     await this.server.listen(this.keyPair)
