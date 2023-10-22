@@ -99,44 +99,62 @@ const stream = async (opts = {}) => {
 const commands = [
   {
     name: 'stream',
-    help: 'stream local library to remote listeners.',
+    help: 'Stream local library to remote listeners.',
     options: [
       {
         name: 'username',
         abbr: 'u',
-        help: 'set streamer username.'
+        help: 'Set streamer username.'
       },
       {
         name: 'random',
         abbr: 'r',
         boolean: true,
         default: false,
-        help: 'random playlist order.'
+        help: 'Random playlist order.'
       },
       {
         name: 'library',
         abbr: 'l',
-        help: 'set library path.'
+        help: 'Set library path.'
       }
     ],
-    command: async (args) => await stream({ library: args.l })
+    command: async (args) => await stream({ library: args.l }),
+    usage: function (args, help, usage) {
+      console.log(help)
+      console.log(usage)
+      process.exit(0)
+    }
   },
   {
     name: 'listen',
-    help: 'listen to remote stream.',
+    help: 'Listen to remote stream.',
     options: [
       {
         name: 'key',
         abbr: 'k',
-        help: 'streamer key.'
+        help: 'Streamer key.'
       }
     ],
-    command: async (args) => await listen(Buffer.from(args.k, 'hex'))
+    command: async (args) => await listen(Buffer.from(args.k, 'hex')),
+    usage: function (args, help, usage) {
+      console.log(help)
+      console.log(usage)
+      process.exit(0)
+    }
   }
 ]
 
 const args = process.argv.slice(2)
-const match = subcommand(commands)
+
+if (args[0] !== 'stream' && args[0] !== 'listen') {
+  console.log('Pear radio terminal streamer/listener.')
+  console.log('     stream [--help]      Stream your local library.')
+  console.log('     listen [--help]      Listen to a remote streamer.')
+  process.exit(0)
+}
+
+const match = subcommand({ usage: true, commands })
 const matched = match(args)
 if (!matched) {
   process.exit(0)
