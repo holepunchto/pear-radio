@@ -11,6 +11,8 @@ import Corestore from 'corestore'
 import c from 'compact-encoding'
 import { syncResponse } from '../js/lib/encoding.js'
 import subcommand from 'subcommand'
+import { readdir } from 'fs/promises'
+import { join } from 'path'
 
 class CliPlayer {
   constructor (user, userKeyPair, swarm, store, playlist, opts = {}) {
@@ -31,7 +33,6 @@ class CliPlayer {
   async syncRequest (req) {
     const block = this.streamer.checkpoint // TODO this is always start of the song playing, improve
     const { artist, name } = await this.streamer.getMetadata()
-    console.log(block, artist, name)
     return c.encode(syncResponse, { block, artist, name })
   }
 
@@ -88,7 +89,7 @@ const stream = async (opts = {}) => {
     publicKey: user.keyPair.publicKey,
     name: opts.username || 'default name'
   }
-  const playlist = ['/home/rafapaezbas/Desktop/a.mp3'] // TODO
+  const playlist = (await readdir(opts.library)).filter(e => e.includes('.mp3')).map(e => join(opts.library, e))
   const player = new CliPlayer(user, userKeyPair, swarm, store, playlist)
   await player.ready()
   await player.play()
@@ -118,7 +119,7 @@ const commands = [
         help: 'set library path.'
       }
     ],
-    command: async (args) => await stream()
+    command: async (args) => await stream({ library: args.l })
   },
   {
     name: 'listen',
@@ -130,7 +131,7 @@ const commands = [
         help: 'streamer key.'
       }
     ],
-    command: async (ags) => await listen(args.k)
+    command: async (args) => await listen(Buffer.from(args.k, 'hex'))
   }
 ]
 
