@@ -1,5 +1,7 @@
+import c from 'compact-encoding'
 import EventEmmiter from 'events'
 import { Mp3ReadStream, Streamer, HttpAudioStreamer } from './streamer.js'
+import { syncResponse } from './lib/encoding.js'
 
 const bootstrap = process.env.TEST ? [{ host: '127.0.0.1', port: 49736 }] : undefined
 

@@ -47,6 +47,7 @@
     "hyperswarm": "^4.3.5",
     "node-id3": "^0.2.5",
     "random-access-memory": "^6.1.0",
-    "sodium-native": "^3.4.1"
+    "sodium-native": "^3.4.1",
+    "subcommand": "^2.1.1"
   }
 }
