@@ -104,14 +104,14 @@ export class TagManager extends EventEmmiter {
     const hash = Buffer.alloc(32)
     sodium.crypto_generichash(hash, Buffer.from(pearRadioTopic))
     await this.swarm.join(hash)
-    return this.swarm.flush()
+    this.swarm.flush()
   }
 
   async announceTag (tag) {
     const hash = Buffer.alloc(32)
     sodium.crypto_generichash(hash, Buffer.from(tag))
     await this.swarm.join(hash)
-    return this.swarm.flush()
+    this.swarm.flush()
   }
 
   async searchByTag (tag) {
@@ -120,7 +120,7 @@ export class TagManager extends EventEmmiter {
     const hash = Buffer.alloc(32)
     sodium.crypto_generichash(hash, Buffer.from('pear-radio' + tag))
     await this.swarm.join(hash)
-    return this.swarm.flush()
+    this.swarm.flush()
   }
 
   removeTag (tag) {
@@ -153,7 +153,7 @@ export class Streamer {
     await this.chat.ready()
     this.swarm.join(this.core.discoveryKey)
     this.swarm.join(this.metadata.discoveryKey)
-    await this.swarm.flush()
+    this.swarm.flush()
   }
 
   async stream (metadata, stream, opts = {}) {
@@ -199,7 +199,7 @@ export class Listener {
     await this.metadata.ready()
     this.swarm.join(this.core.discoveryKey)
     this.swarm.join(this.metadata.discoveryKey)
-    await this.swarm.flush()
+    this.swarm.flush()
   }
 
   async listen (fromBlock, metadataCallback) {
