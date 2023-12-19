@@ -7,10 +7,12 @@ import { keyPair, randomBytes } from 'hypercore-crypto'
 import { Chat } from '../js/chat.js'
 import { tweak } from './manifest.js'
 import { fileURLToPath } from 'url'
-import Tracer from '@holepunchto/tracer'
 import ram from 'random-access-memory'
 import Hyperswarm from 'hyperswarm'
 import Corestore from 'corestore'
+import pear from 'pear'
+
+console.log(pear)
 
 const bootstrap = process.env.TEST ? [{ host: '127.0.0.1', port: 49736 }] : undefined
 
@@ -21,11 +23,6 @@ const swarm = new Hyperswarm({ bootstrap })
 swarm.on('connection', (conn) => {
   store.replicate(conn)
 })
-
-const tracer = new Tracer(store.get({ name: 'tracer' }))
-await tracer.ready()
-swarm.join(tracer.bee.core.discoveryKey)
-console.log('tracer key', tracer.bee.core.key.toString('hex'))
 
 const { getConfig, setConfig } = await configuration()
 
@@ -46,7 +43,7 @@ const player = new Player(() => {
   return audio
 }, swarm, store, userKeyPair)
 
-const user = new User(player, { bootstrap, keyPair: userKeyPair, tracer })
+const user = new User(player, { bootstrap, keyPair: userKeyPair })
 const tagManager = new TagManager(user, { bootstrap })
 
 // TODO do the same for listener

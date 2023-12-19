@@ -11,17 +11,14 @@ export class User {
     this.server = this.rpc.createServer()
     this.player = player
     this.connections = new Map()
-    this.tracer = opts.tracer
   }
 
   async ready () {
     this.server.respond('user-info', (req) => {
-      if (this.tracer) this.tracer.log('user-info', { $count: 1 })
       return c.encode(userInfo, this.info)
     })
 
     this.server.respond('sync-request', async (req) => {
-      if (this.tracer) this.tracer.log('sync-request', { $count: 1, metadata: { key: req.toString('hex') } })
       return (await this.player.syncRequest(req))
     })
 

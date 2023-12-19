@@ -1,4 +1,4 @@
-import holepunch from 'holepunch://app'
+import pear from 'pear'
 import simpleConfig from '@rafapaezbas/simple-config'
 
 const darkModeOS = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -11,5 +11,5 @@ const defaultConfig = {
 }
 
 export default () => {
-  return simpleConfig(holepunch.config.storage, defaultConfig)
+  return simpleConfig(pear.config.storage, defaultConfig)
 }
