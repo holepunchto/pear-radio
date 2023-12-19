@@ -2,12 +2,12 @@ import EventEmmiter from 'events'
 import NodeID3 from 'node-id3'
 import fs from 'fs'
 import { basename } from 'path'
-import ffprobe from '@dropb/ffprobe'
 import Hyperswarm from 'hyperswarm'
 import http from 'http'
 import sodium from 'sodium-native'
 import { Chat } from './chat.js'
 import { createManifest } from './manifest.js'
+import mp3Duration from '@rafapaezbas/mp3-duration'
 
 const PEAR_RADIO_STREAM = 'pear_radio_stream'
 const PEAR_RADIO_METADATA = 'pear_radio_metadata'
@@ -54,7 +54,7 @@ export class HttpAudioStreamer {
 
 export class Mp3ReadStream {
   static async stream (path) {
-    const bitRate = (await ffprobe.ffprobe(path)).format.bit_rate // bits per seconds
+    const bitRate = await Mp3ReadStream.readMp3BitRate(path) // bits per seconds
     const localStream = fs.createReadStream(path)
     const remoteStream = fs.createReadStream(path, { highWaterMark: Math.floor(bitRate / 8) }) // chunks are ~1 second of audio, helps in sync calculation
     return { localStream, remoteStream }
@@ -62,10 +62,28 @@ export class Mp3ReadStream {
 
   static async readTrack (path) {
     const tags = NodeID3.read(path)
-    const duration = Math.floor((await ffprobe.ffprobe(path)).format.duration)
+    const duration = Math.floor(await Mp3ReadStream.readMp3Duration(path))
     const secondsToMinutes = (seconds) => Math.floor(seconds / 60) + ':' + (seconds % 60 >= 10 ? seconds % 60 : '0' + seconds % 60)
     const file = basename(path)
     return { file, name: tags.title, artist: tags.artist, duration: secondsToMinutes(duration), seconds: duration, path }
+  }
+
+  static async readMp3Duration (path) {
+    return new Promise((resolve, reject) => {
+      mp3Duration(path, (err, { duration }) => {
+        if (err) reject(err)
+        resolve(duration)
+      })
+    })
+  }
+
+  static async readMp3BitRate (path) {
+    return new Promise((resolve, reject) => {
+      mp3Duration(path, (err, { bitRate }) => {
+        if (err) reject(err)
+        resolve(bitRate)
+      })
+    })
   }
 }
 
