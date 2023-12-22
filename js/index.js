@@ -2,8 +2,8 @@ import { User } from './user.js'
 import { Player } from './player.js'
 import { Listener, TagManager } from './streamer.js'
 import copy from 'copy-text-to-clipboard'
-import configuration from './config.js'
-import { keyPair, randomBytes } from 'hypercore-crypto'
+import { PearRadioConfiguration } from './config.js'
+import { keyPair } from 'hypercore-crypto'
 import { Chat } from '../js/chat.js'
 import { tweak } from './manifest.js'
 import { fileURLToPath } from 'url'
@@ -11,8 +11,6 @@ import ram from 'random-access-memory'
 import Hyperswarm from 'hyperswarm'
 import Corestore from 'corestore'
 import pear from 'pear'
-
-console.log(pear)
 
 const bootstrap = process.env.TEST ? [{ host: '127.0.0.1', port: 49736 }] : undefined
 
@@ -24,17 +22,12 @@ swarm.on('connection', (conn) => {
   store.replicate(conn)
 })
 
-const { getConfig, setConfig } = await configuration()
+const configuration = new PearRadioConfiguration(pear.config.storage)
+await configuration.ready()
 
-if (!getConfig('seed')) {
-  setConfig('seed', randomBytes(32).toString('hex'))
-}
+// TODO remove this, change calls
 
-if (!getConfig('favourites')) {
-  setConfig('favourites', JSON.stringify([]))
-}
-
-const userKeyPair = keyPair(Buffer.from(getConfig('seed'), 'hex'))
+const userKeyPair = keyPair(await configuration.get('seed'))
 
 const player = new Player(() => {
   const audio = document.createElement('audio')
@@ -309,14 +302,14 @@ const addResult = (info) => {
 
   result.fav.onclick = async (e) => {
     result.fav.classList.replace('far', 'fas')
-    const favs = JSON.parse(getConfig('favourites'))
+    const favs = await configuration.get('favourites')
     const publicKey = info.publicKey.toString('hex')
     const name = info.name
     const description = info.description
     const tags = info.tags
     if (!favs.find(e => e.publicKey === publicKey)) {
       favs.push({ publicKey, name, description, tags })
-      setConfig('favourites', JSON.stringify(favs))
+      configuration.set('favourites', favs)
     }
     e.stopPropagation()
   }
@@ -371,19 +364,19 @@ const selectIcon = (icon) => {
 }
 
 let lastSearch = null
-if (getConfig('darkMode')) darkMode() // do this first so user doesnt notice
+if (await configuration.get('darkMode')) darkMode() // do this first so user doesnt notice
 
 await user.ready()
 
 const defaultName = 'User ' + user.server.publicKey.toString('hex').substr(0, 6)
 
-if ((getConfig('username')) === null || !getConfig('username') || getConfig('username').length === 0) await setConfig('username', defaultName)
+if ((await configuration.get('username')) === null || !(await configuration.get('username')) || (await configuration.get('username')).length === 0) await configuration.set('username', defaultName)
 
 user.info = {
   publicKey: user.keyPair.publicKey,
-  name: getConfig('username'),
-  description: getConfig('description'),
-  tags: getConfig('tags')
+  name: (await configuration.get('username')),
+  description: (await configuration.get('description')),
+  tags: (await configuration.get('tags'))
 }
 
 document.querySelector('#stream-public-key-message').innerHTML = 'Click here to copy your stream public key: ' + user.keyPair.publicKey.toString('hex').substr(0, 6)
@@ -431,7 +424,7 @@ document.querySelector('#search-icon').onclick = async () => {
 document.querySelector('#favourites-icon').onclick = async () => {
   selectIcon('#favourites-icon')
   fade('#favourites')
-  listFavourites(JSON.parse(getConfig('favourites')))
+  listFavourites(JSON.parse(await configuration.get('favourites')))
 }
 
 document.querySelector('#chat-icon').onclick = async () => {
@@ -448,7 +441,7 @@ document.querySelector('#settings-icon').onclick = async () => {
   document.querySelector('#settings-description').value = user.info.description || ''
   document.querySelector('#settings-tags').value = user.info.tags || ''
 
-  if (getConfig('darkMode')) {
+  if (await configuration.get('darkMode')) {
     document.querySelector('#dark-mode').classList.add('selected-settings-color')
     document.querySelector('#light-mode').classList.remove('selected-settings-color')
   } else {
@@ -524,14 +517,14 @@ document.querySelector('#stream-public-key').onclick = async () => {
 const setDarkMode = async () => {
   document.querySelector('#dark-mode').classList.add('selected-settings-color')
   document.querySelector('#light-mode').classList.remove('selected-settings-color')
-  await setConfig('darkMode', true)
+  await configuration.set('darkMode', true)
   darkMode()
 }
 
 const setLightMode = async () => {
   document.querySelector('#dark-mode').classList.remove('selected-settings-color')
   document.querySelector('#light-mode').classList.add('selected-settings-color')
-  await setConfig('darkMode', false)
+  await configuration.set('darkMode', false)
   lightMode()
 }
 
@@ -557,9 +550,9 @@ document.querySelector('#settings-save').onclick = async () => {
   user.info.description = description
   user.info.tags = tags
 
-  await setConfig('username', name)
-  await setConfig('description', description)
-  await setConfig('tags', tags)
+  await configuration.set('username', name)
+  await configuration.set('description', description)
+  await configuration.set('tags', tags)
 
   if (oldTags && oldTags !== tags) {
     oldTags.split(',').map(async e => {
