@@ -8,6 +8,7 @@ import sodium from 'sodium-native'
 import { Chat } from './chat.js'
 import { createManifest } from './manifest.js'
 import mp3Duration from '@rafapaezbas/mp3-duration'
+import { stat } from 'fs/promises'
 
 const PEAR_RADIO_STREAM = 'pear_radio_stream'
 const PEAR_RADIO_METADATA = 'pear_radio_metadata'
@@ -54,9 +55,11 @@ export class HttpAudioStreamer {
 
 export class Mp3ReadStream {
   static async stream (path) {
-    const bitRate = await Mp3ReadStream.readMp3BitRate(path) // bits per seconds
+    const { size } = await stat(path)
+    const duration = await Mp3ReadStream.readMp3Duration(path)
+    const bitRate = size / Math.floor(duration)
     const localStream = fs.createReadStream(path)
-    const remoteStream = fs.createReadStream(path, { highWaterMark: Math.floor(bitRate / 8) }) // chunks are ~1 second of audio, helps in sync calculation
+    const remoteStream = fs.createReadStream(path, { highWaterMark: Math.floor(bitRate) }) // chunks are ~1 second of audio, helps in sync calculation
     return { localStream, remoteStream }
   }
 
@@ -73,15 +76,6 @@ export class Mp3ReadStream {
       mp3Duration(path, (err, { duration }) => {
         if (err) reject(err)
         resolve(duration)
-      })
-    })
-  }
-
-  static async readMp3BitRate (path) {
-    return new Promise((resolve, reject) => {
-      mp3Duration(path, (err, { bitRate }) => {
-        if (err) reject(err)
-        resolve(bitRate)
       })
     })
   }
