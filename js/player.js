@@ -96,7 +96,8 @@ export class Player extends EventEmmiter {
   }
 
   currentAudioBlock () {
-    return this.streamer.checkpoint + Math.floor(this.audio.currentTime)
+    const buffer = 4 // compensate mp3 kbs deviation
+    return this.streamer.checkpoint + Math.floor(this.audio.currentTime) - buffer
   }
 
   trackIsBuffering () {
