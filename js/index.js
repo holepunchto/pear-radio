@@ -254,7 +254,7 @@ const onResultClick = async (listener, result, info) => {
   showLastPlayedTracks(lastPlayedTracks.slice(1)) // remove first because its currently playing, its already displayed in Playing:...
 
   renderChat(info)
-  chat = await createChat(user.keyPair, info.publicKey, listener.store)
+  // chat = await createChat(user.keyPair, info.publicKey, listener.store) TODO fix
 
   const stream = await listener.listen(block, (data) => {
     if (data.cleanBuffer) {
@@ -303,7 +303,7 @@ const addResult = (info) => {
   result.fav.onclick = async (e) => {
     result.fav.classList.replace('far', 'fas')
     const favs = await configuration.get('favourites')
-    const publicKey = info.publicKey.toString('hex')
+    const publicKey = info.publicKey
     const name = info.name
     const description = info.description
     const tags = info.tags
@@ -424,7 +424,7 @@ document.querySelector('#search-icon').onclick = async () => {
 document.querySelector('#favourites-icon').onclick = async () => {
   selectIcon('#favourites-icon')
   fade('#favourites')
-  listFavourites(JSON.parse(await configuration.get('favourites')))
+  listFavourites(await configuration.get('favourites'))
 }
 
 document.querySelector('#chat-icon').onclick = async () => {
