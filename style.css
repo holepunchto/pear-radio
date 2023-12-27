@@ -605,3 +605,7 @@ header {
     overflow: auto;
     margin-right: 10px;
 }
+
+.hidden-visibility {
+    visibility: hidden;
+}

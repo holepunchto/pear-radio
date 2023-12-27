@@ -135,12 +135,11 @@ const createStreamerResult = (info, opts = {}) => {
   play.classList.add('far', 'fa-play-circle', 'streamer-play')
   pause.classList.add('fas', 'fa-pause', 'streamer-pause', 'disabled')
 
+  if (opts.favourites) fav.classList.add('hidden-visibility')
+
   name.innerHTML = info.name
-  if (opts.favourites) {
-    Array(play, pause).forEach(e => name.append(e))
-  } else {
-    Array(fav, play, pause).forEach(e => name.append(e))
-  }
+
+  Array(fav, play, pause).forEach(e => name.append(e))
   description.innerHTML = info.description && info.description.length > 0 ? info.description : 'No description provided.'
   tags.innerHTML = info.tags && info.tags.length > 0 ? info.tags.replaceAll(',', ', ').replaceAll('  ', ' ') : 'No tags provided.' // add space after comma and remove double spaces
   listen.innerHTML = ''
@@ -275,7 +274,7 @@ const addResult = async (info, opts = {}) => {
     const name = info.name
     const description = info.description
     const tags = info.tags
-    if (!favs.find(e => e.publicKey === publicKey)) {
+    if (!favs.find(e => b4a.equals(e.publicKey, publicKey))) {
       favs.push({ publicKey, name, description, tags })
       configuration.set('favourites', favs)
     }
@@ -285,11 +284,19 @@ const addResult = async (info, opts = {}) => {
 const listFavourites = (favourites) => {
   if (!favourites.length) return
 
+  // remove duplicates
+  const favouritesSet = favourites.reduce((acc, e) => {
+    if (!acc.find(o => b4a.equals(o.publicKey, e.publicKey))) {
+      acc.push(e)
+    }
+    return acc
+  }, [])
+
   document.getElementById('favourites-placeholder').classList.add('disabled')
   document.getElementById('favourites-title').classList.remove('disabled')
   document.getElementById('favourites-list').innerHTML = ''
 
-  favourites.forEach(info => addResult(info, { favourites: true }))
+  favouritesSet.forEach(info => addResult(info, { favourites: true }))
 }
 
 const updateThumbnail = (metadata) => {
