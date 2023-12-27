@@ -61,15 +61,6 @@ input::placeholder {
     background: var(--main-bg-color);
 }
 
-#chat {
-    position: absolute;
-    width: 100%;
-    height: 90%;
-    top: 10%;
-    right: -100%;
-    background: var(--main-bg-color);
-}
-
 #settings {
     position: absolute;
     width: 100%;
@@ -383,18 +374,6 @@ header {
     letter-spacing: 1px;
 }
 
-#chat-placeholder {
-    text-align: center;
-    padding: 5vh;
-    margin-top: 25vh;
-}
-
-.chat-placeholder-message {
-    color: var(--secondary-fg-color);
-    font-size: 100%;
-    letter-spacing: 1px;
-}
-
 .disabled {
     display: none !important;
 }
@@ -596,32 +575,6 @@ header {
   font-size: 125%;
   margin-right: 2vw;
   color: var(--main-fg-color);
-}
-
-#chat-title {
-    background: #e9e9e9;
-    padding: 6px;
-    padding-left: 12px;
-    border-radius: 8px;
-    margin-bottom: 1vh;
-    margin-left: 3vw;
-    margin-right: 3vw;
-    margin-top: 4vh;
-}
-
-#chat-title-name {
-    color: var(--main-fg-color);
-    font-weight: bold;
-}
-
-#chat-title-description {
-    color: var(--main-fg-color);
-    font-weight: 600;
-}
-
-#chat-title-tags {
-    color: var(--main-fg-color);
-    font-weight: 600;
 }
 
 #messages-list > div {

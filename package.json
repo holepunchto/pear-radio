@@ -33,7 +33,6 @@
   },
   "dependencies": {
     "@dropb/ffprobe": "^2.0.1",
-    "@holepunchto/autobase": "^5.5.3",
     "@hyperswarm/rpc": "^3.1.0",
     "@rafapaezbas/mp3-duration": "^1.2.0",
     "compact-encoding": "^2.11.0",

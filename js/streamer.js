@@ -5,7 +5,6 @@ import { basename } from 'path'
 import Hyperswarm from 'hyperswarm'
 import http from 'http'
 import sodium from 'sodium-native'
-import { Chat } from './chat.js'
 import { createManifest } from './manifest.js'
 import mp3Duration from '@rafapaezbas/mp3-duration'
 import { stat } from 'fs/promises'
@@ -153,7 +152,6 @@ export class Streamer {
     this.metadata = null
     this.streaming = null
     this.checkpoint = null // last song starting block
-    this.chat = new Chat(this.keyPair, { store: this.store })
   }
 
   async ready () {
@@ -162,7 +160,6 @@ export class Streamer {
     this.metadata = this.store.get({ key: this.keyPair.publicKey, keyPair: this.keyPair, manifest: createManifest(this.keyPair.publicKey, PEAR_RADIO_METADATA), valueEncoding: 'json' })
     await this.core.ready()
     await this.metadata.ready()
-    await this.chat.ready()
     this.swarm.join(this.core.discoveryKey)
     this.swarm.join(this.metadata.discoveryKey)
     this.swarm.flush()

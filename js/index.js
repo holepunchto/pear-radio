@@ -4,8 +4,6 @@ import { Listener, TagManager } from './streamer.js'
 import copy from 'copy-text-to-clipboard'
 import { PearRadioConfiguration } from './config.js'
 import { keyPair } from 'hypercore-crypto'
-import { Chat } from '../js/chat.js'
-import { tweak } from './manifest.js'
 import { fileURLToPath } from 'url'
 import ram from 'random-access-memory'
 import Hyperswarm from 'hyperswarm'
@@ -40,7 +38,6 @@ const user = new User(player, { bootstrap, keyPair: userKeyPair })
 const tagManager = new TagManager(user, { bootstrap })
 
 // TODO do the same for listener
-let chat = null
 
 const addTrack = (metadata) => {
   const track = document.createElement('div')
@@ -64,7 +61,6 @@ const addTrack = (metadata) => {
 
   track.onclick = async () => {
     play(metadata, { forceRemoteCleanBuffer: true })
-    renderChat(user.info)
   }
 
   document.querySelector('#tracklist').append(track)
@@ -93,10 +89,6 @@ const hideStreamersPlaceholder = () => {
 const resetSearchResults = () => {
   hideStreamersPlaceholder()
   document.querySelector('#streamers-list').innerHTML = ''
-}
-
-const resetChatMessages = () => {
-  document.querySelector('#messages-list').innerHTML = ''
 }
 
 const disableScrolling = () => {
@@ -168,48 +160,8 @@ const createStreamerResult = (info) => {
   return { streamer, name, description, listen, playing, lastPlayedTracks, play, pause, fav, tags }
 }
 
-const addChatMessage = (username, msg) => {
-  const div = document.createElement('div')
-  const icon = document.createElement('i')
-  const user = document.createElement('span')
-  const message = document.createElement('p')
-
-  icon.classList.add('fas', 'fa-user')
-  user.innerHTML = username
-  message.innerHTML = msg
-
-  div.append(icon)
-  div.append(user)
-  div.append(message)
-
-  document.getElementById('messages-list').append(div)
-}
-
-const createChat = async (userKeyPair, streamerKey, store) => {
-  const namespace = 'pear_radio_chat'
-  const bootstrap = await tweak(streamerKey, namespace)
-  const chat = new Chat(userKeyPair, { bootstrap, store })
-  chat.on('message', async () => {
-    resetChatMessages()
-    const messages = await chat.getMessages()
-    messages.forEach(e => {
-      const { user: username, msg } = chat.parseMessage(e.toString())
-      addChatMessage(username, msg)
-    })
-  })
-
-  return chat
-}
-
-const renderChat = ({ name, description, tags }) => {
-  document.getElementById('chat-placeholder').classList.add('disabled')
-  document.getElementById('chat-content').classList.remove('disabled')
-  document.getElementById('chat-title-name').innerHTML = name + ' (Live chat)'
-}
-
 const onResultClick = async (listener, result, info) => {
   if (listener) await listener.destroy() // destroy prev listener
-  if (chat) await chat.destroy()
 
   Array.from(document.getElementsByClassName('streamer-selected')).forEach((e) => { // Reset previous stream
     if (e.classList.contains('listen')) e.classList.add('disabled')
@@ -252,9 +204,6 @@ const onResultClick = async (listener, result, info) => {
 
   const lastPlayedTracks = await listener.getLastPlayedTracks(5)
   showLastPlayedTracks(lastPlayedTracks.slice(1)) // remove first because its currently playing, its already displayed in Playing:...
-
-  renderChat(info)
-  // chat = await createChat(user.keyPair, info.publicKey, listener.store) TODO fix
 
   const stream = await listener.listen(block, (data) => {
     if (data.cleanBuffer) {
@@ -350,7 +299,7 @@ const play = async (metadata, opts) => { // Remove previous buffered music
 }
 
 const fade = (view) => {
-  ['#stream', '#settings', '#listen', '#favourites', '#chat'].filter(e => e !== view).forEach(e => {
+  ['#stream', '#settings', '#listen', '#favourites'].filter(e => e !== view).forEach(e => {
     document.querySelector(e).classList.add('fade-out')
   })
   document.querySelector(view).classList.remove('fade-out')
@@ -358,7 +307,7 @@ const fade = (view) => {
 }
 
 const selectIcon = (icon) => {
-  const icons = ['#settings-icon', '#tracklist-icon', '#search-icon', '#favourites-icon', '#chat-icon']
+  const icons = ['#settings-icon', '#tracklist-icon', '#search-icon', '#favourites-icon']
   icons.forEach(i => document.querySelector(i).classList.remove('selected-header-icon'))
   document.querySelector(icon).classList.add('selected-header-icon')
 }
@@ -427,11 +376,6 @@ document.querySelector('#favourites-icon').onclick = async () => {
   listFavourites(await configuration.get('favourites'))
 }
 
-document.querySelector('#chat-icon').onclick = async () => {
-  selectIcon('#chat-icon')
-  fade('#chat')
-}
-
 document.querySelector('#settings-icon').onclick = async () => {
   selectIcon('#settings-icon')
   fade('#settings')
@@ -472,16 +416,6 @@ document.querySelector('#search-button').onclick = async () => {
       showStreamersTitle()
       tagManager.tags.get(searchText).map(addResult)
     }
-  }
-}
-
-document.querySelector('#send-message-button').onclick = async () => {
-  const message = document.querySelector('#comment-input').value
-  document.querySelector('#comment-input').value = ''
-  if (user.player.isPlayingLocal) {
-    user.player.streamer.chat.addMessage(message, user.info.name)
-  } else {
-    chat.addMessage(message, user.info.name)
   }
 }
 
@@ -598,17 +532,6 @@ tagManager.on('stream-found', (info) => {
 
 await player.ready()
 await tagManager.ready()
-
-user.player.streamer.chat.on('message', async () => {
-  if (player.isPlayingLocal) {
-    resetChatMessages()
-    const messages = await player.streamer.chat.getMessages()
-    messages.forEach(e => {
-      const { user: username, msg } = player.streamer.chat.parseMessage(e.toString())
-      addChatMessage(username, msg)
-    })
-  }
-})
 
 setInterval(() => {
   if (player && player.audio && player.audio.currentTime && player.streamer.streaming) {

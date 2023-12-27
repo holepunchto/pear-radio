@@ -3,9 +3,7 @@
 import { User } from '../js/user.js'
 import { Listener, HttpAudioStreamer, Mp3ReadStream, Streamer } from '../js/streamer.js'
 import { keyPair, randomBytes } from 'hypercore-crypto'
-import { Chat } from '../js/chat.js'
 import ram from 'random-access-memory'
-import { tweak } from '../js/manifest.js'
 import Hyperswarm from 'hyperswarm'
 import Corestore from 'corestore'
 import c from 'compact-encoding'
@@ -73,15 +71,6 @@ const listen = async (key, opts = {}) => {
   httpAudioStreamer.stream(stream)
   console.log('Streaming to http://localhost:' + httpAudioStreamer.port)
   console.log(artist + ' - ' + name)
-
-  const namespace = 'pear_radio_chat'
-  const streamerChatKey = await tweak(key, namespace)
-  const chat = new Chat(userKeyPair, { bootstrap: streamerChatKey, store: listener.store })
-  await chat.ready()
-
-  chat.on('message', (msg) => {
-    console.log('message:', msg)
-  })
 }
 
 const stream = async (opts = {}) => {
