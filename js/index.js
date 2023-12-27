@@ -9,6 +9,7 @@ import ram from 'random-access-memory'
 import Hyperswarm from 'hyperswarm'
 import Corestore from 'corestore'
 import pear from 'pear'
+import b4a from 'b4a'
 
 const bootstrap = process.env.TEST ? [{ host: '127.0.0.1', port: 49736 }] : undefined
 
@@ -115,7 +116,7 @@ const lightMode = () => {
   r.style.setProperty('--tertiary-fg-color', '#e5ebfb')
 }
 
-const createStreamerResult = (info) => {
+const createStreamerResult = (info, opts = {}) => {
   const streamer = document.createElement('div')
   const name = document.createElement('p')
   const description = document.createElement('p')
@@ -135,7 +136,11 @@ const createStreamerResult = (info) => {
   pause.classList.add('fas', 'fa-pause', 'streamer-pause', 'disabled')
 
   name.innerHTML = info.name
-  Array(fav, play, pause).forEach(e => name.append(e))
+  if (opts.favourites) {
+    Array(play, pause).forEach(e => name.append(e))
+  } else {
+    Array(fav, play, pause).forEach(e => name.append(e))
+  }
   description.innerHTML = info.description && info.description.length > 0 ? info.description : 'No description provided.'
   tags.innerHTML = info.tags && info.tags.length > 0 ? info.tags.replaceAll(',', ', ').replaceAll('  ', ' ') : 'No tags provided.' // add space after comma and remove double spaces
   listen.innerHTML = ''
@@ -228,14 +233,18 @@ const onResultPauseClick = (event, listener, result) => {
   result.listen.classList.remove('disabled')
   result.pause.classList.add('disabled')
   result.play.classList.remove('disabled')
-
+  event.preventDefault()
   event.stopPropagation()
 }
 
-const addResult = (info) => {
+const addResult = async (info, opts = {}) => {
   const listener = null
-  const result = createStreamerResult(info)
-  document.querySelector('#streamers-list').append(result.streamer)
+  const result = createStreamerResult(info, opts)
+  if (opts.favourites) {
+    document.querySelector('#favourites-list').append(result.streamer)
+  } else {
+    document.querySelector('#streamers-list').append(result.streamer)
+  }
   hideStreamersPlaceholder()
   hideSearchingSpinner()
 
@@ -249,7 +258,17 @@ const addResult = (info) => {
 
   result.pause.onclick = async (event) => onResultPauseClick(event, listener, result)
 
+  if (!opts.favourites) {
+    const favourites = await configuration.get('favourites')
+    if (favourites.find(e => b4a.equals(info.publicKey, e.publicKey))) {
+      result.fav.classList.replace('far', 'fas')
+    }
+  }
+
   result.fav.onclick = async (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+
     result.fav.classList.replace('far', 'fas')
     const favs = await configuration.get('favourites')
     const publicKey = info.publicKey
@@ -260,7 +279,6 @@ const addResult = (info) => {
       favs.push({ publicKey, name, description, tags })
       configuration.set('favourites', favs)
     }
-    e.stopPropagation()
   }
 }
 
@@ -271,13 +289,7 @@ const listFavourites = (favourites) => {
   document.getElementById('favourites-title').classList.remove('disabled')
   document.getElementById('favourites-list').innerHTML = ''
 
-  favourites.forEach(info => {
-    const listener = null
-    const result = createStreamerResult(info)
-    result.streamer.onclick = async () => onResultClick(listener, result, info)
-    result.pause.onclick = async (event) => onResultPauseClick(event, listener, result)
-    document.querySelector('#favourites-list').append(result.streamer)
-  })
+  favourites.forEach(info => addResult(info, { favourites: true }))
 }
 
 const updateThumbnail = (metadata) => {
@@ -402,7 +414,7 @@ document.querySelector('#search-button').onclick = async () => {
     if (info) {
       resetSearchResults()
       showStreamersTitle()
-      addResult(info)
+      await addResult(info)
     } else {
       // hideStreamersTitle()
       // showNoResultsPlaceholder()
