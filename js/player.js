@@ -54,8 +54,7 @@ export class Player extends EventEmmiter {
     await this.httpAudioStreamer.stream(stream)
     if (!this.intervalIsBuffering) this.intervalIsBuffering = this.trackIsBuffering()
     this.intervalIsFinished = null // only for local
-    this.cleanBuffer()
-    await this.audio.play()
+    this.audio.play()
     this.isPlayingLocal = false
   }
 
