@@ -1,8 +1,4 @@
-import { User } from '@holepunchto/pear-radio-backend/user'
-import { Player } from '@holepunchto/pear-radio-backend/player'
-import { TagManager } from '@holepunchto/pear-radio-backend/tag-manager'
-import { Listener } from '@holepunchto/pear-radio-backend/listener'
-import { PearRadioConfiguration } from '@holepunchto/pear-radio-backend/config'
+import { User, Player, TagManager, Listener, PearRadioConfiguration } from '@holepunchto/pear-radio-backend'
 import copy from 'copy-text-to-clipboard'
 import { keyPair } from 'hypercore-crypto'
 import { fileURLToPath } from 'url'
@@ -25,8 +21,6 @@ swarm.on('connection', (conn) => {
 const configuration = new PearRadioConfiguration(pear.config.storage)
 await configuration.ready()
 
-// TODO remove this, change calls
-
 const userKeyPair = keyPair(await configuration.get('seed'))
 
 const player = new Player(() => {
@@ -38,8 +32,6 @@ const player = new Player(() => {
 
 const user = new User(player, { bootstrap, keyPair: userKeyPair })
 const tagManager = new TagManager(user, { bootstrap })
-
-// TODO do the same for listener
 
 const addTrack = (metadata) => {
   const track = document.createElement('div')
@@ -550,9 +542,6 @@ tagManager.on('stream-found', (info) => {
   }
 })
 
-await player.ready()
-await tagManager.ready()
-
 setInterval(() => {
   if (player && player.audio && player.audio.currentTime && player.streamer.streaming) {
     const seconds = Math.floor(player.audio.currentTime)
@@ -567,3 +556,6 @@ window.addEventListener('keydown', (e) => {
     return false
   }
 })
+
+await player.ready()
+await tagManager.ready()
