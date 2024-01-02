@@ -560,3 +560,10 @@ setInterval(() => {
     document.querySelector('#elapsed').innerHTML = elapsed
   }
 }, 1000)
+
+window.addEventListener('keydown', (e) => {
+  if (e.keyCode === 9) {
+    e.preventDefault()
+    return false
+  }
+})
