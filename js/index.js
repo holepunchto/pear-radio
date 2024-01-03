@@ -217,7 +217,7 @@ const onResultClick = async (listener, result, info) => {
 }
 
 const onResultPauseClick = (event, listener, result) => {
-  if (listener) listener.destroy()
+  if (listener) listener.close()
   player.stop()
 
   Array.from(document.getElementsByClassName('streamer-selected')).forEach((e) => e.classList.remove('streamer-selected'))
