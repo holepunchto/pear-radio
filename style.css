@@ -607,5 +607,9 @@ header {
 }
 
 .hidden-visibility {
-    visibility: hidden;
+    display: none;
+}
+
+.favs-list-icons-margin {
+    margin-right: 20px !important;
 }

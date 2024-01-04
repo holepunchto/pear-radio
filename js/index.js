@@ -128,7 +128,11 @@ const createStreamerResult = (info, opts = {}) => {
   play.classList.add('far', 'fa-play-circle', 'streamer-play')
   pause.classList.add('fas', 'fa-pause', 'streamer-pause', 'disabled')
 
-  if (opts.favourites) fav.classList.add('hidden-visibility')
+  if (opts.favourites) {
+    fav.classList.add('hidden-visibility')
+    play.classList.add('favs-list-icons-margin')
+    pause.classList.add('favs-list-icons-margin')
+  }
 
   name.innerHTML = info.name
 
