@@ -80,6 +80,10 @@ const hideStreamersPlaceholder = () => {
   document.querySelector('#streamers-placeholder').classList.add('disabled')
 }
 
+const showStreamersPlaceholder = () => {
+  document.querySelector('#streamers-placeholder').classList.remove('disabled')
+}
+
 const resetSearchResults = () => {
   hideStreamersPlaceholder()
   document.querySelector('#streamers-list').innerHTML = ''
@@ -240,9 +244,9 @@ const addResult = async (info, opts = {}) => {
     document.querySelector('#favourites-list').append(result.streamer)
   } else {
     document.querySelector('#streamers-list').append(result.streamer)
+    hideStreamersPlaceholder()
+    hideSearchingSpinner()
   }
-  hideStreamersPlaceholder()
-  hideSearchingSpinner()
 
   result.streamer.onclick = async () => {
     try {
