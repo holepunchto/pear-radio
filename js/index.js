@@ -191,11 +191,7 @@ const onResultClick = async (listener, result, info) => {
   const showLastPlayedTracks = (lastPlayedTracks) => {
     result.lastPlayedTracks.innerHTML = '' // reset
     result.lastPlayedTracks.classList.remove('disabled')
-    if (!lastPlayedTracks.length) {
-      const placeholder = document.createElement('p')
-      placeholder.innerHTML = 'Not avalilable'
-      result.lastPlayedTracks.append(placeholder)
-    } else {
+    if (lastPlayedTracks.length) {
       const header = document.createElement('p')
       header.innerHTML = 'Last played tracks:'
       result.lastPlayedTracks.append(header)
