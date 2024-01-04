@@ -329,7 +329,15 @@ const selectIcon = (icon) => {
 }
 
 let lastSearch = null
-if (await configuration.get('darkMode')) darkMode() // do this first so user doesnt notice
+
+if ((await configuration.get('darkMode')) === null) { // only happens once
+  const darkModeOS = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+  await configuration.set('darkMode', darkModeOS)
+}
+
+if (await configuration.get('darkMode')) {
+  darkMode() // do this first so user doesnt notice
+}
 
 await user.ready()
 
