@@ -30,7 +30,7 @@ const player = new Player(() => {
   return audio
 }, swarm, store, userKeyPair)
 
-const user = new User(player, { bootstrap, keyPair: userKeyPair })
+const user = new User(player.syncRequest.bind(player), { bootstrap, keyPair: userKeyPair })
 const tagManager = new TagManager(user, { bootstrap })
 
 const addTrack = (metadata) => {
