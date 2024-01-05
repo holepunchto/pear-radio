@@ -33,6 +33,9 @@ const player = new Player(() => {
 const user = new User(player.syncRequest.bind(player), { bootstrap, keyPair: userKeyPair })
 const tagManager = new TagManager(user, { bootstrap })
 
+await player.ready()
+await tagManager.ready()
+
 const addTrack = (metadata) => {
   const track = document.createElement('div')
   const trackname = document.createElement('p')
@@ -568,6 +571,3 @@ window.addEventListener('keydown', (e) => {
     return false
   }
 })
-
-await player.ready()
-await tagManager.ready()
