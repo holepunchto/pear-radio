@@ -31,14 +31,19 @@ class CliPlayer {
   }
 
   async play (opts = {}) {
-    const path = this.playlist[this.index++ % this.playlist.length]
-    const { remoteStream } = await Mp3ReadStream.stream(path) // will only use remote stream even for local
-    const metadata = await Mp3ReadStream.readTrack(path)
-    await this.streamer.stream(metadata, remoteStream, opts)
-    setTimeout(() => {
-      this.index++
-      this.play()
-    }, metadata.seconds * 1000)
+    try {
+      const path = this.playlist[this.index++ % this.playlist.length]
+      const { remoteStream } = await Mp3ReadStream.stream(path) // will only use remote stream even for local
+      const metadata = await Mp3ReadStream.readTrack(path)
+      await this.streamer.stream(metadata, remoteStream, opts)
+      setTimeout(() => {
+        this.index++
+        this.play()
+      }, metadata.seconds * 1000)
+    } catch (err) {
+      console.log(err)
+      this.play() // prev track had some issue playing, play next
+    }
   }
 }
 
