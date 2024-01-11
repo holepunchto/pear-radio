@@ -1,13 +1,9 @@
-#!/usr/bin/env node
-
-import { User } from '../js/user.js'
-import { Listener, HttpAudioStreamer, Mp3ReadStream, Streamer } from '../js/streamer.js'
+import { User, HttpAudioStreamer, Listener, Streamer, Mp3ReadStream, encoding } from '@holepunchto/pear-radio-backend'
 import { keyPair, randomBytes } from 'hypercore-crypto'
 import ram from 'random-access-memory'
 import Hyperswarm from 'hyperswarm'
 import Corestore from 'corestore'
 import c from 'compact-encoding'
-import { syncResponse } from '../js/lib/encoding.js'
 import subcommand from 'subcommand'
 import { readdir } from 'fs/promises'
 import { join } from 'path'
@@ -29,14 +25,14 @@ class CliPlayer {
   }
 
   async syncRequest (req) {
-    const block = this.streamer.checkpoint // TODO this is always start of the song playing, improve
+    const block = this.streamer.checkpoint
     const { artist, name } = await this.streamer.getMetadata()
-    return c.encode(syncResponse, { block, artist, name })
+    return c.encode(encoding.syncResponse, { block, artist, name })
   }
 
   async play (opts = {}) {
     const path = this.playlist[this.index++ % this.playlist.length]
-    const { _, remoteStream } = await Mp3ReadStream.stream(path) // will only use remote stream even for local
+    const { remoteStream } = await Mp3ReadStream.stream(path) // will only use remote stream even for local
     const metadata = await Mp3ReadStream.readTrack(path)
     await this.streamer.stream(metadata, remoteStream, opts)
     setTimeout(() => {
@@ -80,6 +76,7 @@ const stream = async (opts = {}) => {
   }
   const playlist = (await readdir(opts.library)).filter(e => e.includes('.mp3')).map(e => join(opts.library, e))
   const player = new CliPlayer(user, userKeyPair, swarm, store, playlist)
+  user.syncResponseCallback = player.syncRequest.bind(player)
   await player.ready()
   await player.play()
   console.log('Streaming on:', user.server.publicKey.toString('hex'))
