@@ -1,0 +1,19 @@
+{
+  "name": "pear-radio-terminal",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.mjs",
+  "pear": {
+    "name": "pear-radio-terminal",
+    "type": "terminal",
+    "bin": "pear-radio-terminal"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@holepunchto/pear-radio-backend": "^1.0.7",
+    "hyperswarm": "^4.7.13",
+    "subcommand": "^2.1.1"
+  }
+}

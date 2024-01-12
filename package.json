@@ -8,8 +8,6 @@
   "scripts": {
     "dev-a": "env TEST=true pear dev --store=/tmp/a --no-watch --no-tools",
     "dev-b": "env TEST=true pear dev --store=/tmp/b --no-watch --no-tools",
-    "dev-c": "env TEST=true pear dev --store=/tmp/c --no-watch --no-tools",
-    "dev-cli": "env TEST=true node bin/index.mjs b986db55cb91f4928caa0d59b70220164600fc293978edaec6b51a6deba09c70",
     "fix": "standard --fix",
     "test": "brittle test/*.test.js",
     "stage": "rm -r -f node_modules && npm i --omit=dev && pear stage pear-radio-channel-2",

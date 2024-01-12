@@ -89,7 +89,7 @@ async function stream (opts = {}) {
     tags: opts.tags || ''
   }
   const playlist = (await readdir(opts.library)).filter(e => e.includes('.mp3')).map(e => join(opts.library, e))
-  const player = new CliPlayer(user, userKeyPair, swarm, store, playlist)
+  const player = new CliPlayer(user, userKeyPair, swarm, store, playlist, opts)
   user.syncResponseCallback = player.syncRequest.bind(player)
   await player.ready()
   await player.play()
@@ -134,7 +134,7 @@ const commands = [
         help: 'Set library path.'
       }
     ],
-    command: async (args) => await stream({ seed: args.s, library: args.l, username: args.u, description: args.d, tags: args.t }),
+    command: async (args) => await stream({ seed: args.s, library: args.l, username: args.u, description: args.d, tags: args.t, random: args.random }),
     usage: function (args, help, usage) {
       console.log(help)
       console.log(usage)
