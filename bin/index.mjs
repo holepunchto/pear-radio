@@ -1,5 +1,5 @@
 import { User, HttpAudioStreamer, Listener, Streamer, Mp3ReadStream, encoding } from '@holepunchto/pear-radio-backend'
-import { keyPair, randomBytes } from 'hypercore-crypto'
+import { keyPair, randomBytes, hash } from 'hypercore-crypto'
 import ram from 'random-access-memory'
 import Hyperswarm from 'hyperswarm'
 import Corestore from 'corestore'
@@ -7,6 +7,8 @@ import c from 'compact-encoding'
 import subcommand from 'subcommand'
 import { readdir } from 'fs/promises'
 import { join } from 'path'
+
+const bootstrap = process.env.TEST ? [{ host: '127.0.0.1', port: 49736 }] : undefined
 
 class CliPlayer {
   constructor (user, userKeyPair, swarm, store, playlist, opts = {}) {
@@ -32,7 +34,8 @@ class CliPlayer {
 
   async play (opts = {}) {
     try {
-      const path = this.playlist[this.index++ % this.playlist.length]
+      if (this.random) this.index = Math.floor(Math.random() * this.playlist.length)
+      const path = this.playlist[++this.index % this.playlist.length]
       const { remoteStream } = await Mp3ReadStream.stream(path) // will only use remote stream even for local
       const metadata = await Mp3ReadStream.readTrack(path)
       await this.streamer.stream(metadata, remoteStream, opts)
@@ -41,27 +44,30 @@ class CliPlayer {
         this.play()
       }, metadata.seconds * 1000)
     } catch (err) {
-      console.log(err)
+      console.log('Track', this.playlist[this.index], 'unable to play.', err)
       this.play() // prev track had some issue playing, play next
     }
   }
 }
 
-const bootstrap = process.env.TEST ? [{ host: '127.0.0.1', port: 49736 }] : undefined
-const userKeyPair = keyPair(randomBytes(32))
-const user = new User(null, { bootstrap, keyPair: userKeyPair })
+async function setup (seed, opts) {
+  const userKeyPair = keyPair(seed ? hash(Buffer.from(seed)) : randomBytes(32))
+  const user = new User(null, { bootstrap, keyPair: userKeyPair })
 
-const httpAudioStreamer = new HttpAudioStreamer({ cli: true })
+  const httpAudioStreamer = new HttpAudioStreamer({ cli: true })
 
-const store = new Corestore(ram)
-await store.ready()
+  const store = new Corestore(ram)
+  await store.ready()
 
-const swarm = new Hyperswarm({ bootstrap })
-swarm.on('connection', (conn) => {
-  store.replicate(conn)
-})
+  const swarm = new Hyperswarm({ bootstrap })
+  swarm.on('connection', (conn) => {
+    store.replicate(conn)
+  })
+  return { swarm, store, user, userKeyPair, httpAudioStreamer }
+}
 
-const listen = async (key, opts = {}) => {
+async function listen (key, opts = {}) {
+  const { swarm, store, user, httpAudioStreamer } = await setup()
   const listener = new Listener(key, swarm, store, { bootstrap })
   await listener.ready()
   const { block, artist, name } = await user.syncRequest(key)
@@ -74,10 +80,13 @@ const listen = async (key, opts = {}) => {
   console.log(artist + ' - ' + name)
 }
 
-const stream = async (opts = {}) => {
-  user.info = { // TODO
+async function stream (opts = {}) {
+  const { swarm, store, userKeyPair, user } = await setup(opts.seed)
+  user.info = {
     publicKey: user.keyPair.publicKey,
-    name: opts.username || 'default name'
+    name: opts.username || 'default name',
+    description: opts.description || '',
+    tags: opts.tags || ''
   }
   const playlist = (await readdir(opts.library)).filter(e => e.includes('.mp3')).map(e => join(opts.library, e))
   const player = new CliPlayer(user, userKeyPair, swarm, store, playlist)
@@ -93,9 +102,24 @@ const commands = [
     help: 'Stream local library to remote listeners.',
     options: [
       {
+        name: 'seed',
+        abbr: 's',
+        help: 'Set streamer key pair seed.'
+      },
+      {
         name: 'username',
         abbr: 'u',
         help: 'Set streamer username.'
+      },
+      {
+        name: 'description',
+        abbr: 'd',
+        help: 'Set streamer description.'
+      },
+      {
+        name: 'tags',
+        abbr: 't',
+        help: 'Set streamer tags.'
       },
       {
         name: 'random',
@@ -110,7 +134,7 @@ const commands = [
         help: 'Set library path.'
       }
     ],
-    command: async (args) => await stream({ library: args.l }),
+    command: async (args) => await stream({ seed: args.s, library: args.l, username: args.u, description: args.d, tags: args.t }),
     usage: function (args, help, usage) {
       console.log(help)
       console.log(usage)
