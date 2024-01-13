@@ -32,7 +32,7 @@
     "standard": "^17.0.0"
   },
   "dependencies": {
-    "@holepunchto/pear-radio-backend": "^1.0.4",
+    "@holepunchto/pear-radio-backend": "^1.1.1",
     "b4a": "^1.6.4",
     "copy-text-to-clipboard": "^3.0.1",
     "corestore": "^6.15.4",
