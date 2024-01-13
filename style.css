@@ -615,3 +615,7 @@ header {
 .favs-list-icons-margin {
     margin-right: 20px !important;
 }
+
+.capitalize {
+    text-transform: capitalize;
+}

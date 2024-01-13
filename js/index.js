@@ -1,3 +1,5 @@
+/* eslint no-array-constructor: 0 */
+
 import { User, Player, TagManager, Listener, PearRadioConfiguration } from '@holepunchto/pear-radio-backend'
 import copy from 'copy-text-to-clipboard'
 import { keyPair } from 'hypercore-crypto'
@@ -81,10 +83,6 @@ const hideSearchingSpinner = () => {
 
 const hideStreamersPlaceholder = () => {
   document.querySelector('#streamers-placeholder').classList.add('disabled')
-}
-
-const showStreamersPlaceholder = () => {
-  document.querySelector('#streamers-placeholder').classList.remove('disabled')
 }
 
 const resetSearchResults = () => {
@@ -198,15 +196,17 @@ const onResultClick = async (listener, result, info) => {
       const header = document.createElement('p')
       header.innerHTML = 'Last played tracks:'
       result.lastPlayedTracks.append(header)
-      lastPlayedTracks.forEach(metadata => {
+      lastPlayedTracks.reverse().forEach(metadata => {
         const track = document.createElement('p')
-        track.innerHTML = `${metadata.artist || 'Unknown artist'} - ${metadata.name || 'Unknown track'}`
+        track.innerHTML = `${metadata.artist.toLowerCase() || 'Unknown artist'} - ${metadata.name.toLowerCase() || 'Unknown track'}`
+        track.classList.add('capitalize')
         result.lastPlayedTracks.append(track)
       })
     }
   }
 
-  const lastPlayedTracks = await listener.getLastPlayedTracks(5)
+  const maxLastPlayedTracks = 3
+  const lastPlayedTracks = await listener.getLastPlayedTracks(maxLastPlayedTracks)
   showLastPlayedTracks(lastPlayedTracks.slice(1)) // remove first because its currently playing, its already displayed in Playing:...
 
   const stream = await listener.listen(block, (data) => {
@@ -214,9 +214,9 @@ const onResultClick = async (listener, result, info) => {
       player.cleanBuffer()
       player.audio.play()
     }
-    result.playing.innerHTML = `Now playing: ${data.artist || 'Unknown artist'} - ${data.name || 'Unknown track'}`
+    result.playing.innerHTML = `Now playing: ${data.artist.toLowerCase() || 'Unknown artist'} - ${data.name.toLowerCase() || 'Unknown track'}`
     lastPlayedTracks.unshift(data)
-    if (lastPlayedTracks.length > 5) lastPlayedTracks.pop()
+    if (lastPlayedTracks.length > maxLastPlayedTracks) lastPlayedTracks.pop()
     showLastPlayedTracks(lastPlayedTracks.slice(1))
   })
 
@@ -228,7 +228,7 @@ const onResultPauseClick = (event, listener, result) => {
   player.stop()
 
   Array.from(document.getElementsByClassName('streamer-selected')).forEach((e) => e.classList.remove('streamer-selected'))
-  result.playing.classList.add('disabled')
+  result.playing.classList.add('disabled', 'capitalize')
   result.listen.classList.remove('disabled')
   result.pause.classList.add('disabled')
   result.play.classList.remove('disabled')
