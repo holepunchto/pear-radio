@@ -245,6 +245,7 @@ input:focus {
     margin-left: 2vw;
     margin-right: 2vw;
     margin-top: 2vh;
+    overflow: auto;
 }
 
 .streamer {
