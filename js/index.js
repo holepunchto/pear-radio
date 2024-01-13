@@ -154,7 +154,7 @@ const createStreamerResult = (info, opts = {}) => {
   tags.classList.add('streamer-tags')
   listen.classList.add('listen')
   lastPlayedTracks.classList.add('listen')
-  playing.classList.add('listen', 'main-fg-color', 'disabled')
+  playing.classList.add('listen', 'main-fg-color', 'disabled', 'capitalize')
 
   streamer.append(user)
   streamer.append(name)
@@ -187,8 +187,16 @@ const onResultClick = async (listener, result, info) => {
 
   listener = new Listener(info.publicKey, swarm, store, { bootstrap })
   await listener.ready()
-  const { block, artist, name } = await user.syncRequest(info.publicKey)
-  result.playing.innerHTML = `Now playing: ${artist || 'Unknown artist'} - ${name || 'Unknown track'}`
+
+  const response = await user.syncRequest(info.publicKey)
+  if (!response) {
+    console.log('User sync request response not valid.')
+    return
+  }
+
+  const { block, artist, name } = response
+
+  result.playing.innerHTML = `Now playing: ${artist.toLowerCase() || 'Unknown artist'} - ${name.toLowerCase() || 'Unknown track'}`
 
   const showLastPlayedTracks = (lastPlayedTracks) => {
     result.lastPlayedTracks.innerHTML = '' // reset
@@ -232,7 +240,7 @@ const onResultPauseClick = (event, listener, result) => {
   player.stop()
 
   Array.from(document.getElementsByClassName('streamer-selected')).forEach((e) => e.classList.remove('streamer-selected'))
-  result.playing.classList.add('disabled', 'capitalize')
+  result.playing.classList.add('disabled')
   result.listen.classList.remove('disabled')
   result.pause.classList.add('disabled')
   result.play.classList.remove('disabled')
@@ -434,21 +442,21 @@ document.querySelector('#settings-icon').onclick = async () => {
 document.querySelector('#search-button').onclick = async () => {
   const searchText = document.querySelector('#search-input').value
   lastSearch = searchText
+
+  resetSearchResults()
+  hideStreamersTitle()
+  showSearchingSpinner()
+
   if (searchText.length === 64) { // Search is a pk
     const info = await user.getUserInfo(Buffer.from(searchText, 'hex'))
     if (info) {
-      resetSearchResults()
       showStreamersTitle()
       await addResult(info)
     } else {
-      // hideStreamersTitle()
-      // showNoResultsPlaceholder()
+      console.log('Invalid user info response to search:', searchText)
     }
   } else {
     tagManager.searchByTag(searchText)
-    resetSearchResults()
-    hideStreamersTitle()
-    showSearchingSpinner()
     if (tagManager.tags.get(searchText).length) {
       showStreamersTitle()
       tagManager.tags.get(searchText).map(addResult)
