@@ -59,6 +59,7 @@ input::placeholder {
     top: 10%;
     right: -100%;
     background: var(--main-bg-color);
+    overflow: auto;
 }
 
 #settings {
