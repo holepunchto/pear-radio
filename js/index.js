@@ -288,7 +288,7 @@ const addResult = async (info, opts = {}) => {
 
     result.fav.classList.replace('far', 'fas')
     const favs = await configuration.get('favourites')
-    const publicKey = info.publicKey
+    const publicKey = b4a.from(info.publicKey)
     const name = info.name
     const description = info.description
     const tags = info.tags
