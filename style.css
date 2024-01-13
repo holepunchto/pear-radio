@@ -404,6 +404,15 @@ header {
     cursor: pointer;
 }
 
+.streamer-fav-trash {
+    color: var(--secondary-fg-color);
+    font-size: 24px;
+    float: right;
+    cursor: pointer;
+    margin-right: 20px;
+    margin-left: 15px;
+}
+
 #thumbnail-timer {
     color: var(--main-fg-color);
     margin-top: 3vh;
@@ -606,10 +615,6 @@ header {
     height: 65vh;
     overflow: auto;
     margin-right: 10px;
-}
-
-.hidden-visibility {
-    display: none;
 }
 
 .favs-list-icons-margin {

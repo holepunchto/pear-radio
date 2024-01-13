@@ -126,22 +126,23 @@ const createStreamerResult = (info, opts = {}) => {
   const fav = document.createElement('i')
   const play = document.createElement('i')
   const pause = document.createElement('i')
+  const trash = document.createElement('i')
   const user = document.createElement('i')
 
   user.classList.add('fas', 'fa-user', 'streamer-user')
   fav.classList.add('far', 'fa-heart', 'streamer-like')
   play.classList.add('far', 'fa-play-circle', 'streamer-play')
   pause.classList.add('fas', 'fa-pause', 'streamer-pause', 'disabled')
+  trash.classList.add('fa', 'fa-trash', 'streamer-fav-trash', 'disabled')
 
   if (opts.favourites) {
-    fav.classList.add('hidden-visibility')
-    play.classList.add('favs-list-icons-margin')
-    pause.classList.add('favs-list-icons-margin')
+    fav.classList.add('disabled')
+    trash.classList.remove('disabled')
   }
 
   name.innerHTML = info.name
 
-  Array(fav, play, pause).forEach(e => name.append(e))
+  Array(fav, trash, play, pause).forEach(e => name.append(e))
   description.innerHTML = info.description && info.description.length > 0 ? info.description : 'No description provided.'
   tags.innerHTML = info.tags && info.tags.length > 0 ? info.tags.replaceAll(',', ', ').replaceAll('  ', ' ') : 'No tags provided.' // add space after comma and remove double spaces
   listen.innerHTML = ''
