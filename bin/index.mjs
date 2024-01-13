@@ -1,4 +1,4 @@
-import { User, HttpAudioStreamer, Listener, Streamer, Mp3ReadStream, encoding } from '@holepunchto/pear-radio-backend'
+import { User, HttpAudioStreamer, Listener, Streamer, Mp3ReadStream, TagManager, encoding } from '@holepunchto/pear-radio-backend'
 import { keyPair, randomBytes, hash } from 'hypercore-crypto'
 import ram from 'random-access-memory'
 import Hyperswarm from 'hyperswarm'
@@ -54,6 +54,9 @@ async function setup (seed, opts) {
   const userKeyPair = keyPair(seed ? hash(Buffer.from(seed)) : randomBytes(32))
   const user = new User(null, { bootstrap, keyPair: userKeyPair })
 
+  const tagManager = new TagManager(user, { bootstrap })
+  await tagManager.ready()
+
   const httpAudioStreamer = new HttpAudioStreamer({ cli: true })
 
   const store = new Corestore(ram)
@@ -63,7 +66,7 @@ async function setup (seed, opts) {
   swarm.on('connection', (conn) => {
     store.replicate(conn)
   })
-  return { swarm, store, user, userKeyPair, httpAudioStreamer }
+  return { swarm, store, user, userKeyPair, httpAudioStreamer, tagManager }
 }
 
 async function listen (key, opts = {}) {
@@ -81,13 +84,20 @@ async function listen (key, opts = {}) {
 }
 
 async function stream (opts = {}) {
-  const { swarm, store, userKeyPair, user } = await setup(opts.seed)
+  const { swarm, store, userKeyPair, user, tagManager } = await setup(opts.seed)
   user.info = {
     publicKey: user.keyPair.publicKey,
     name: opts.username || 'default name',
     description: opts.description || '',
     tags: opts.tags || ''
   }
+
+  if (opts.tags) {
+    opts.tags.split(',').map(async e => {
+      await tagManager.announceTag(e)
+    })
+  }
+
   const playlist = (await readdir(opts.library)).filter(e => e.includes('.mp3')).map(e => join(opts.library, e))
   const player = new CliPlayer(user, userKeyPair, swarm, store, playlist, opts)
   user.syncResponseCallback = player.syncRequest.bind(player)
