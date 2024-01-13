@@ -9,10 +9,13 @@
     "dev-a": "env TEST=true pear dev --store=/tmp/a --no-watch --no-tools",
     "dev-b": "env TEST=true pear dev --store=/tmp/b --no-watch --no-tools",
     "fix": "standard --fix",
-    "test": "brittle test/*.test.js",
-    "stage": "rm -r -f node_modules && npm i --omit=dev && pear stage pear-radio-channel-2",
-    "release": "pear release pear-radio-channel-2",
-    "seed": "pear seed pear-radio-channel-2"
+    "test": "standard",
+    "stage-dev": "rm package-lock.json && rm -r -f node_modules && npm i --omit=dev && pear stage dev",
+    "release-dev": "pear release dev",
+    "seed-dev": "pear seed dev",
+    "stage-prod": "rm package-lock.json && rm -r -f node_modules && npm i --omit=dev && pear stage prod",
+    "release-prod": "pear release prod",
+    "seed-prod": "pear seed prod"
   },
   "pear": {
     "gui": {
@@ -26,7 +29,6 @@
   "license": "MIT",
   "devDependencies": {
     "brittle": "^3.0.0",
-    "joyrider": "^1.0.0",
     "standard": "^17.0.0"
   },
   "dependencies": {
