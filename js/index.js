@@ -164,7 +164,7 @@ const createStreamerResult = (info, opts = {}) => {
   streamer.append(lastPlayedTracks)
   streamer.append(playing)
 
-  return { streamer, name, description, listen, playing, lastPlayedTracks, play, pause, fav, tags }
+  return { streamer, name, description, listen, playing, lastPlayedTracks, play, pause, fav, trash, tags }
 }
 
 const onResultClick = async (listener, result, info) => {
@@ -225,6 +225,9 @@ const onResultClick = async (listener, result, info) => {
 }
 
 const onResultPauseClick = (event, listener, result) => {
+  event.preventDefault()
+  event.stopPropagation()
+
   if (listener) listener.close()
   player.stop()
 
@@ -233,8 +236,6 @@ const onResultPauseClick = (event, listener, result) => {
   result.listen.classList.remove('disabled')
   result.pause.classList.add('disabled')
   result.play.classList.remove('disabled')
-  event.preventDefault()
-  event.stopPropagation()
 }
 
 const addResult = async (info, opts = {}) => {
@@ -242,6 +243,14 @@ const addResult = async (info, opts = {}) => {
   const result = createStreamerResult(info, opts)
   if (opts.favourites) {
     document.querySelector('#favourites-list').append(result.streamer)
+    result.trash.onclick = async (event) => {
+      event.preventDefault()
+      event.stopPropagation()
+
+      result.streamer.remove()
+      const favs = await configuration.get('favourites')
+      await configuration.set('favourites', favs.filter(e => !b4a.equals(info.publicKey, e.publicKey)))
+    }
   } else {
     document.querySelector('#streamers-list').append(result.streamer)
     hideStreamersPlaceholder()
@@ -277,7 +286,7 @@ const addResult = async (info, opts = {}) => {
     const tags = info.tags
     if (!favs.find(e => b4a.equals(e.publicKey, publicKey))) {
       favs.push({ publicKey, name, description, tags })
-      configuration.set('favourites', favs)
+      await configuration.set('favourites', favs)
     }
   }
 }
