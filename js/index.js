@@ -372,7 +372,7 @@ user.info = {
   tags: (await configuration.get('tags'))
 }
 
-await tagManager.ready() // announce to #all channel after setting up user info
+await tagManager.ready()
 
 document.querySelector('#stream-public-key-message').innerText = 'Click here to copy your stream public key: ' + user.keyPair.publicKey.toString('hex').substr(0, 6)
 
@@ -566,9 +566,9 @@ player.on('buffering-finished', async () => {
 tagManager.on('stream-found', (info) => {
   const tags = info.tags ? info.tags.split(',') : null
   const currentSearch = document.querySelector('#search-input').value
-  if (!info.tags && currentSearch !== '#all') return
+  if (!info.tags) return
 
-  if (currentSearch === '#all' || tags.indexOf(currentSearch) !== -1) {
+  if (tags.indexOf(currentSearch) !== -1) {
     hideStreamersPlaceholder()
     hideSearchingSpinner()
     showStreamersTitle()
