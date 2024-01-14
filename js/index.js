@@ -195,7 +195,7 @@ const onResultClick = async (listener, result, info) => {
 
   const { block, artist, name } = response
 
-  result.playing.innerText = `Now playing: ${artist.toLowerCase() || 'Unknown artist'} - ${name.toLowerCase() || 'Unknown track'}`
+  result.playing.innerText = `Now playing: ${artist?.toLowerCase() || 'Unknown artist'} - ${name?.toLowerCase() || 'Unknown track'}`
 
   const showLastPlayedTracks = (lastPlayedTracks) => {
     result.lastPlayedTracks.innerText = '' // reset
@@ -206,7 +206,7 @@ const onResultClick = async (listener, result, info) => {
       result.lastPlayedTracks.append(header)
       lastPlayedTracks.reverse().forEach(metadata => {
         const track = document.createElement('p')
-        track.innerText = `${metadata.artist.toLowerCase() || 'Unknown artist'} - ${metadata.name.toLowerCase() || 'Unknown track'}`
+        track.innerText = `${metadata.artist?.toLowerCase() || 'Unknown artist'} - ${metadata.name?.toLowerCase() || 'Unknown track'}`
         track.classList.add('capitalize')
         result.lastPlayedTracks.append(track)
       })
@@ -222,7 +222,7 @@ const onResultClick = async (listener, result, info) => {
       player.cleanBuffer()
       player.audio.play()
     }
-    result.playing.innerText = `Now playing: ${data.artist.toLowerCase() || 'Unknown artist'} - ${data.name.toLowerCase() || 'Unknown track'}`
+    result.playing.innerText = `Now playing: ${data.artist?.toLowerCase() || 'Unknown artist'} - ${data.name?.toLowerCase() || 'Unknown track'}`
     lastPlayedTracks.unshift(data)
     if (lastPlayedTracks.length > maxLastPlayedTracks) lastPlayedTracks.pop()
     showLastPlayedTracks(lastPlayedTracks.slice(1))
