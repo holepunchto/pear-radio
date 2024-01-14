@@ -12,7 +12,7 @@
 :root {
     --main-bg-color: #f9f9f9;
     --main-fg-color: #05070a;
-    --secondary-fg-color: #bbb;
+    --secondary-fg-color: #6a6a6a;
     --tertiary-fg-color: #e5ebfb;
 }
 
@@ -272,7 +272,7 @@ input:focus {
 }
 
 .streamer-description {
-    font-size:100%;
+    font-size:110%;
     padding-left:2vh;
     font-weight: 200;
     margin-top: 2vh;
@@ -280,7 +280,7 @@ input:focus {
 }
 
 .streamer-tags {
-    font-size:100%;
+    font-size:110%;
     padding-left:2vh;
     font-weight: 200;
     margin-top: 1vh;
@@ -290,7 +290,7 @@ input:focus {
 .listen {
     margin-top: 2vh;
     margin-left: 2vh;
-    font-size: 100%;
+    font-size: 110%;
     width: 80vw;
     color: var(--secondary-fg-color);
 }
