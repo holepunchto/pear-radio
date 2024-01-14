@@ -54,7 +54,7 @@ async function setup (seed, opts) {
   const userKeyPair = keyPair(seed ? hash(Buffer.from(seed)) : randomBytes(32))
   const user = new User(null, { bootstrap, keyPair: userKeyPair })
 
-  const tagManager = new TagManager(user, { bootstrap })
+  const tagManager = new TagManager(user, { bootstrap, streamOnly: true })
   await tagManager.ready()
 
   const httpAudioStreamer = new HttpAudioStreamer({ cli: true })
