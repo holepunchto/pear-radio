@@ -36,7 +36,6 @@ const user = new User(player.syncRequest.bind(player), { bootstrap, keyPair: use
 const tagManager = new TagManager(user, { bootstrap })
 
 await player.ready()
-await tagManager.ready()
 
 const addTrack = (metadata) => {
   const track = document.createElement('div')
@@ -45,9 +44,9 @@ const addTrack = (metadata) => {
   const duration = document.createElement('p')
 
   const name = metadata.name || metadata.file
-  trackname.innerHTML = name.length < 30 ? name : name.substr(0, 30) + '...'
-  duration.innerHTML = metadata.duration
-  artist.innerHTML = metadata.artist || 'Unknown artist'
+  trackname.innerText = name.length < 30 ? name : name.substr(0, 30) + '...'
+  duration.innerText = metadata.duration
+  artist.innerText = metadata.artist || 'Unknown artist'
 
   track.classList.add('tracklist-track')
   trackname.classList.add('tracklist-trackname')
@@ -87,7 +86,7 @@ const hideStreamersPlaceholder = () => {
 
 const resetSearchResults = () => {
   hideStreamersPlaceholder()
-  document.querySelector('#streamers-list').innerHTML = ''
+  document.querySelector('#streamers-list').innerText = ''
 }
 
 const disableScrolling = () => {
@@ -140,13 +139,13 @@ const createStreamerResult = (info, opts = {}) => {
     trash.classList.remove('disabled')
   }
 
-  name.innerHTML = info.name
+  name.innerText = info.name
 
   Array(fav, trash, play, pause).forEach(e => name.append(e))
-  description.innerHTML = info.description && info.description.length > 0 ? info.description : 'No description provided.'
-  tags.innerHTML = info.tags && info.tags.length > 0 ? info.tags.replaceAll(',', ', ').replaceAll('  ', ' ') : 'No tags provided.' // add space after comma and remove double spaces
-  listen.innerHTML = ''
-  playing.innerHTML = 'Buffering...'
+  description.innerText = info.description && info.description.length > 0 ? info.description : 'No description provided.'
+  tags.innerText = info.tags && info.tags.length > 0 ? info.tags.replaceAll(',', ', ').replaceAll('  ', ' ') : 'No tags provided.' // add space after comma and remove double spaces
+  listen.innerText = ''
+  playing.innerText = 'Buffering...'
 
   streamer.classList.add('streamer')
   name.classList.add('streamer-name')
@@ -183,7 +182,7 @@ const onResultClick = async (listener, result, info) => {
   result.play.classList.add('disabled')
   result.pause.classList.remove('disabled')
 
-  result.playing.innerHTML = 'Buffering...' // reset
+  result.playing.innerText = 'Buffering...' // reset
 
   listener = new Listener(info.publicKey, swarm, store, { bootstrap })
   await listener.ready()
@@ -196,18 +195,18 @@ const onResultClick = async (listener, result, info) => {
 
   const { block, artist, name } = response
 
-  result.playing.innerHTML = `Now playing: ${artist.toLowerCase() || 'Unknown artist'} - ${name.toLowerCase() || 'Unknown track'}`
+  result.playing.innerText = `Now playing: ${artist.toLowerCase() || 'Unknown artist'} - ${name.toLowerCase() || 'Unknown track'}`
 
   const showLastPlayedTracks = (lastPlayedTracks) => {
-    result.lastPlayedTracks.innerHTML = '' // reset
+    result.lastPlayedTracks.innerText = '' // reset
     result.lastPlayedTracks.classList.remove('disabled')
     if (lastPlayedTracks.length) {
       const header = document.createElement('p')
-      header.innerHTML = 'Last played tracks:'
+      header.innerText = 'Last played tracks:'
       result.lastPlayedTracks.append(header)
       lastPlayedTracks.reverse().forEach(metadata => {
         const track = document.createElement('p')
-        track.innerHTML = `${metadata.artist.toLowerCase() || 'Unknown artist'} - ${metadata.name.toLowerCase() || 'Unknown track'}`
+        track.innerText = `${metadata.artist.toLowerCase() || 'Unknown artist'} - ${metadata.name.toLowerCase() || 'Unknown track'}`
         track.classList.add('capitalize')
         result.lastPlayedTracks.append(track)
       })
@@ -223,7 +222,7 @@ const onResultClick = async (listener, result, info) => {
       player.cleanBuffer()
       player.audio.play()
     }
-    result.playing.innerHTML = `Now playing: ${data.artist.toLowerCase() || 'Unknown artist'} - ${data.name.toLowerCase() || 'Unknown track'}`
+    result.playing.innerText = `Now playing: ${data.artist.toLowerCase() || 'Unknown artist'} - ${data.name.toLowerCase() || 'Unknown track'}`
     lastPlayedTracks.unshift(data)
     if (lastPlayedTracks.length > maxLastPlayedTracks) lastPlayedTracks.pop()
     showLastPlayedTracks(lastPlayedTracks.slice(1))
@@ -312,16 +311,16 @@ const listFavourites = (favourites) => {
 
   document.getElementById('favourites-placeholder').classList.add('disabled')
   document.getElementById('favourites-title').classList.remove('disabled')
-  document.getElementById('favourites-list').innerHTML = ''
+  document.getElementById('favourites-list').innerText = ''
 
   favouritesSet.forEach(info => addResult(info, { favourites: true }))
 }
 
 const updateThumbnail = (metadata) => {
-  document.querySelector('#thumbnail-track').innerHTML = metadata.name || metadata.file
-  document.querySelector('#thumbnail-artist').innerHTML = metadata.artist || 'Unkown artist'
-  document.querySelector('#duration').innerHTML = metadata.duration
-  document.querySelector('#elapsed').innerHTML = '0:00'
+  document.querySelector('#thumbnail-track').innerText = metadata.name || metadata.file
+  document.querySelector('#thumbnail-artist').innerText = metadata.artist || 'Unkown artist'
+  document.querySelector('#duration').innerText = metadata.duration
+  document.querySelector('#elapsed').innerText = '0:00'
 }
 
 const updatePlaylist = (metadata) => {
@@ -373,7 +372,9 @@ user.info = {
   tags: (await configuration.get('tags'))
 }
 
-document.querySelector('#stream-public-key-message').innerHTML = 'Click here to copy your stream public key: ' + user.keyPair.publicKey.toString('hex').substr(0, 6)
+await tagManager.ready() // announce to #all channel after setting up user info
+
+document.querySelector('#stream-public-key-message').innerText = 'Click here to copy your stream public key: ' + user.keyPair.publicKey.toString('hex').substr(0, 6)
 
 document.addEventListener('dragover', async (e) => {
   e.preventDefault()
@@ -555,11 +556,11 @@ player.on('track-finished', async (next) => {
 })
 
 player.on('buffering', async () => {
-  // document.querySelector('#state').innerHTML = '(Buffering)'
+  // document.querySelector('#state').innerText = '(Buffering)'
 })
 
 player.on('buffering-finished', async () => {
-  document.querySelector('#state').innerHTML = ''
+  document.querySelector('#state').innerText = ''
 })
 
 tagManager.on('stream-found', (info) => {
@@ -579,7 +580,7 @@ setInterval(() => {
   if (player && player.audio && player.audio.currentTime && player.streamer.streaming) {
     const seconds = Math.floor(player.audio.currentTime)
     const elapsed = Math.floor(seconds / 60) + ':' + (seconds % 60 >= 10 ? seconds % 60 : '0' + seconds % 60)
-    document.querySelector('#elapsed').innerHTML = elapsed
+    document.querySelector('#elapsed').innerText = elapsed
   }
 }, 1000)
 
