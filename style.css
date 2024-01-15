@@ -624,3 +624,11 @@ header {
 .capitalize {
     text-transform: capitalize;
 }
+
+#streamers-list {
+    padding: 10px;
+}
+
+#favourites-list {
+    padding: 10px;
+}
