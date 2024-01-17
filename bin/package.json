@@ -6,13 +6,19 @@
   "pear": {
     "name": "pear-radio-terminal",
     "type": "terminal",
-    "bin": "pear-radio-terminal"
+    "bin": "pear-radio-terminal",
+    "builtinsMap": {
+      "tty": "bare-tty",
+      "events": "bare-events"
+    }
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@holepunchto/pear-radio-backend": "^1.0.7",
+    "bare-events": "^2.2.0",
+    "bare-tty": "^3.0.0",
     "hyperswarm": "^4.7.13",
     "subcommand": "^2.1.1"
   }
