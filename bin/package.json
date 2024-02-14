@@ -19,7 +19,9 @@
     "@holepunchto/pear-radio-backend": "^1.0.7",
     "bare-events": "^2.2.0",
     "bare-tty": "^3.0.0",
+    "corestore": "^6.17.0",
     "hyperswarm": "^4.7.13",
+    "random-access-memory": "^6.2.0",
     "subcommand": "^2.1.1"
   }
 }

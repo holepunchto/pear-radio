@@ -1,4 +1,4 @@
-import { User, HttpAudioStreamer, Listener, Streamer, Mp3ReadStream, TagManager, encoding } from '@holepunchto/pear-radio-backend'
+import { User, HttpAudioStreamer, Listener, Streamer, Mp3ReadStream, TagManager, encoding } from 'pear-radio-backend'
 import { keyPair, randomBytes, hash } from 'hypercore-crypto'
 import ram from 'random-access-memory'
 import Hyperswarm from 'hyperswarm'
