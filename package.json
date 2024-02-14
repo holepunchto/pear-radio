@@ -5,6 +5,12 @@
   "bin": {
     "pear-radio": "./bin/index.mjs"
   },
+  "imports": {
+    "url": {
+      "bare": "bare-url",
+      "default": "url"
+    }
+  },
   "scripts": {
     "dev-a": "env TEST=true pear dev --store=/tmp/a --no-watch --no-tools",
     "dev-b": "env TEST=true pear dev --store=/tmp/b --no-watch --no-tools",

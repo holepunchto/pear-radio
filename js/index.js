@@ -1,9 +1,9 @@
 /* eslint no-array-constructor: 0 */
 
-import { User, Player, TagManager, Listener, PearRadioConfiguration } from '@holepunchto/pear-radio-backend'
+import { User, Player, TagManager, Listener, PearRadioConfiguration } from 'pear-radio-backend'
 import copy from 'copy-text-to-clipboard'
 import { keyPair } from 'hypercore-crypto'
-import { fileURLToPath } from 'url'
+import url from 'url'
 import ram from 'random-access-memory'
 import Hyperswarm from 'hyperswarm'
 import Corestore from 'corestore'
@@ -393,7 +393,7 @@ document.addEventListener('drop', async (e) => {
     addTrack(metadata)
   } else {
     const uri = await new Promise((resolve) => e.dataTransfer.items[0].getAsString(async (p) => resolve(p)))
-    const metadata = await player.addTrack(fileURLToPath(uri))
+    const metadata = await player.addTrack(url.fileURLToPath(uri))
     addTrack(metadata)
   }
 
