@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { User, HttpAudioStreamer, Listener, Streamer, Mp3ReadStream, TagManager, encoding } from 'pear-radio-backend'
 import { keyPair, randomBytes, hash } from 'hypercore-crypto'
 import ram from 'random-access-memory'
