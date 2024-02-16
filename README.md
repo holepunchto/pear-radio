@@ -3,8 +3,11 @@
 Pear radio is a Holepunch music audio player/streamer.
 
 ```
-npm install -g https://github.com/holepunchto/pear-radio
-pear-radio [streamer-pk]
+pear run pear://tnu5wefezcdj79st747ai45msrmdqaeyrhgcjpt4n1kkymwci51y
+```
+
+```
+npm install -g pear-radio
 ```
 
 <img src="https://user-images.githubusercontent.com/15270736/211868865-b51cdfe4-6195-4c21-8323-d7f86dced1ee.png" width=35% height=35%>
