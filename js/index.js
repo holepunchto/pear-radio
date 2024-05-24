@@ -7,8 +7,14 @@ import url from 'url'
 import ram from 'random-access-memory'
 import Hyperswarm from 'hyperswarm'
 import Corestore from 'corestore'
-import pear from 'pear'
 import b4a from 'b4a'
+
+// Compatible with upcoming platform version
+
+if (typeof Pear === 'undefined') {
+  window.Pear = (await import('pear')).default
+  if (!Pear.updates) Pear.updates = () => {}
+}
 
 const bootstrap = process.env.TEST ? [{ host: '127.0.0.1', port: 49736 }] : undefined
 
@@ -20,7 +26,7 @@ swarm.on('connection', (conn) => {
   store.replicate(conn)
 })
 
-const configuration = new PearRadioConfiguration(pear.config.storage)
+const configuration = new PearRadioConfiguration(Pear.config.storage)
 await configuration.ready()
 
 const userKeyPair = keyPair(await configuration.get('seed'))
