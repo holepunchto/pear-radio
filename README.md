@@ -3,7 +3,7 @@
 Pear radio is a Holepunch music audio player/streamer.
 
 ```
-pear run pear://tnu5wefezcdj79st747ai45msrmdqaeyrhgcjpt4n1kkymwci51y
+pear run pear://fbdbkwt5yojdfidmqeh39tomepj348hn78xzwk181ecqr61jkzzo
 ```
 
 <img src="https://user-images.githubusercontent.com/15270736/211868865-b51cdfe4-6195-4c21-8323-d7f86dced1ee.png" width=35% height=35%>
