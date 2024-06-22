@@ -100,7 +100,7 @@ async function stream (opts = {}) {
     })
   }
 
-  const playlist = (await readdir(opts.library)).filter(e => e.includes('.mp3')).map(e => join(opts.library, e))
+  const playlist = (await readdir(opts.library, { recursive: true })).filter(e => e.includes('.mp3')).map(e => join(opts.library, e))
   const player = new CliPlayer(user, userKeyPair, swarm, store, playlist, opts)
   user.syncResponseCallback = player.syncRequest.bind(player)
   await player.ready()
