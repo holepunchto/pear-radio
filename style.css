@@ -24,6 +24,7 @@
 body {
   background-color: var(--main-bg-color);
   overflow: hidden;
+  margin: 0px;
 }
 
 input {
@@ -39,7 +40,7 @@ input::placeholder {
     position: absolute;
     width: 100%;
     height: 90%;
-    top: 10%;
+    top: 15%;
     right: 0%;
 }
 
@@ -47,7 +48,7 @@ input::placeholder {
     position: absolute;
     width: 100%;
     height: 90%;
-    top: 10%;
+    top: 15%;
     right: -100%;
     background: var(--main-bg-color);
 }
@@ -56,7 +57,7 @@ input::placeholder {
     position: absolute;
     width: 100%;
     height: 90%;
-    top: 10%;
+    top: 15%;
     right: -100%;
     background: var(--main-bg-color);
     overflow: auto;
@@ -66,7 +67,7 @@ input::placeholder {
     position: absolute;
     width: 100%;
     height: 90%;
-    top: 10%;
+    top: 15%;
     right: -100%;
     background: var(--main-bg-color);
 }
@@ -239,7 +240,7 @@ input:focus {
 
 #streamers {
     display: flex;
-    height: 75vh;
+    height: 72vh;
     justify-content: flex-start;
     flex-direction: column;
     margin-left: 2vw;
@@ -631,4 +632,9 @@ header {
 
 #favourites-list {
     padding: 10px;
+}
+
+#titlebar {
+    background-color: #303030;
+    margin-bottom: 24px;
 }

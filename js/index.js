@@ -1,4 +1,5 @@
 /* eslint no-array-constructor: 0 */
+/* global Pear */
 
 import { User, Player, TagManager, Listener, PearRadioConfiguration } from 'pear-radio-backend'
 import copy from 'copy-text-to-clipboard'

@@ -30,7 +30,8 @@
       "width": 420,
       "resizable": false
     },
-    "entrypoints": []
+    "entrypoints": [],
+    "links": ["http://127.0.0.1", "http://localhost", "https://ka-f.fontawesome.com"]
   },
   "author": "",
   "license": "MIT",
