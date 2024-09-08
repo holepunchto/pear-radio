@@ -10,8 +10,6 @@ import Hyperswarm from 'hyperswarm'
 import Corestore from 'corestore'
 import b4a from 'b4a'
 
-// Compatible with upcoming platform version
-
 if (typeof Pear === 'undefined') {
   window.Pear = (await import('pear')).default
   if (!Pear.updates) Pear.updates = () => {}
@@ -597,3 +595,11 @@ window.addEventListener('keydown', (e) => {
     return false
   }
 })
+
+const fragment = Pear.config.fragment
+if (fragment) {
+  selectIcon('#search-icon')
+  fade('#listen')
+  document.querySelector('#search-input').value = fragment
+  document.querySelector('#search-button').click()
+}
