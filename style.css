@@ -636,5 +636,6 @@ header {
 
 #titlebar {
     background-color: #303030;
-    margin-bottom: 24px;
+    height: 36px;
+    -webkit-app-region: drag;
 }
