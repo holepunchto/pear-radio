@@ -1,6 +1,6 @@
 {
   "name": "pear-radio",
-  "version": "1.2.0",
+  "version": "1.4.0",
   "main": "index.html",
   "type": "module",
   "bin": {
@@ -21,6 +21,7 @@
     "release-dev": "pear release dev",
     "seed-dev": "pear seed dev",
     "stage-prod": "rm package-lock.json && rm -r -f node_modules && npm i --omit=dev && pear stage prod",
+    "dry-stage-prod": "rm package-lock.json && rm -r -f node_modules && npm i --omit=dev && pear stage --dry-run prod",
     "release-prod": "pear release prod",
     "seed-prod": "pear seed prod"
   },
